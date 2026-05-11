@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Fileshift — Convert Anything</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#0C0C10"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Fileshift"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+
+<!-- SEO -->
+<meta name="description" content="Convert PDF, Excel and Images instantly. 100% in-browser, nothing leaves your device."/>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0C0C10;
+  --ink2:#16161E;
+  --ink3:#1F1F2A;
+  --line:#2A2A38;
+  --line2:#383848;
+  --fog:#6B6B88;
+  --mist:#9898B8;
+  --snow:#F0F0FF;
+  --c1:#00E5FF;--c1d:#00B8CC;
+  --c2:#7B5CFA;--c2d:#5C3DD8;
+  --c3:#FF6B35;--c3d:#CC4A18;
+  --c4:#00D68F;--c4d:#00A86B;
+  --radius:16px;
+  --card-bg:#13131C;
+}
+html{height:100%;scroll-behavior:smooth}
+body{
+  font-family:'Syne',sans-serif;
+  background:var(--ink);
+  color:var(--snow);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* ── NOISE TEXTURE ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;opacity:.4;
+}
+
+/* ── AMBIENT GLOWS ── */
+.glow-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(80px);opacity:.18}
+.orb1{width:500px;height:500px;background:var(--c2);top:-150px;right:-100px}
+.orb2{width:400px;height:400px;background:var(--c1);bottom:-100px;left:-80px}
+
+/* ── LAYOUT ── */
+.shell{
+  position:relative;z-index:1;
+  max-width:680px;margin:0 auto;
+  padding:0 20px 80px;
+}
+
+/* ── HEADER ── */
+header{
+  padding:52px 0 40px;
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+}
+.wordmark{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:28px;
+}
+.logo-icon{
+  width:44px;height:44px;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  box-shadow:0 0 24px rgba(0,229,255,.25);
+}
+.logo-icon::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.2),transparent);
+}
+.logo-icon svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1}
+.logo-name{
+  font-size:26px;font-weight:800;letter-spacing:-.04em;
+  background:linear-gradient(135deg,#fff 40%,var(--mist));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.tagline-wrap{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:99px;padding:7px 16px;
+  margin-bottom:24px;
+}
+.tagline-dot{width:6px;height:6px;border-radius:50%;background:var(--c1);animation:breathe 2s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+.tagline{font-size:11.5px;font-weight:600;color:var(--mist);letter-spacing:.08em;text-transform:uppercase;font-family:'DM Mono',monospace}
+.hero-title{
+  font-size:clamp(2.4rem,6vw,3.4rem);font-weight:800;
+  line-height:1.05;letter-spacing:-.04em;
+  margin-bottom:12px;
+}
+.hero-title .shift{
+  background:linear-gradient(90deg,var(--c1),var(--c2),var(--c3));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  background-size:200%;
+  animation:shimmer 4s ease-in-out infinite;
+}
+@keyframes shimmer{0%,100%{background-position:0%}50%{background-position:100%}}
+.hero-sub{font-size:14px;color:var(--fog);line-height:1.7;max-width:420px;font-weight:400}
+
+/* ── CONVERSION PICKER ── */
+.picker{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;
+  margin-bottom:24px;
+}
+.pick-btn{
+  padding:14px 12px;
+  border:1.5px solid var(--line2);
+  border-radius:var(--radius);
+  background:var(--card-bg);
+  color:var(--mist);
+  font-family:'Syne',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;
+  transition:all .2s;
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;
+  position:relative;overflow:hidden;
+  text-align:left;
+}
+.pick-btn::before{
+  content:'';position:absolute;inset:0;opacity:0;
+  transition:opacity .2s;
+}
+.pick-btn:hover{border-color:var(--line2);color:var(--snow);transform:translateY(-2px)}
+.pick-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.pick-icon svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pick-label{font-size:12px;font-weight:700;letter-spacing:.01em}
+.pick-sub{font-size:10px;font-family:'DM Mono',monospace;font-weight:400;opacity:.6}
+.pick-arrow{position:absolute;right:12px;top:50%;transform:translateY(-50%);opacity:.3;font-size:14px}
+
+/* Active states per mode */
+.pick-btn.act-pdf{border-color:rgba(0,229,255,.5);background:rgba(0,229,255,.06);color:var(--c1)}
+.pick-btn.act-xl{border-color:rgba(123,92,250,.5);background:rgba(123,92,250,.06);color:var(--c2)}
+.pick-btn.act-img{border-color:rgba(255,107,53,.5);background:rgba(255,107,53,.06);color:var(--c3)}
+.pick-btn.act-img2{border-color:rgba(0,214,143,.5);background:rgba(0,214,143,.06);color:var(--c4)}
+
+/* ── PANELS ── */
+.panel{display:none}.panel.active{display:block;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARD ── */
+.card{
+  background:var(--card-bg);
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:24px;
+  margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);
+}
+
+/* ── SECTION LABEL ── */
+.sec-label{
+  font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  font-family:'DM Mono',monospace;color:var(--fog);
+  margin-bottom:14px;display:flex;align-items:center;gap:8px;
+}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--line)}
+
+/* ── DROP ZONE ── */
+.drop-zone{
+  border:1.5px dashed var(--line2);
+  border-radius:14px;padding:40px 20px;
+  text-align:center;cursor:pointer;
+  transition:all .25s;background:rgba(255,255,255,.02);
+  position:relative;
+}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.drop-zone:hover,.drop-zone.over{background:rgba(255,255,255,.04)}
+.dz-c1:hover,.dz-c1.over{border-color:var(--c1);box-shadow:0 0 30px rgba(0,229,255,.08)}
+.dz-c2:hover,.dz-c2.over{border-color:var(--c2);box-shadow:0 0 30px rgba(123,92,250,.08)}
+.dz-c3:hover,.dz-c3.over{border-color:var(--c3);box-shadow:0 0 30px rgba(255,107,53,.08)}
+.dz-c4:hover,.dz-c4.over{border-color:var(--c4);box-shadow:0 0 30px rgba(0,214,143,.08)}
+
+.dz-ring{
+  width:64px;height:64px;margin:0 auto 16px;
+  border-radius:50%;border:1.5px solid;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.dz-ring svg{width:24px;height:24px;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.dz-ring.c1{border-color:rgba(0,229,255,.3);color:var(--c1)}
+.dz-ring.c2{border-color:rgba(123,92,250,.3);color:var(--c2)}
+.dz-ring.c3{border-color:rgba(255,107,53,.3);color:var(--c3)}
+.dz-ring.c4{border-color:rgba(0,214,143,.3);color:var(--c4)}
+.dz-ring::before{
+  content:'';position:absolute;inset:-6px;border-radius:50%;
+  border:1px solid;opacity:.2;
+}
+.dz-ring.c1::before{border-color:var(--c1)}
+.dz-ring.c2::before{border-color:var(--c2)}
+.dz-ring.c3::before{border-color:var(--c3)}
+.dz-ring.c4::before{border-color:var(--c4)}
+.dz-title{font-size:15px;font-weight:700;margin-bottom:5px}
+.dz-hint{font-size:12px;color:var(--fog);font-family:'DM Mono',monospace}
+.dz-hint b{font-weight:600}
+.dz-hint b.c1{color:var(--c1)}.dz-hint b.c2{color:var(--c2)}
+.dz-hint b.c3{color:var(--c3)}.dz-hint b.c4{color:var(--c4)}
+
+/* ── FILE CHIP ── */
+.file-chip{
+  display:none;align-items:center;gap:12px;
+  background:rgba(255,255,255,.03);border:1px solid var(--line2);
+  border-radius:12px;padding:12px 14px;margin-top:12px;
+}
+.file-chip.show{display:flex}
+.f-badge{
+  width:38px;height:38px;border-radius:9px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Mono',monospace;font-size:10px;font-weight:500;
+}
+.f-badge.c1{background:rgba(0,229,255,.1);color:var(--c1)}
+.f-badge.c2{background:rgba(123,92,250,.1);color:var(--c2)}
+.f-badge.c3{background:rgba(255,107,53,.1);color:var(--c3)}
+.f-badge.c4{background:rgba(0,214,143,.1);color:var(--c4)}
+.f-info{flex:1;min-width:0}
+.f-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.f-size{font-size:11px;color:var(--fog);font-family:'DM Mono',monospace;margin-top:2px}
+.f-rm{
+  background:none;border:none;cursor:pointer;color:var(--fog);
+  padding:6px;border-radius:8px;display:flex;transition:color .15s,background .15s;
+}
+.f-rm:hover{color:#FF6B6B;background:rgba(255,107,107,.08)}
+.f-rm svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* ── FORMAT SELECTOR ── */
+.fmt-section{margin-top:18px}
+.fmt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.fmt-opt{
+  padding:10px 6px;border:1.5px solid var(--line2);border-radius:10px;
+  background:rgba(255,255,255,.02);color:var(--fog);
+  font-family:'DM Mono',monospace;font-size:12px;font-weight:500;
+  cursor:pointer;text-align:center;transition:all .18s;
+}
+.fmt-opt.on-c3{border-color:var(--c3);background:rgba(255,107,53,.1);color:var(--c3)}
+.fmt-opt.on-c4{border-color:var(--c4);background:rgba(0,214,143,.1);color:var(--c4)}
+.fmt-opt:not([class*="on-"]):hover{border-color:var(--line2);color:var(--mist);background:rgba(255,255,255,.04)}
+
+/* ── SLIDER ── */
+.slider-row{display:flex;align-items:center;gap:12px;margin-top:14px}
+.slider-row label{font-size:11px;color:var(--fog);font-family:'DM Mono',monospace;white-space:nowrap}
+.slider-row input[type=range]{flex:1;accent-color:var(--c3);height:3px}
+.slider-row input.ac4{accent-color:var(--c4)}
+.slider-val{font-size:11px;font-family:'DM Mono',monospace;width:34px;text-align:right}
+.slider-val.c3{color:var(--c3)}.slider-val.c4{color:var(--c4)}
+.select-row{display:flex;align-items:center;gap:12px;margin-top:12px}
+.select-row label{font-size:11px;color:var(--fog);font-family:'DM Mono',monospace;white-space:nowrap}
+.select-row select{
+  flex:1;background:var(--ink3);border:1px solid var(--line2);
+  border-radius:9px;color:var(--snow);font-family:'Syne',sans-serif;
+  font-size:12px;padding:8px 12px;cursor:pointer;
+}
+
+/* ── CONVERT BUTTON ── */
+.btn-cvt{
+  width:100%;margin-top:18px;padding:16px;
+  border:none;border-radius:13px;
+  color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+  cursor:pointer;letter-spacing:.01em;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  transition:opacity .15s,transform .12s,box-shadow .2s;
+  position:relative;overflow:hidden;
+}
+.btn-cvt::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.12),transparent)}
+.btn-cvt:not(:disabled):hover{opacity:.92;transform:translateY(-2px)}
+.btn-cvt:disabled{opacity:.3;cursor:not-allowed;transform:none}
+.btn-cvt svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.bc1{background:linear-gradient(135deg,var(--c1),#0099BB);box-shadow:0 8px 24px rgba(0,229,255,.2)}
+.bc2{background:linear-gradient(135deg,var(--c2),var(--c2d));box-shadow:0 8px 24px rgba(123,92,250,.2)}
+.bc3{background:linear-gradient(135deg,var(--c3),var(--c3d));box-shadow:0 8px 24px rgba(255,107,53,.2)}
+.bc4{background:linear-gradient(135deg,var(--c4),var(--c4d));box-shadow:0 8px 24px rgba(0,214,143,.2)}
+
+/* ── PROGRESS ── */
+.prog-wrap{margin-top:16px;display:none}.prog-wrap.show{display:block}
+.prog-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.prog-lbl{font-size:12px;color:var(--fog);font-family:'DM Mono',monospace}
+.prog-pct{font-size:12px;font-weight:600;font-family:'DM Mono',monospace}
+.prog-pct.c1{color:var(--c1)}.prog-pct.c2{color:var(--c2)}.prog-pct.c3{color:var(--c3)}.prog-pct.c4{color:var(--c4)}
+.prog-track{height:3px;background:var(--line);border-radius:99px;overflow:hidden}
+.prog-fill{height:100%;width:0%;border-radius:99px;transition:width .35s ease}
+.pf-c1{background:linear-gradient(90deg,var(--c1),#00AACC)}
+.pf-c2{background:linear-gradient(90deg,var(--c2),var(--c2d))}
+.pf-c3{background:linear-gradient(90deg,var(--c3),var(--c3d))}
+.pf-c4{background:linear-gradient(90deg,var(--c4),var(--c4d))}
+.prog-step{font-size:10px;color:var(--line2);margin-top:5px;font-family:'DM Mono',monospace}
+
+/* ── MESSAGES ── */
+.msg{display:none;align-items:flex-start;gap:9px;padding:12px 14px;border-radius:10px;font-size:12.5px;line-height:1.6;margin-top:14px;font-family:'DM Mono',monospace}
+.msg.show{display:flex}
+.msg.error{background:rgba(255,80,80,.08);border:1px solid rgba(255,80,80,.2);color:#FF9090}
+.msg.success{background:rgba(0,214,143,.08);border:1px solid rgba(0,214,143,.2);color:var(--c4)}
+.msg svg{width:15px;height:15px;flex-shrink:0;margin-top:1px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── RESULT CARD ── */
+.res-card{
+  display:none;background:var(--card-bg);border:1px solid var(--line);
+  border-radius:20px;padding:24px;text-align:center;margin-bottom:12px;
+  position:relative;overflow:hidden;
+}
+.res-card.show{display:block;animation:fadeUp .35s ease}
+.res-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent)}
+.res-ring{
+  width:64px;height:64px;margin:0 auto 14px;border-radius:50%;
+  border:1.5px solid;display:flex;align-items:center;justify-content:center;
+}
+.res-ring.c1{border-color:rgba(0,229,255,.4);background:rgba(0,229,255,.06)}
+.res-ring.c2{border-color:rgba(123,92,250,.4);background:rgba(123,92,250,.06)}
+.res-ring.c3{border-color:rgba(255,107,53,.4);background:rgba(255,107,53,.06)}
+.res-ring.c4{border-color:rgba(0,214,143,.4);background:rgba(0,214,143,.06)}
+.res-ring svg{width:26px;height:26px;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.res-ring.c1 svg{stroke:var(--c1)}.res-ring.c2 svg{stroke:var(--c2)}
+.res-ring.c3 svg{stroke:var(--c3)}.res-ring.c4 svg{stroke:var(--c4)}
+.res-title{font-size:18px;font-weight:800;margin-bottom:4px}
+.res-meta{font-size:11px;color:var(--fog);font-family:'DM Mono',monospace;margin-bottom:16px}
+.pills-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:18px}
+.pill-tag{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:4px 11px;border-radius:99px;font-size:11px;font-weight:600;
+  font-family:'DM Mono',monospace;
+}
+.pill-tag.c1{background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.2);color:var(--c1)}
+.pill-tag.c2{background:rgba(123,92,250,.1);border:1px solid rgba(123,92,250,.2);color:var(--c2)}
+.pill-tag svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2}
+
+/* ── DOWNLOAD BUTTON ── */
+.btn-dl{
+  width:100%;padding:14px;border:none;border-radius:12px;
+  color:#fff;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .15s,transform .1s;
+}
+.btn-dl:hover{opacity:.9;transform:translateY(-1px)}
+.btn-dl svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.dl-c1{background:linear-gradient(135deg,var(--c1),#0099BB)}
+.dl-c2{background:linear-gradient(135deg,var(--c2),var(--c2d))}
+.dl-c3{background:linear-gradient(135deg,var(--c3),var(--c3d))}
+.dl-c4{background:linear-gradient(135deg,var(--c4),var(--c4d))}
+.btn-again{
+  display:block;width:100%;background:none;
+  border:1px solid var(--line2);border-radius:12px;
+  padding:11px;margin-top:10px;
+  color:var(--fog);font-family:'Syne',sans-serif;font-size:13px;
+  cursor:pointer;transition:color .15s,border-color .15s;
+}
+.btn-again:hover{color:var(--snow);border-color:var(--line2)}
+
+/* ── PREVIEW TABLE ── */
+.prev-section{display:none;background:var(--card-bg);border:1px solid var(--line);border-radius:20px;padding:20px 24px;margin-bottom:12px}
+.prev-section.show{display:block}
+.prev-hd{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--fog);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.prev-hd span{background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.15);border-radius:99px;padding:2px 9px;font-size:10px;color:var(--c1)}
+.tab-nav{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tab-btn{background:var(--ink3);border:1px solid var(--line);border-radius:8px;padding:5px 12px;font-size:11px;font-weight:600;color:var(--fog);cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
+.tab-btn.active{background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.3);color:var(--c1)}
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead tr{background:var(--ink3)}
+thead th{padding:9px 12px;text-align:left;font-weight:600;color:var(--fog);border-bottom:1px solid var(--line);white-space:nowrap;font-family:'DM Mono',monospace;font-size:10px}
+tbody tr:nth-child(even){background:rgba(255,255,255,.015)}
+tbody tr:hover{background:rgba(0,229,255,.03)}
+tbody td{padding:8px 12px;color:var(--snow);border-bottom:1px solid rgba(255,255,255,.03);white-space:nowrap;font-size:11px;font-family:'DM Mono',monospace}
+
+/* ── IMAGE THUMBS ── */
+.img-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:14px}
+.img-thumb{border-radius:10px;overflow:hidden;border:1px solid var(--line);aspect-ratio:3/4;position:relative;background:var(--ink3)}
+.img-thumb img{width:100%;height:100%;object-fit:cover;display:block}
+.img-lbl{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.7);font-size:9px;font-family:'DM Mono',monospace;color:var(--fog);padding:3px 6px;text-align:center}
+
+/* ── SHEET MODE TOGGLE ── */
+.sheet-mode-btn{
+  display:flex;align-items:center;gap:9px;
+  padding:11px 12px;
+  border:1.5px solid var(--line2);border-radius:11px;
+  background:rgba(255,255,255,.02);color:var(--fog);
+  font-family:'Syne',sans-serif;font-size:12px;
+  cursor:pointer;text-align:left;
+  transition:all .18s;
+}
+.sheet-mode-btn:hover{border-color:var(--mist);color:var(--snow);background:rgba(255,255,255,.04)}
+.sheet-mode-btn.active-sm{
+  border-color:rgba(0,229,255,.5);
+  background:rgba(0,229,255,.07);
+  color:var(--c1);
+}
+.sm-label{font-size:12px;font-weight:700;line-height:1.3}
+.sm-sub{font-size:10px;font-family:'DM Mono',monospace;font-weight:400;opacity:.65;margin-top:2px}
+
+
+.badges{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:8px}
+.badge{display:flex;align-items:center;gap:5px;font-size:10.5px;color:var(--fog);background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:99px;padding:5px 11px;font-family:'DM Mono',monospace}
+.badge svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margin-top:32px}
+.foot-brand{font-size:13px;font-weight:800;letter-spacing:-.02em;color:var(--mist);margin-bottom:6px}
+.foot-copy{font-size:11px;color:var(--fog);font-family:'DM Mono',monospace}
+
+@media(max-width:480px){
+  header{padding:36px 0 28px}
+  .picker{grid-template-columns:1fr 1fr}
+  .card,.res-card,.prev-section{padding:18px 16px}
+  .hero-title{font-size:2rem}
+}
+</style>
+</head>
+<body>
+<div class="glow-orb orb1"></div>
+<div class="glow-orb orb2"></div>
+
+<div class="shell">
+
+<header>
+  <div class="wordmark">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+    </div>
+    <span class="logo-name">Fileshift</span>
+  </div>
+  <div class="tagline-wrap">
+    <span class="tagline-dot"></span>
+    <span class="tagline">100% In-Browser · Zero Upload · Always Free</span>
+  </div>
+  <h1 class="hero-title">Convert files<br><span class="shift">instantly.</span></h1>
+  <p class="hero-sub">PDF, Excel, and Images — shift between any format in seconds. Everything runs on your device, nothing leaves your browser.</p>
+</header>
+
+<!-- PICKER -->
+<div class="picker">
+  <button class="pick-btn act-pdf" id="tabPdf" onclick="switchMode('pdf')">
+    <div class="pick-icon" style="background:rgba(0,229,255,.1);color:var(--c1)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="8" y="12" width="8" height="1.5" rx=".5"/><rect x="8" y="15" width="5" height="1.5" rx=".5"/></svg>
+    </div>
+    <div>
+      <div class="pick-label">PDF → Excel</div>
+      <div class="pick-sub">.pdf → .xlsx</div>
+    </div>
+    <span class="pick-arrow">›</span>
+  </button>
+  <button class="pick-btn" id="tabXl" onclick="switchMode('xl')">
+    <div class="pick-icon" style="background:rgba(123,92,250,.1);color:var(--c2)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+    </div>
+    <div>
+      <div class="pick-label">Excel → PDF</div>
+      <div class="pick-sub">.xlsx → .pdf</div>
+    </div>
+    <span class="pick-arrow">›</span>
+  </button>
+  <button class="pick-btn" id="tabImg" onclick="switchMode('img')">
+    <div class="pick-icon" style="background:rgba(255,107,53,.1);color:var(--c3)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </div>
+    <div>
+      <div class="pick-label">PDF → Images</div>
+      <div class="pick-sub">PNG · JPG · WEBP</div>
+    </div>
+    <span class="pick-arrow">›</span>
+  </button>
+  <button class="pick-btn" id="tabImg2" onclick="switchMode('img2')">
+    <div class="pick-icon" style="background:rgba(0,214,143,.1);color:var(--c4)">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+    </div>
+    <div>
+      <div class="pick-label">Excel → Images</div>
+      <div class="pick-sub">PNG · JPG · WEBP</div>
+    </div>
+    <span class="pick-arrow">›</span>
+  </button>
+</div>
+
+<!-- ══ PDF → EXCEL ══ -->
+<div class="panel active" id="panelPdf">
+  <div class="card">
+    <div class="sec-label">Upload PDF</div>
+    <div class="drop-zone dz-c1" id="dzPdf">
+      <input type="file" id="inPdf" accept=".pdf"/>
+      <div class="dz-ring c1"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+      <p class="dz-title">Drop your PDF here</p>
+      <p class="dz-hint">or <b class="c1">click to browse</b> &nbsp;·&nbsp; any size</p>
+    </div>
+    <div class="file-chip" id="chipPdf">
+      <div class="f-badge c1">PDF</div>
+      <div class="f-info"><div class="f-name" id="chipPdfName"></div><div class="f-size" id="chipPdfSize"></div></div>
+      <button class="f-rm" id="rmPdf"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="fmt-section" style="margin-top:16px">
+      <div class="sec-label">Sheet Layout</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="sheetModeRow">
+        <button class="sheet-mode-btn active-sm" id="smMulti" onclick="setSheetMode('multi')">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="2" y="3" width="9" height="8" rx="1.5"/><rect x="13" y="3" width="9" height="8" rx="1.5"/><rect x="2" y="13" width="9" height="8" rx="1.5"/><rect x="13" y="13" width="9" height="8" rx="1.5"/></svg>
+          <div><div class="sm-label">Multiple Sheets</div><div class="sm-sub">One sheet per PDF page</div></div>
+        </button>
+        <button class="sheet-mode-btn" id="smSingle" onclick="setSheetMode('single')">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          <div><div class="sm-label">Single Sheet</div><div class="sm-sub">All pages combined</div></div>
+        </button>
+      </div>
+    </div>
+    <button class="btn-cvt bc1" id="btnCvtPdf" disabled>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Convert to Excel
+    </button>
+    <div class="prog-wrap" id="pwPdf">
+      <div class="prog-top"><span class="prog-lbl" id="plPdf">Reading PDF…</span><span class="prog-pct c1" id="ppPdf">0%</span></div>
+      <div class="prog-track"><div class="prog-fill pf-c1" id="pfPdf"></div></div>
+      <div class="prog-step" id="psPdf"></div>
+    </div>
+    <div class="msg" id="msgPdf"><svg id="msgPdfIcon" viewBox="0 0 24 24"></svg><span id="msgPdfText"></span></div>
+  </div>
+  <div class="prev-section" id="previewPdf">
+    <div class="prev-hd">Preview <span id="previewCount"></span></div>
+    <div class="tab-nav" id="tabNav"></div>
+    <div class="tbl-wrap"><table><thead id="previewHead"></thead><tbody id="previewBody"></tbody></table></div>
+  </div>
+  <div class="res-card" id="resPdf">
+    <div class="res-ring c1"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="res-title">Excel file ready!</div>
+    <div class="res-meta" id="resPdfMeta"></div>
+    <div class="pills-row" id="resPdfSheets"></div>
+    <button class="btn-dl dl-c1" id="dlPdf"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download .xlsx</button>
+    <button class="btn-again" id="againPdf">Convert another file</button>
+  </div>
+  <div class="badges">
+    <span class="badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Never leaves device</span>
+    <span class="badge"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Multiple sheets</span>
+    <span class="badge"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Any size</span>
+  </div>
+</div>
+
+<!-- ══ EXCEL → PDF ══ -->
+<div class="panel" id="panelXl">
+  <div class="card">
+    <div class="sec-label">Upload Excel</div>
+    <div class="drop-zone dz-c2" id="dzXl">
+      <input type="file" id="inXl" accept=".xlsx,.xls,.csv"/>
+      <div class="dz-ring c2"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+      <p class="dz-title">Drop your Excel file here</p>
+      <p class="dz-hint">or <b class="c2">click to browse</b> &nbsp;·&nbsp; .xlsx / .xls / .csv</p>
+    </div>
+    <div class="file-chip" id="chipXl">
+      <div class="f-badge c2">XLS</div>
+      <div class="f-info"><div class="f-name" id="chipXlName"></div><div class="f-size" id="chipXlSize"></div></div>
+      <button class="f-rm" id="rmXl"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <button class="btn-cvt bc2" id="btnCvtXl" disabled>
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Convert to PDF
+    </button>
+    <div class="prog-wrap" id="pwXl">
+      <div class="prog-top"><span class="prog-lbl" id="plXl">Reading file…</span><span class="prog-pct c2" id="ppXl">0%</span></div>
+      <div class="prog-track"><div class="prog-fill pf-c2" id="pfXl"></div></div>
+      <div class="prog-step" id="psXl"></div>
+    </div>
+    <div class="msg" id="msgXl"><svg id="msgXlIcon" viewBox="0 0 24 24"></svg><span id="msgXlText"></span></div>
+  </div>
+  <div class="res-card" id="resXl">
+    <div class="res-ring c2"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="res-title">PDF file ready!</div>
+    <div class="res-meta" id="resXlMeta"></div>
+    <div class="pills-row" id="resXlSheets"></div>
+    <button class="btn-dl dl-c2" id="dlXl"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download PDF</button>
+    <button class="btn-again" id="againXl">Convert another file</button>
+  </div>
+  <div class="badges">
+    <span class="badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Never leaves device</span>
+    <span class="badge"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>All sheets included</span>
+  </div>
+</div>
+
+<!-- ══ PDF → IMAGES ══ -->
+<div class="panel" id="panelImg">
+  <div class="card">
+    <div class="sec-label">Upload PDF</div>
+    <div class="drop-zone dz-c3" id="dzImg">
+      <input type="file" id="inImg" accept=".pdf"/>
+      <div class="dz-ring c3"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+      <p class="dz-title">Drop your PDF here</p>
+      <p class="dz-hint">or <b class="c3">click to browse</b> &nbsp;·&nbsp; any size</p>
+    </div>
+    <div class="file-chip" id="chipImg">
+      <div class="f-badge c3">PDF</div>
+      <div class="f-info"><div class="f-name" id="chipImgName"></div><div class="f-size" id="chipImgSize"></div></div>
+      <button class="f-rm" id="rmImg"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="fmt-section">
+      <div class="sec-label">Output Format</div>
+      <div class="fmt-grid" id="fmtRowImg">
+        <button class="fmt-opt on-c3" data-fmt="png" onclick="selectFmt('img','png')">PNG</button>
+        <button class="fmt-opt" data-fmt="jpg" onclick="selectFmt('img','jpg')">JPG</button>
+        <button class="fmt-opt" data-fmt="webp" onclick="selectFmt('img','webp')">WEBP</button>
+        <button class="fmt-opt" data-fmt="gif" onclick="selectFmt('img','gif')">GIF</button>
+      </div>
+      <div class="select-row">
+        <label>Scale</label>
+        <select id="scaleImg">
+          <option value="1">1× — 72 DPI (fast)</option>
+          <option value="2" selected>2× — 144 DPI (balanced)</option>
+          <option value="3">3× — 216 DPI (sharp)</option>
+          <option value="4">4× — 288 DPI (print)</option>
+        </select>
+      </div>
+      <div class="slider-row" id="qualRowImg" style="display:none">
+        <label>Quality</label>
+        <input type="range" id="qualImg" min="0.5" max="1" step="0.05" value="0.92"/>
+        <span class="slider-val c3" id="qualImgVal">92%</span>
+      </div>
+    </div>
+    <button class="btn-cvt bc3" id="btnCvtImg" disabled>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Convert to Images
+    </button>
+    <div class="prog-wrap" id="pwImg">
+      <div class="prog-top"><span class="prog-lbl" id="plImg">Reading PDF…</span><span class="prog-pct c3" id="ppImg">0%</span></div>
+      <div class="prog-track"><div class="prog-fill pf-c3" id="pfImg"></div></div>
+      <div class="prog-step" id="psImg"></div>
+    </div>
+    <div class="msg" id="msgImg"><svg id="msgImgIcon" viewBox="0 0 24 24"></svg><span id="msgImgText"></span></div>
+  </div>
+  <div class="res-card" id="resImg">
+    <div class="res-ring c3"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="res-title">Images ready!</div>
+    <div class="res-meta" id="resImgMeta"></div>
+    <div class="img-grid" id="imgPreviewGrid"></div>
+    <button class="btn-dl dl-c3" id="dlImg" style="margin-top:16px"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download ZIP</button>
+    <button class="btn-again" id="againImg">Convert another file</button>
+  </div>
+  <div class="badges">
+    <span class="badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Never leaves device</span>
+    <span class="badge"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>4 formats</span>
+  </div>
+</div>
+
+<!-- ══ EXCEL → IMAGES ══ -->
+<div class="panel" id="panelImg2">
+  <div class="card">
+    <div class="sec-label">Upload Excel</div>
+    <div class="drop-zone dz-c4" id="dzImg2">
+      <input type="file" id="inImg2" accept=".xlsx,.xls,.csv"/>
+      <div class="dz-ring c4"><svg viewBox="0 0 24 24" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg></div>
+      <p class="dz-title">Drop your Excel file here</p>
+      <p class="dz-hint">or <b class="c4">click to browse</b> &nbsp;·&nbsp; .xlsx / .xls / .csv</p>
+    </div>
+    <div class="file-chip" id="chipImg2">
+      <div class="f-badge c4">XLS</div>
+      <div class="f-info"><div class="f-name" id="chipImg2Name"></div><div class="f-size" id="chipImg2Size"></div></div>
+      <button class="f-rm" id="rmImg2"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="fmt-section">
+      <div class="sec-label">Output Format</div>
+      <div class="fmt-grid" id="fmtRowImg2">
+        <button class="fmt-opt on-c4" data-fmt="png" onclick="selectFmt('img2','png')">PNG</button>
+        <button class="fmt-opt" data-fmt="jpg" onclick="selectFmt('img2','jpg')">JPG</button>
+        <button class="fmt-opt" data-fmt="webp" onclick="selectFmt('img2','webp')">WEBP</button>
+        <button class="fmt-opt" data-fmt="gif" onclick="selectFmt('img2','gif')">GIF</button>
+      </div>
+      <div class="slider-row" id="qualRowImg2" style="display:none">
+        <label>Quality</label>
+        <input type="range" class="ac4" id="qualImg2" min="0.5" max="1" step="0.05" value="0.92"/>
+        <span class="slider-val c4" id="qualImg2Val">92%</span>
+      </div>
+    </div>
+    <button class="btn-cvt bc4" id="btnCvtImg2" disabled>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      Convert to Images
+    </button>
+    <div class="prog-wrap" id="pwImg2">
+      <div class="prog-top"><span class="prog-lbl" id="plImg2">Reading file…</span><span class="prog-pct c4" id="ppImg2">0%</span></div>
+      <div class="prog-track"><div class="prog-fill pf-c4" id="pfImg2"></div></div>
+      <div class="prog-step" id="psImg2"></div>
+    </div>
+    <div class="msg" id="msgImg2"><svg id="msgImg2Icon" viewBox="0 0 24 24"></svg><span id="msgImg2Text"></span></div>
+  </div>
+  <div class="res-card" id="resImg2">
+    <div class="res-ring c4"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="res-title">Images ready!</div>
+    <div class="res-meta" id="resImg2Meta"></div>
+    <div class="img-grid" id="img2PreviewGrid"></div>
+    <button class="btn-dl dl-c4" id="dlImg2" style="margin-top:16px"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download ZIP</button>
+    <button class="btn-again" id="againImg2">Convert another file</button>
+  </div>
+  <div class="badges">
+    <span class="badge"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Never leaves device</span>
+    <span class="badge"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>4 formats</span>
+  </div>
+</div>
+
+<footer>
+  <div class="foot-brand">Fileshift</div>
+  <div class="foot-copy">© 2025 Fileshift · All conversions run locally in your browser</div>
+</footer>
+
+</div><!-- /shell -->
+
+<script>
+pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+// ── MODE ─────────────────────────────────────────────────────────────────────
+function switchMode(m){
+  ['Pdf','Xl','Img','Img2'].forEach(k=>{
+    const panel=document.getElementById('panel'+k);
+    const tab=document.getElementById('tab'+k);
+    if(panel)panel.classList.toggle('active',m===k.toLowerCase());
+    if(tab){
+      const cls='pick-btn'+(m===k.toLowerCase()?' act-'+k.toLowerCase():'');
+      tab.className=cls;
+    }
+  });
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+const fmtBytes=b=>b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
+const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+function prog(pfx,pct,lbl,stp){
+  document.getElementById('pw'+pfx).classList.add('show');
+  document.getElementById('pf'+pfx).style.width=pct+'%';
+  document.getElementById('pl'+pfx).textContent=lbl;
+  document.getElementById('pp'+pfx).textContent=pct+'%';
+  document.getElementById('ps'+pfx).textContent=stp||'';
+}
+function hideProg(pfx){
+  document.getElementById('pw'+pfx).classList.remove('show');
+  document.getElementById('pf'+pfx).style.width='0%';
+}
+function showMsg(pfx,type,txt){
+  const b=document.getElementById('msg'+pfx);b.className='msg show '+type;
+  document.getElementById('msg'+pfx+'Text').textContent=txt;
+  document.getElementById('msg'+pfx+'Icon').innerHTML=type==='error'
+    ?'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>'
+    :'<polyline points="20 6 9 17 4 12"/>';
+}
+function clearMsg(pfx){document.getElementById('msg'+pfx).className='msg'}
+
+function setupDrop(dzId,inId,fn){
+  const dz=document.getElementById(dzId),inp=document.getElementById(inId);
+  ['dragenter','dragover'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.add('over')}));
+  ['dragleave','drop'].forEach(e=>dz.addEventListener(e,ev=>{ev.preventDefault();dz.classList.remove('over')}));
+  dz.addEventListener('drop',ev=>{const f=ev.dataTransfer.files[0];if(f)fn(f)});
+  inp.addEventListener('change',()=>{if(inp.files[0])fn(inp.files[0])});
+}
+
+// ── FORMAT SELECTOR ───────────────────────────────────────────────────────────
+const imgFmt={img:'png',img2:'png'};
+function selectFmt(panel,fmt){
+  imgFmt[panel]=fmt;
+  const colorClass=panel==='img'?'on-c3':'on-c4';
+  const rowId='fmtRow'+(panel==='img'?'Img':'Img2');
+  document.querySelectorAll('#'+rowId+' .fmt-opt').forEach(b=>{
+    b.className='fmt-opt'+(b.dataset.fmt===fmt?' '+colorClass:'');
+  });
+  const qrId='qualRow'+(panel==='img'?'Img':'Img2');
+  const qr=document.getElementById(qrId);
+  if(qr)qr.style.display=fmt==='png'?'none':'flex';
+}
+document.getElementById('qualImg').oninput=()=>{
+  document.getElementById('qualImgVal').textContent=Math.round(document.getElementById('qualImg').value*100)+'%';
+};
+document.getElementById('qualImg2').oninput=()=>{
+  document.getElementById('qualImg2Val').textContent=Math.round(document.getElementById('qualImg2').value*100)+'%';
+};
+
+// ═══════════════════════════════════════════════════════════════════
+// PDF → EXCEL
+// ═══════════════════════════════════════════════════════════════════
+let pdfFile=null,pdfTables=[],pdfBlob=null,pdfActiveTab=0,pdfSheetMode='multi';
+function setSheetMode(mode){
+  pdfSheetMode=mode;
+  document.getElementById('smMulti').classList.toggle('active-sm',mode==='multi');
+  document.getElementById('smSingle').classList.toggle('active-sm',mode==='single');
+}
+setupDrop('dzPdf','inPdf',pickPdf);
+document.getElementById('rmPdf').addEventListener('click',resetPdf);
+document.getElementById('againPdf').addEventListener('click',resetPdf);
+document.getElementById('dlPdf').addEventListener('click',()=>{
+  if(!pdfBlob)return;
+  const url=URL.createObjectURL(pdfBlob);
+  const a=document.createElement('a');a.href=url;
+  a.download=(pdfFile?pdfFile.name.replace(/\.pdf$/i,''):'converted')+'_converted.xlsx';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+});
+function pickPdf(f){
+  if(!f.name.toLowerCase().endsWith('.pdf')){showMsg('Pdf','error','Please select a PDF file.');return}
+  pdfFile=f;
+  document.getElementById('chipPdfName').textContent=f.name;
+  document.getElementById('chipPdfSize').textContent=fmtBytes(f.size);
+  document.getElementById('chipPdf').classList.add('show');
+  document.getElementById('dzPdf').style.display='none';
+  clearMsg('Pdf');
+  document.getElementById('resPdf').classList.remove('show');
+  document.getElementById('previewPdf').classList.remove('show');
+  document.getElementById('btnCvtPdf').disabled=false;
+}
+function resetPdf(){
+  pdfFile=null;pdfTables=[];pdfBlob=null;
+  document.getElementById('inPdf').value='';
+  document.getElementById('chipPdf').classList.remove('show');
+  document.getElementById('dzPdf').style.display='';
+  document.getElementById('btnCvtPdf').disabled=true;
+  clearMsg('Pdf');hideProg('Pdf');
+  document.getElementById('resPdf').classList.remove('show');
+  document.getElementById('previewPdf').classList.remove('show');
+}
+document.getElementById('btnCvtPdf').addEventListener('click',async()=>{
+  if(!pdfFile)return;
+  document.getElementById('btnCvtPdf').disabled=true;
+  clearMsg('Pdf');
+  document.getElementById('resPdf').classList.remove('show');
+  document.getElementById('previewPdf').classList.remove('show');
+  prog('Pdf',0,'Reading PDF…','');
+  try{
+    const arrayBuffer=await pdfFile.arrayBuffer();
+    prog('Pdf',10,'Loading pages…','Initialising PDF.js');
+    const pdf=await pdfjsLib.getDocument({data:arrayBuffer}).promise;
+    const totalPages=pdf.numPages;
+    prog('Pdf',15,`Found ${totalPages} page(s)`,`${totalPages} page${totalPages>1?'s':''} to scan`);
+    const allPageItems=[];
+    for(let p=1;p<=totalPages;p++){
+      const pct=15+Math.round((p/totalPages)*45);
+      prog('Pdf',pct,`Scanning page ${p} of ${totalPages}…`,'Extracting text positions');
+      const page=await pdf.getPage(p);
+      const content=await page.getTextContent();
+      const viewport=page.getViewport({scale:1});
+      const items=content.items.map(item=>({
+        text:item.str.trim(),
+        x:Math.round(item.transform[4]),
+        y:Math.round(viewport.height-item.transform[5]),
+        w:Math.round(item.width),h:Math.round(item.height),page:p
+      })).filter(i=>i.text.length>0);
+      allPageItems.push(...items);
+    }
+    prog('Pdf',65,'Detecting table structure…','Clustering rows and columns');
+    const tables=detectTables(allPageItems,totalPages);
+    prog('Pdf',80,'Building Excel workbook…',`${tables.length} table(s) found`);
+    if(tables.length===0){
+      hideProg('Pdf');
+      showMsg('Pdf','error','No tables found. The PDF may contain only images or unstructured text.');
+      document.getElementById('btnCvtPdf').disabled=false;return;
+    }
+    pdfTables=tables;
+    const wb=XLSX.utils.book_new();
+    wb.Props={Title:'Converted from '+pdfFile.name,Author:'Fileshift',CreatedDate:new Date()};
+
+    if(pdfSheetMode==='single'){
+      // Merge all tables into one sheet with spacer rows between them
+      const merged=[];
+      tables.forEach((tbl,idx)=>{
+        if(idx>0){
+          // Page separator: 2 blank rows + a label row
+          merged.push([]);
+          const label=tbl.name||`Table ${idx+1}`;
+          const labelRow=[`── ${label} ──`];
+          merged.push(labelRow);
+        }
+        tbl.rows.forEach(row=>merged.push(row));
+      });
+      const ws=XLSX.utils.aoa_to_sheet(merged);
+      styleXlsxSheetSingle(ws,merged,tables);
+      XLSX.utils.book_append_sheet(wb,ws,'All Pages');
+    } else {
+      tables.forEach((tbl,idx)=>{
+        const sName=sanitizeSheetName(tbl.name||`Table ${idx+1}`,idx);
+        const ws=XLSX.utils.aoa_to_sheet(tbl.rows);
+        styleXlsxSheet(ws,tbl.rows);
+        XLSX.utils.book_append_sheet(wb,ws,sName);
+      });
+    }
+    prog('Pdf',95,'Finalising…','Writing .xlsx bytes');
+    const wbOut=XLSX.write(wb,{bookType:'xlsx',type:'array',cellStyles:true});
+    pdfBlob=new Blob([wbOut],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+    prog('Pdf',100,'Done!','');await sleep(300);hideProg('Pdf');
+    renderPreview(tables);
+    document.getElementById('resPdfMeta').textContent=`${tables.length} table${tables.length>1?'s':''} · ${fmtBytes(pdfBlob.size)}`;
+    document.getElementById('resPdfSheets').innerHTML=tables.map((t,i)=>
+      `<span class="pill-tag c2"><svg viewBox="0 0 24 24" width="11" height="11"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>${t.name||'Table '+(i+1)}</span>`
+    ).join('');
+    document.getElementById('resPdf').classList.add('show');
+  }catch(err){
+    hideProg('Pdf');showMsg('Pdf','error','Failed: '+err.message);
+    document.getElementById('btnCvtPdf').disabled=false;console.error(err);
+  }
+});
+
+// Table detection
+function detectTables(items,totalPages){
+  const tables=[],pageGroups={};
+  items.forEach(item=>{if(!pageGroups[item.page])pageGroups[item.page]=[];pageGroups[item.page].push(item)});
+  for(let p=1;p<=totalPages;p++){
+    const pageItems=pageGroups[p]||[];if(!pageItems.length)continue;
+    const rows=clusterIntoRows(pageItems,6);if(rows.length<2)continue;
+    const colGroups=detectColumns(rows);if(colGroups.length<2)continue;
+    const grid=buildGrid(rows,colGroups);
+    const nonEmpty=grid.filter(row=>row.some(c=>c.trim()!==''));if(nonEmpty.length<2)continue;
+    const subTables=splitOnGaps(rows,grid,nonEmpty);
+    subTables.forEach((subGrid,si)=>{
+      if(subGrid.length<2||subGrid[0].length<2)return;
+      tables.push({name:sanitizeSheetName(`Page ${p}${subTables.length>1?' T'+(si+1):''}`,tables.length),rows:subGrid});
+    });
+  }
+  return deduplicateTables(tables);
+}
+function clusterIntoRows(items,threshold){
+  const sorted=[...items].sort((a,b)=>a.y-b.y||a.x-b.x);
+  const rows=[];let cur=[sorted[0]],curY=sorted[0].y;
+  for(let i=1;i<sorted.length;i++){
+    if(Math.abs(sorted[i].y-curY)<=threshold)cur.push(sorted[i]);
+    else{rows.push(cur.sort((a,b)=>a.x-b.x));cur=[sorted[i]];curY=sorted[i].y}
+  }
+  if(cur.length)rows.push(cur.sort((a,b)=>a.x-b.x));
+  return rows;
+}
+function detectColumns(rows){
+  const allX=rows.flatMap(r=>r.map(i=>i.x));allX.sort((a,b)=>a-b);
+  const cg=[];let g=[allX[0]];
+  for(let i=1;i<allX.length;i++){
+    if(allX[i]-allX[i-1]<=20)g.push(allX[i]);
+    else{cg.push(Math.round(g.reduce((a,b)=>a+b,0)/g.length));g=[allX[i]]}
+  }
+  if(g.length)cg.push(Math.round(g.reduce((a,b)=>a+b,0)/g.length));
+  const minRows=Math.max(2,Math.floor(rows.length*0.3));
+  return cg.filter(cx=>rows.filter(r=>r.some(i=>Math.abs(i.x-cx)<=20)).length>=minRows);
+}
+function buildGrid(rows,cg){
+  return rows.map(row=>{
+    const cells=new Array(cg.length).fill('');
+    row.forEach(item=>{
+      let ni=0,md=Infinity;
+      cg.forEach((cx,ci)=>{const d=Math.abs(item.x-cx);if(d<md){md=d;ni=ci}});
+      if(md<=80)cells[ni]=cells[ni]?cells[ni]+' '+item.text:item.text;
+    });
+    return cells;
+  });
+}
+function splitOnGaps(rows,grid,nonEmptyGrid){
+  if(rows.length<4)return[nonEmptyGrid];
+  const gaps=[];
+  for(let i=1;i<rows.length;i++)gaps.push({idx:i,gap:(rows[i][0]?.y||0)-(rows[i-1][0]?.y||0)});
+  const avg=gaps.reduce((a,b)=>a+b.gap,0)/gaps.length;
+  const sp=gaps.filter(g=>g.gap>avg*3).map(g=>g.idx);
+  if(!sp.length)return[nonEmptyGrid];
+  const sub=[];let start=0;
+  [...sp,grid.length].forEach(s=>{const sl=nonEmptyGrid.slice(start,s);if(sl.length>=2)sub.push(sl);start=s});
+  return sub.length?sub:[nonEmptyGrid];
+}
+function deduplicateTables(tables){
+  const seen=new Set();
+  return tables.filter(t=>{const k=JSON.stringify(t.rows.slice(0,3));if(seen.has(k))return false;seen.add(k);return true});
+}
+function makeStyle(bg,fg,bold,hAlign,borderRgb){
+  const bs={style:'thin',color:{rgb:borderRgb}};
+  return{
+    font:{name:'Calibri',sz:bold?11:10,bold:bold,color:{rgb:fg}},
+    fill:{fgColor:{rgb:bg}},
+    alignment:{vertical:'center',horizontal:hAlign,wrapText:false},
+    border:{top:bs,bottom:bs,left:bs,right:bs}
+  };
+}
+function styleXlsxSheet(ws,rows){
+  if(!rows.length)return;
+  const numCols=rows[0]?.length||0;
+  const numRows=rows.length;
+
+  // Column widths
+  const cw=new Array(numCols).fill(8);
+  rows.forEach(row=>row.forEach((cell,ci)=>{
+    const l=String(cell??'').length;
+    cw[ci]=Math.min(Math.max(cw[ci],l+3),52);
+  }));
+  ws['!cols']=cw.map(w=>({wch:w}));
+  ws['!freeze']={xSplit:0,ySplit:1};
+  if(numCols>0){
+    ws['!autofilter']={ref:`A1:${XLSX.utils.encode_col(numCols-1)}1`};
+  }
+
+  // Pre-build styles
+  const sHeader=makeStyle('4472C4','FFFFFF',true,'center','2E58A6');
+  const sData  =makeStyle('FFFFFF','333333',false,'left','B8C9E8');
+  const sAlt   =makeStyle('EEF3FB','333333',false,'left','B8C9E8');
+
+  for(let r=0;r<numRows;r++){
+    for(let c=0;c<numCols;c++){
+      const addr=XLSX.utils.encode_cell({r,c});
+      // Ensure cell exists
+      if(!ws[addr]) ws[addr]={t:'s',v:''};
+      // Assign style
+      const isHeader=r===0;
+      const isAlt=!isHeader&&r%2===0;
+      ws[addr].s=isHeader?sHeader:isAlt?sAlt:sData;
+    }
+  }
+
+  ws['!rows']=Array.from({length:numRows},(_,r)=>({hpt:r===0?22:18,hpx:r===0?22:18}));
+}
+
+// Single-sheet mode: style merged table with separator rows
+function styleXlsxSheetSingle(ws,rows,tables){
+  if(!rows.length)return;
+
+  const maxCols=Math.max(...tables.map(t=>t.rows[0]?.length||0),1);
+  const cw=new Array(maxCols).fill(8);
+  rows.forEach(row=>row.forEach((cell,ci)=>{
+    const l=String(cell??'').length;
+    if(ci<maxCols) cw[ci]=Math.min(Math.max(cw[ci],l+3),52);
+  }));
+  ws['!cols']=cw.map(w=>({wch:w}));
+
+  // Build row-type map
+  const rowTypes=[];
+  tables.forEach((tbl,idx)=>{
+    if(idx>0){rowTypes.push('blank');rowTypes.push('label')}
+    tbl.rows.forEach((row,ri)=>rowTypes.push(ri===0?'header':'data'));
+  });
+
+  // Pre-build styles
+  const bs_hdr={style:'thin',color:{rgb:'2E58A6'}};
+  const bs_data={style:'thin',color:{rgb:'B8C9E8'}};
+  const bs_lbl={style:'thin',color:{rgb:'334766'}};
+
+  const sHeader={font:{name:'Calibri',sz:11,bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:'4472C4'}},alignment:{vertical:'center',horizontal:'center'},border:{top:bs_hdr,bottom:bs_hdr,left:bs_hdr,right:bs_hdr}};
+  const sData  ={font:{name:'Calibri',sz:10,color:{rgb:'333333'}},fill:{fgColor:{rgb:'FFFFFF'}},alignment:{vertical:'center',horizontal:'left'},border:{top:bs_data,bottom:bs_data,left:bs_data,right:bs_data}};
+  const sAlt   ={font:{name:'Calibri',sz:10,color:{rgb:'333333'}},fill:{fgColor:{rgb:'EEF3FB'}},alignment:{vertical:'center',horizontal:'left'},border:{top:bs_data,bottom:bs_data,left:bs_data,right:bs_data}};
+  const sLabel ={font:{name:'Calibri',sz:10,bold:true,italic:true,color:{rgb:'7EB8F7'}},fill:{fgColor:{rgb:'1E2D3D'}},alignment:{vertical:'center',horizontal:'left'},border:{top:bs_lbl,bottom:bs_lbl,left:bs_lbl,right:bs_lbl}};
+
+  let dataRowIdx=0;
+  for(let r=0;r<rows.length;r++){
+    const type=rowTypes[r]||'data';
+    if(type==='header') dataRowIdx=0;
+    else if(type==='data') dataRowIdx++;
+    else dataRowIdx=0;
+    if(type==='blank') continue;
+
+    const numCols=type==='label'?maxCols:(rows[r]?.length||0);
+    for(let c=0;c<numCols;c++){
+      const addr=XLSX.utils.encode_cell({r,c});
+      if(!ws[addr]) ws[addr]={t:'s',v:''};
+      const isAlt=type==='data'&&dataRowIdx%2===0;
+      ws[addr].s=type==='header'?sHeader:type==='label'?sLabel:isAlt?sAlt:sData;
+    }
+  }
+
+  ws['!rows']=rowTypes.map(t=>({
+    hpt:t==='header'?22:t==='label'?20:t==='blank'?6:18,
+    hpx:t==='header'?22:t==='label'?20:t==='blank'?6:18
+  }));
+}
+function sanitizeSheetName(name,idx){let s=String(name).replace(/[\\/*?:\[\]]/g,'_').trim();if(!s)s=`Table_${idx+1}`;return s.slice(0,31)}
+function renderPreview(tables){
+  document.getElementById('previewCount').textContent=`${tables.length} table${tables.length>1?'s':''}`;
+  const tn=document.getElementById('tabNav');tn.innerHTML='';
+  tables.forEach((t,i)=>{
+    const btn=document.createElement('button');btn.className='tab-btn'+(i===0?' active':'');
+    btn.textContent=t.name||`Table ${i+1}`;
+    btn.onclick=()=>{pdfActiveTab=i;document.querySelectorAll('.tab-btn').forEach((b,j)=>b.classList.toggle('active',j===i));renderTable(tables[i])};
+    tn.appendChild(btn);
+  });
+  renderTable(tables[0]);
+  document.getElementById('previewPdf').classList.add('show');
+}
+function renderTable(tbl){
+  const rows=tbl.rows;if(!rows||!rows.length)return;
+  document.getElementById('previewHead').innerHTML='<tr>'+rows[0].map(h=>`<th>${escHtml(h)}</th>`).join('')+'</tr>';
+  document.getElementById('previewBody').innerHTML=rows.slice(1,9).map(r=>'<tr>'+r.map(c=>`<td>${escHtml(c)}</td>`).join('')+'</tr>').join('');
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// EXCEL → PDF
+// ═══════════════════════════════════════════════════════════════════
+let xlFile=null;
+setupDrop('dzXl','inXl',pickXl);
+document.getElementById('rmXl').addEventListener('click',resetXl);
+document.getElementById('againXl').addEventListener('click',resetXl);
+function pickXl(f){
+  const n=f.name.toLowerCase();
+  if(!n.endsWith('.xlsx')&&!n.endsWith('.xls')&&!n.endsWith('.csv')){showMsg('Xl','error','Only .xlsx, .xls or .csv files supported.');return}
+  xlFile=f;
+  document.getElementById('chipXlName').textContent=f.name;
+  document.getElementById('chipXlSize').textContent=fmtBytes(f.size);
+  document.getElementById('chipXl').classList.add('show');
+  document.getElementById('dzXl').style.display='none';
+  clearMsg('Xl');document.getElementById('resXl').classList.remove('show');
+  document.getElementById('btnCvtXl').disabled=false;
+}
+function resetXl(){
+  xlFile=null;document.getElementById('inXl').value='';
+  document.getElementById('chipXl').classList.remove('show');
+  document.getElementById('dzXl').style.display='';
+  document.getElementById('btnCvtXl').disabled=true;
+  clearMsg('Xl');hideProg('Xl');document.getElementById('resXl').classList.remove('show');
+}
+document.getElementById('btnCvtXl').addEventListener('click',async()=>{
+  if(!xlFile)return;
+  document.getElementById('btnCvtXl').disabled=true;
+  clearMsg('Xl');document.getElementById('resXl').classList.remove('show');
+  prog('Xl',10,'Reading file…','');
+  try{
+    const buf=await xlFile.arrayBuffer();
+    const wb=XLSX.read(buf,{type:'array'});
+    prog('Xl',35,'Building professional PDF…','Setting up layout');
+    const {jsPDF}=window.jspdf;
+    const sheets=wb.SheetNames;
+    const doc=new jsPDF({orientation:'landscape',unit:'pt',format:'a4'});
+    const PW=841.89,PH=595.28; // A4 landscape pts
+    const ML=36,MR=36,MT=36,MB=40;
+    const docTitle=xlFile.name.replace(/\.(xlsx|xls|csv)$/i,'');
+    const generatedDate=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+    sheets.forEach((name,idx)=>{
+      if(idx>0)doc.addPage();
+      prog('Xl',Math.round(35+(idx/sheets.length)*55),`Processing sheet ${idx+1}/${sheets.length}…`,name);
+      const ws=wb.Sheets[name];
+      const data=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      if(!data.length)return;
+
+      // ── Top header bar ──────────────────────────────────────
+      const hBarH=42;
+      doc.setFillColor(30,41,59); // dark slate
+      doc.rect(0,0,PW,hBarH,'F');
+
+      // Accent left stripe
+      doc.setFillColor(68,114,196);
+      doc.rect(0,0,5,hBarH,'F');
+
+      // Document title (left)
+      doc.setFont('helvetica','bold');
+      doc.setFontSize(13);
+      doc.setTextColor(255,255,255);
+      const dispTitle=docTitle.length>55?docTitle.slice(0,52)+'…':docTitle;
+      doc.text(dispTitle,ML+8,hBarH/2+5);
+
+      // Sheet badge (right side of header)
+      const badgeText=sheets.length>1?`Sheet: ${name}  (${idx+1}/${sheets.length})`:`Sheet: ${name}`;
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(9);
+      doc.setTextColor(180,200,230);
+      const bw=doc.getTextWidth(badgeText);
+      doc.text(badgeText,PW-MR-bw,hBarH/2+4);
+
+      // ── Sub-header info strip ─────────────────────────────
+      const subH=22;
+      doc.setFillColor(241,245,249);
+      doc.rect(0,hBarH,PW,subH,'F');
+      doc.setDrawColor(203,213,225);
+      doc.setLineWidth(0.5);
+      doc.line(0,hBarH+subH,PW,hBarH+subH);
+
+      doc.setFont('helvetica','normal');
+      doc.setFontSize(8);
+      doc.setTextColor(100,116,139);
+      const rowCount=Math.max(0,data.length-1);
+      const colCount=data[0]?.length||0;
+      doc.text(`${rowCount} rows · ${colCount} columns`,ML+8,hBarH+subH/2+3);
+      doc.text(`Generated: ${generatedDate}`,PW/2,hBarH+subH/2+3,{align:'center'});
+      const fileInfo=`Source: ${xlFile.name}`;
+      const fiW=doc.getTextWidth(fileInfo);
+      doc.text(fileInfo,PW-MR-fiW,hBarH+subH/2+3);
+
+      // ── AutoTable ────────────────────────────────────────
+      const tableStartY=hBarH+subH+8;
+      const tableEndY=PH-MB-16; // leave room for footer
+      const availH=tableEndY-tableStartY;
+
+      const head=[data[0].map(c=>String(c??''))];
+      const body=data.slice(1).map(r=>r.map(c=>String(c??'')));
+
+      // Smart font sizing based on column count
+      const nc=head[0].length||1;
+      const bodyFs=nc<=6?9:nc<=10?8:nc<=16?7:6;
+      const headFs=bodyFs+1;
+      const cellPad=nc<=8?5:nc<=14?3.5:2.5;
+
+      doc.autoTable({
+        head,body,
+        startY:tableStartY,
+        margin:{left:ML,right:MR,bottom:MB+16},
+        tableWidth:'auto',
+        styles:{
+          font:'helvetica',
+          fontSize:bodyFs,
+          cellPadding:cellPad,
+          overflow:'ellipsize',
+          valign:'middle',
+          textColor:[30,41,59],
+          lineColor:[203,213,225],
+          lineWidth:0.4
+        },
+        headStyles:{
+          fillColor:[68,114,196],
+          textColor:[255,255,255],
+          fontStyle:'bold',
+          fontSize:headFs,
+          cellPadding:cellPad+1,
+          halign:'center',
+          valign:'middle',
+          lineColor:[46,88,166],
+          lineWidth:0.5
+        },
+        alternateRowStyles:{
+          fillColor:[241,245,249]
+        },
+        bodyStyles:{
+          fillColor:[255,255,255]
+        },
+        columnStyles:{},
+        theme:'grid',
+        rowPageBreak:'avoid',
+        // Draw subtle page header continuation marker if table spans pages
+        didDrawPage:(hookData)=>{
+          const pg=doc.internal.getNumberOfPages();
+          // Footer bar
+          doc.setFillColor(30,41,59);
+          doc.rect(0,PH-MB,PW,MB,'F');
+          doc.setFillColor(68,114,196);
+          doc.rect(0,PH-MB,5,MB,'F');
+          doc.setFont('helvetica','normal');
+          doc.setFontSize(8);
+          doc.setTextColor(180,200,230);
+          doc.text('Fileshift · Converted in-browser · fileshift.app',ML+8,PH-MB/2+3);
+          const pgTxt=`Page ${pg}`;
+          const pgW=doc.getTextWidth(pgTxt);
+          doc.text(pgTxt,PW-MR-pgW,PH-MB/2+3);
+        }
+      });
+    });
+
+    prog('Xl',100,'Done!','');await sleep(300);hideProg('Xl');
+    const outName=docTitle+'.pdf';
+    document.getElementById('dlXl').onclick=()=>doc.save(outName);
+    document.getElementById('resXlMeta').textContent=`${sheets.length} sheet${sheets.length===1?'':'s'} · Professional layout`;
+    document.getElementById('resXlSheets').innerHTML=sheets.map(s=>`<span class="pill-tag c2">${escHtml(s)}</span>`).join('');
+    document.getElementById('resXl').classList.add('show');
+  }catch(err){
+    hideProg('Xl');showMsg('Xl','error','Failed: '+err.message);
+    document.getElementById('btnCvtXl').disabled=false;console.error(err);
+  }
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// PDF → IMAGES
+// ═══════════════════════════════════════════════════════════════════
+let imgFile=null,imgBlobs=[];
+setupDrop('dzImg','inImg',pickImg);
+document.getElementById('rmImg').addEventListener('click',resetImg);
+document.getElementById('againImg').addEventListener('click',resetImg);
+function pickImg(f){
+  if(!f.name.toLowerCase().endsWith('.pdf')){showMsg('Img','error','Please select a PDF file.');return}
+  imgFile=f;
+  document.getElementById('chipImgName').textContent=f.name;
+  document.getElementById('chipImgSize').textContent=fmtBytes(f.size);
+  document.getElementById('chipImg').classList.add('show');
+  document.getElementById('dzImg').style.display='none';
+  clearMsg('Img');document.getElementById('resImg').classList.remove('show');
+  document.getElementById('btnCvtImg').disabled=false;
+}
+function resetImg(){
+  imgFile=null;imgBlobs=[];
+  document.getElementById('inImg').value='';
+  document.getElementById('chipImg').classList.remove('show');
+  document.getElementById('dzImg').style.display='';
+  document.getElementById('btnCvtImg').disabled=true;
+  clearMsg('Img');hideProg('Img');
+  document.getElementById('resImg').classList.remove('show');
+  document.getElementById('imgPreviewGrid').innerHTML='';
+}
+document.getElementById('btnCvtImg').addEventListener('click',async()=>{
+  if(!imgFile)return;
+  document.getElementById('btnCvtImg').disabled=true;
+  clearMsg('Img');document.getElementById('resImg').classList.remove('show');
+  document.getElementById('imgPreviewGrid').innerHTML='';imgBlobs=[];
+  const fmt=imgFmt['img'];
+  const mimeMap={png:'image/png',jpg:'image/jpeg',webp:'image/webp',gif:'image/png'};
+  const mime=mimeMap[fmt]||'image/png';
+  const quality=parseFloat(document.getElementById('qualImg').value)||0.92;
+  const scale=parseFloat(document.getElementById('scaleImg').value)||2;
+  prog('Img',5,'Reading PDF…','');
+  try{
+    const buf=await imgFile.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const total=pdf.numPages;
+    prog('Img',10,`Found ${total} page(s)`,`Rendering at ${scale}× scale`);
+    const grid=document.getElementById('imgPreviewGrid');
+    for(let p=1;p<=total;p++){
+      const pct=10+Math.round((p/total)*85);
+      prog('Img',pct,`Rendering page ${p} of ${total}…`,`Format: ${fmt.toUpperCase()}`);
+      const page=await pdf.getPage(p);
+      const vp=page.getViewport({scale});
+      const canvas=document.createElement('canvas');
+      canvas.width=vp.width;canvas.height=vp.height;
+      const ctx=canvas.getContext('2d');
+      ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);
+      await page.render({canvasContext:ctx,viewport:vp}).promise;
+      const blob=await new Promise(res=>canvas.toBlob(res,mime,quality));
+      imgBlobs.push({blob,name:`page_${String(p).padStart(3,'0')}.${fmt==='gif'?'png':fmt}`});
+      const thumb=document.createElement('div');thumb.className='img-thumb';
+      const tImg=document.createElement('img');tImg.src=URL.createObjectURL(blob);
+      const lbl=document.createElement('div');lbl.className='img-lbl';lbl.textContent=`Page ${p}`;
+      thumb.appendChild(tImg);thumb.appendChild(lbl);grid.appendChild(thumb);
+    }
+    prog('Img',100,'Done!','');await sleep(300);hideProg('Img');
+    document.getElementById('resImgMeta').textContent=`${total} page${total===1?'':'s'} · ${fmt.toUpperCase()}`;
+    document.getElementById('resImg').classList.add('show');
+  }catch(err){
+    hideProg('Img');showMsg('Img','error','Failed: '+err.message);
+    document.getElementById('btnCvtImg').disabled=false;console.error(err);
+  }
+});
+document.getElementById('dlImg').addEventListener('click',async()=>{
+  if(!imgBlobs.length)return;
+  const btn=document.getElementById('dlImg');btn.disabled=true;btn.textContent='Zipping…';
+  try{
+    const zip=new JSZip();
+    imgBlobs.forEach(({blob,name})=>zip.file(name,blob));
+    const base=imgFile?imgFile.name.replace(/\.pdf$/i,''):'pages';
+    const zipBlob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+    const url=URL.createObjectURL(zipBlob);
+    const a=document.createElement('a');a.href=url;a.download=base+'_images.zip';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+  }catch(err){showMsg('Img','error','ZIP failed: '+err.message)}
+  btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download ZIP';
+});
+
+// ═══════════════════════════════════════════════════════════════════
+// EXCEL → IMAGES
+// ═══════════════════════════════════════════════════════════════════
+let xl2File=null,xl2Blobs=[];
+setupDrop('dzImg2','inImg2',pickImg2);
+document.getElementById('rmImg2').addEventListener('click',resetImg2);
+document.getElementById('againImg2').addEventListener('click',resetImg2);
+function pickImg2(f){
+  const n=f.name.toLowerCase();
+  if(!n.endsWith('.xlsx')&&!n.endsWith('.xls')&&!n.endsWith('.csv')){showMsg('Img2','error','Only .xlsx, .xls or .csv files supported.');return}
+  xl2File=f;
+  document.getElementById('chipImg2Name').textContent=f.name;
+  document.getElementById('chipImg2Size').textContent=fmtBytes(f.size);
+  document.getElementById('chipImg2').classList.add('show');
+  document.getElementById('dzImg2').style.display='none';
+  clearMsg('Img2');document.getElementById('resImg2').classList.remove('show');
+  document.getElementById('btnCvtImg2').disabled=false;
+}
+function resetImg2(){
+  xl2File=null;xl2Blobs=[];
+  document.getElementById('inImg2').value='';
+  document.getElementById('chipImg2').classList.remove('show');
+  document.getElementById('dzImg2').style.display='';
+  document.getElementById('btnCvtImg2').disabled=true;
+  clearMsg('Img2');hideProg('Img2');
+  document.getElementById('resImg2').classList.remove('show');
+  document.getElementById('img2PreviewGrid').innerHTML='';
+}
+document.getElementById('btnCvtImg2').addEventListener('click',async()=>{
+  if(!xl2File)return;
+  document.getElementById('btnCvtImg2').disabled=true;
+  clearMsg('Img2');document.getElementById('resImg2').classList.remove('show');
+  document.getElementById('img2PreviewGrid').innerHTML='';xl2Blobs=[];
+  const fmt=imgFmt['img2'];
+  const mimeMap={png:'image/png',jpg:'image/jpeg',webp:'image/webp',gif:'image/png'};
+  const mime=mimeMap[fmt]||'image/png';
+  const quality=parseFloat(document.getElementById('qualImg2').value)||0.92;
+  prog('Img2',10,'Reading file…','');
+  try{
+    const buf=await xl2File.arrayBuffer();
+    const wb=XLSX.read(buf,{type:'array'});
+    const sheets=wb.SheetNames;
+    prog('Img2',20,`Found ${sheets.length} sheet(s)`,`Rendering as ${fmt.toUpperCase()}`);
+    const grid=document.getElementById('img2PreviewGrid');
+    for(let si=0;si<sheets.length;si++){
+      const pct=20+Math.round(((si+1)/sheets.length)*75);
+      prog('Img2',pct,`Rendering sheet ${si+1}/${sheets.length}…`,sheets[si]);
+      const ws=wb.Sheets[sheets[si]];
+      const data=XLSX.utils.sheet_to_json(ws,{header:1,defval:''});
+      const canvas=renderSheetToCanvas(sheets[si],data);
+      const blob=await new Promise(res=>canvas.toBlob(res,mime,quality));
+      const safeName=sheets[si].replace(/[^a-zA-Z0-9_\-]/g,'_').slice(0,40);
+      xl2Blobs.push({blob,name:`sheet_${String(si+1).padStart(2,'0')}_${safeName}.${fmt==='gif'?'png':fmt}`});
+      const thumb=document.createElement('div');thumb.className='img-thumb';
+      const tImg=document.createElement('img');tImg.src=URL.createObjectURL(blob);
+      const lbl=document.createElement('div');lbl.className='img-lbl';lbl.textContent=sheets[si];
+      thumb.appendChild(tImg);thumb.appendChild(lbl);grid.appendChild(thumb);
+      await sleep(10);
+    }
+    prog('Img2',100,'Done!','');await sleep(300);hideProg('Img2');
+    document.getElementById('resImg2Meta').textContent=`${sheets.length} sheet${sheets.length===1?'':'s'} · ${fmt.toUpperCase()}`;
+    document.getElementById('resImg2').classList.add('show');
+  }catch(err){
+    hideProg('Img2');showMsg('Img2','error','Failed: '+err.message);
+    document.getElementById('btnCvtImg2').disabled=false;console.error(err);
+  }
+});
+function renderSheetToCanvas(sheetName,data){
+  const PADDING=24,HEADER_H=40,ROW_H=28,COL_W=130,MIN_W=800;
+  const cols=data.length?Math.max(...data.map(r=>r.length)):0;
+  const rows=data.length;
+  const W=Math.max(MIN_W,PADDING*2+cols*COL_W);
+  const H=PADDING*2+HEADER_H+ROW_H*rows+10;
+  const canvas=document.createElement('canvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0C0C10';ctx.fillRect(0,0,W,H);
+  // Header bar
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#00D68F');grad.addColorStop(1,'#00A86B');
+  ctx.fillStyle=grad;ctx.fillRect(0,0,W,HEADER_H);
+  ctx.fillStyle='#fff';ctx.font='bold 14px system-ui,sans-serif';
+  ctx.textBaseline='middle';ctx.textAlign='left';
+  ctx.fillText(sheetName,PADDING,HEADER_H/2);
+  ctx.textAlign='right';ctx.font='11px monospace';ctx.fillStyle='rgba(255,255,255,0.65)';
+  ctx.fillText(`${rows} rows × ${cols} cols`,W-PADDING,HEADER_H/2);
+  const startY=HEADER_H;
+  if(data.length>0){
+    ctx.fillStyle='#16161E';ctx.fillRect(0,startY,W,ROW_H);
+    data[0].forEach((cell,ci)=>{
+      ctx.fillStyle='#00D68F';ctx.font='bold 11px monospace';ctx.textAlign='left';ctx.textBaseline='middle';
+      ctx.fillText(String(cell??'').slice(0,18),PADDING+ci*COL_W+6,startY+ROW_H/2);
+      if(ci>0){ctx.strokeStyle='rgba(0,214,143,.15)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(PADDING+ci*COL_W,startY);ctx.lineTo(PADDING+ci*COL_W,startY+ROW_H);ctx.stroke()}
+    });
+    data.slice(1).forEach((row,ri)=>{
+      const y=startY+ROW_H*(ri+1);
+      ctx.fillStyle=ri%2===0?'#13131C':'#16161E';ctx.fillRect(0,y,W,ROW_H);
+      ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(0,y+ROW_H);ctx.lineTo(W,y+ROW_H);ctx.stroke();
+      row.forEach((cell,ci)=>{
+        ctx.fillStyle='#C0C0E0';ctx.font='11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
+        ctx.fillText(String(cell??'').slice(0,22),PADDING+ci*COL_W+6,y+ROW_H/2);
+        if(ci>0){ctx.strokeStyle='rgba(255,255,255,.04)';ctx.lineWidth=0.5;ctx.beginPath();ctx.moveTo(PADDING+ci*COL_W,y);ctx.lineTo(PADDING+ci*COL_W,y+ROW_H);ctx.stroke()}
+      });
+    });
+  }
+  return canvas;
+}
+document.getElementById('dlImg2').addEventListener('click',async()=>{
+  if(!xl2Blobs.length)return;
+  const btn=document.getElementById('dlImg2');btn.disabled=true;btn.textContent='Zipping…';
+  try{
+    const zip=new JSZip();
+    xl2Blobs.forEach(({blob,name})=>zip.file(name,blob));
+    const base=xl2File?xl2File.name.replace(/\.(xlsx|xls|csv)$/i,''):'sheets';
+    const zipBlob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
+    const url=URL.createObjectURL(zipBlob);
+    const a=document.createElement('a');a.href=url;a.download=base+'_images.zip';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),5000);
+  }catch(err){showMsg('Img2','error','ZIP failed: '+err.message)}
+  btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download ZIP';
+});
+
+// ── SERVICE WORKER REGISTRATION ──────────────────────────────
+if('serviceWorker' in navigator){
+  window.addEventListener('load',()=>{
+    navigator.serviceWorker.register('sw.js')
+      .then(reg=>console.log('[Fileshift] SW registered, scope:',reg.scope))
+      .catch(err=>console.warn('[Fileshift] SW registration failed:',err));
+  });
+}
+
+// ── SHORTCUT URL HANDLER (?mode=pdf|xl|img|img2) ─────────────
+(function(){
+  const params=new URLSearchParams(window.location.search);
+  const mode=params.get('mode');
+  if(mode&&['pdf','xl','img','img2'].includes(mode)){
+    // Wait for DOM then switch to the requested mode
+    document.addEventListener('DOMContentLoaded',()=>switchMode(mode));
+  }
+})();
+
+</script>
+</body>
+</html>
