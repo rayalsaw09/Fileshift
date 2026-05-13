@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.fileshift.converter",
+        "sha256_cert_fingerprints": ["42:A8:EE:AD:07:A0:4C:11:56:C7:C0:6A:1D:74:74:F3:9F:1C:A8:0B:B1:0F:41:88:75:2A:7E:84:F6:95:EA:26"]
+      }
+    }]
