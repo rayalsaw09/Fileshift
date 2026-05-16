@@ -170,14 +170,21 @@
 /* Picker buttons */
 [data-theme="white-blue"] .pick-btn,
 [data-theme="purple-modern"] .pick-btn {
-  background: rgba(255,255,255,0.9);
+  background: rgba(255,255,255,0.05) !important;
   color: var(--snow);
-  border-color: var(--line2);
+  border-color: transparent;
 }
 [data-theme="white-blue"] .pick-btn:hover,
 [data-theme="purple-modern"] .pick-btn:hover {
-  background: rgba(255,255,255,1);
+  background: rgba(0,0,0,.06) !important;
   color: var(--snow);
+}
+[data-theme="white-blue"] .picker,
+[data-theme="purple-modern"] .picker,
+[data-theme="white-blue"] .merge-picker,
+[data-theme="purple-modern"] .merge-picker {
+  background: rgba(255,255,255,0.75);
+  border-color: var(--line2);
 }
 [data-theme="white-blue"] .pick-label,
 [data-theme="purple-modern"] .pick-label {
@@ -870,6 +877,32 @@
   display:none;align-items:center;justify-content:center;
 }
 .theme-opt.active-theme .theme-check-badge{display:flex}
+
+/* ── DEFAULT TAB OPTIONS in Settings ── */
+.default-tab-opt{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;
+  border:1.5px solid var(--line2);border-radius:12px;
+  background:var(--card-bg);color:var(--fog);
+  font-family:'Syne',sans-serif;font-size:12px;
+  cursor:pointer;text-align:left;
+  transition:all .18s;
+  position:relative;
+}
+.default-tab-opt:hover{border-color:var(--mist);color:var(--snow);background:rgba(255,255,255,.03)}
+.default-tab-opt.active-dt{border-color:var(--c1);background:rgba(79,140,255,.07);color:var(--c1)}
+.default-tab-opt.active-dt::after{
+  content:'✓';
+  position:absolute;top:7px;right:9px;
+  font-size:10px;font-weight:800;color:var(--c1);
+}
+.dt-opt-icon{
+  width:32px;height:32px;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.dt-opt-label{font-size:12px;font-weight:700;color:inherit;line-height:1.3}
+.dt-opt-sub{font-size:9.5px;font-family:'DM Mono',monospace;color:var(--fog);opacity:.8;margin-top:1px}
 .theme-rec{
   position:absolute;top:8px;left:8px;
   font-size:9px;font-weight:700;font-family:'DM Mono',monospace;
@@ -1832,9 +1865,40 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 
   /* ── SHELL: single centered column, no grid ── */
   .shell {
-    max-width: 1140px;
+    max-width: 1280px;
     padding: 0 40px 80px;
     display: block;
+  }
+
+  /* ── TWO-COLUMN SPLIT LAYOUT ── */
+  .split-layout {
+    display: grid;
+    grid-template-columns: 264px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .split-left {
+    position: sticky;
+    top: 80px; /* below navbar */
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .split-right {
+    min-width: 0;
+  }
+
+  /* Sidebar section label */
+  .split-left-label {
+    font-size: 9px;
+    font-weight: 700;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--fog);
+    padding: 0 4px 8px;
   }
 
   /* ── HERO BANNER — ultra-compact on desktop ── */
@@ -1922,105 +1986,135 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     background: var(--line);
   }
 
-  /* ── TOOL CARDS GRID ── */
+  /* ── TOOL CARDS — VERTICAL SIDEBAR ── */
   .picker {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-bottom: 20px;
-    background: none;
-    border: none;
-    border-radius: 0;
-    padding: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    margin-bottom: 0 !important;
+    background: var(--card-bg);
+    border: 1px solid var(--line2);
+    border-radius: 16px;
+    padding: 8px !important;
+  }
+
+  .merge-picker {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    margin-bottom: 0 !important;
+    background: var(--card-bg);
+    border: 1px solid var(--line2);
+    border-radius: 16px;
+    padding: 8px !important;
   }
 
   .pick-btn {
     flex-direction: row;
     align-items: center;
-    gap: 12px;
-    padding: 14px 16px;
-    border-radius: 14px;
-    border: 1px solid var(--line2) !important;
-    background: var(--card-bg) !important;
+    gap: 10px;
+    padding: 11px 12px;
+    border-radius: 10px;
+    border: 1px solid transparent !important;
+    background: transparent !important;
     color: var(--mist) !important;
     text-align: left;
-    transition: transform .18s, border-color .18s, box-shadow .18s !important;
+    transition: transform .14s, border-color .14s, background .14s, color .14s !important;
     position: relative;
     overflow: hidden;
+    width: 100%;
   }
 
-  .pick-btn::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.07), transparent);
-  }
+  .pick-btn::after { display: none; }
 
   .pick-btn:hover {
-    transform: translateY(-2px) !important;
-    border: none !important;
+    transform: none !important;
+    background: rgba(255,255,255,.04) !important;
+    border-color: transparent !important;
+    color: var(--snow) !important;
+    box-shadow: none !important;
   }
 
-  /* Active / selected tool card */
+  /* Active / selected tool card — sidebar style */
   .pick-btn.act-pdf {
-    border-color: rgba(79,140,255,.4) !important;
-    background: rgba(79,140,255,.06) !important;
+    border-color: transparent !important;
+    background: rgba(79,140,255,.12) !important;
     color: var(--c1) !important;
-    box-shadow: 0 0 20px rgba(79,140,255,.1);
+    box-shadow: none !important;
   }
   .pick-btn.act-xl {
-    border-color: rgba(139,92,246,.4) !important;
-    background: rgba(139,92,246,.06) !important;
+    border-color: transparent !important;
+    background: rgba(139,92,246,.12) !important;
     color: var(--c2) !important;
-    box-shadow: 0 0 20px rgba(139,92,246,.1);
+    box-shadow: none !important;
   }
   .pick-btn.act-img {
-    border-color: rgba(52,211,153,.4) !important;
-    background: rgba(52,211,153,.06) !important;
+    border-color: transparent !important;
+    background: rgba(52,211,153,.12) !important;
     color: var(--c3) !important;
-    box-shadow: 0 0 20px rgba(52,211,153,.1);
+    box-shadow: none !important;
   }
   .pick-btn.act-img2 {
-    border-color: rgba(52,211,153,.4) !important;
-    background: rgba(52,211,153,.06) !important;
+    border-color: transparent !important;
+    background: rgba(52,211,153,.12) !important;
     color: var(--c4) !important;
-    box-shadow: 0 0 20px rgba(52,211,153,.1);
+    box-shadow: none !important;
+  }
+  .pick-btn.act-ppt {
+    border-color: transparent !important;
+    background: rgba(224,64,251,.12) !important;
+    color: var(--c6) !important;
+    box-shadow: none !important;
   }
 
-  .pick-btn:hover:not(.act-pdf):not(.act-xl):not(.act-img):not(.act-img2) {
-    border-color: var(--mist) !important;
+  .pick-btn:hover:not(.act-pdf):not(.act-xl):not(.act-img):not(.act-img2):not(.act-ppt) {
+    border-color: transparent !important;
     color: var(--snow) !important;
-    box-shadow: 0 8px 28px rgba(0,0,0,.2);
+    box-shadow: none !important;
   }
 
   .pick-icon {
-    width: 36px; height: 36px;
-    border-radius: 10px;
+    width: 32px; height: 32px;
+    border-radius: 9px;
     flex-shrink: 0;
   }
-  .pick-icon svg { width: 18px; height: 18px; }
+  .pick-icon svg { width: 16px; height: 16px; }
 
-  .pick-label { font-size: 13px; font-weight: 700; line-height: 1.2; }
-  .pick-sub   { font-size: 10px; font-family: 'DM Mono', monospace; opacity: .55; margin-top: 2px; }
+  .pick-label { font-size: 12.5px; font-weight: 700; line-height: 1.2; }
+  .pick-sub   { font-size: 9.5px; font-family: 'DM Mono', monospace; opacity: .55; margin-top: 1px; }
 
   .pick-arrow {
-    display: none;
+    display: block;
+    margin-left: auto;
+    opacity: 0;
+    font-size: 14px;
+    transition: opacity .14s;
+    flex-shrink: 0;
   }
-
-  /* Active card arrow brighter */
+  .pick-btn:hover .pick-arrow,
   .pick-btn[class*="act-"] .pick-arrow { opacity: .5; }
+
+  /* Sidebar divider between tool groups */
+  .pick-divider {
+    height: 1px;
+    background: var(--line);
+    margin: 4px 4px;
+  }
 
   /* ── CONTENT AREA ── */
   .main-tabs { display: none; } /* replaced by dt-navbar */
 
   .main-content.active { display: block; }
 
-  .card { max-width: none; border-radius: 20px; }
+  .card { max-width: none; border-radius: 16px; }
   .res-card { max-width: none; }
 
   /* Drop zones — compact on desktop */
-  .drop-zone { padding: 32px 24px; }
+  .drop-zone { padding: 28px 20px; }
+
+  /* Panels fill the right column — no extra margin needed */
+  .panel { margin: 0; }
+  .panel.active { display: block; }
 
   /* Settings FAB — bottom right */
   .settings-fab { bottom: 32px; right: 32px; width: 52px; height: 52px; display: none; } /* hidden — in navbar */
@@ -2030,13 +2124,16 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   .mobile-bottom-nav { display: none !important; }
   .sidebar-section-label { display: none !important; }
 
-  /* Show quick actions on desktop */
-  .quick-actions { display: flex; }
+  /* Hide quick actions on desktop — sidebar replaces them */
+  .quick-actions { display: none; }
 
   /* Keyboard hint — hidden to save vertical space */
   .kbd-hint { display: none !important; }
 
   #contentConvert { display: block !important; }
+
+  /* DT section head hidden — sidebar label replaces it */
+  .dt-section-head { display: none; }
 }
 
 /* ── MOBILE LAYOUT (<800px) ──────────────────────────────────── */
@@ -2167,83 +2264,127 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     background: linear-gradient(135deg, var(--c1), var(--c2));
   }
 
-  /* Picker: compact 3-col grid on mobile */
-  .picker {
+  /* MOBILE: two-column layout — tools LEFT, browse/content RIGHT */
+  .split-layout {
     display: grid !important;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 6px;
-    overflow-x: unset;
-    scroll-snap-type: unset;
-    padding-bottom: 0;
-    margin-bottom: 12px;
-    grid-template-columns: unset;
+    grid-template-columns: 88px 1fr !important;
+    gap: 8px !important;
+    align-items: start !important;
+  }
+  .split-left {
+    position: sticky !important;
+    top: 60px !important;
+    margin-bottom: 0 !important;
+  }
+  .split-left-label { display: none; }
+  .split-right { min-width: 0; overflow: hidden; }
+  .pick-divider { display: block; height: 1px; background: var(--line); margin: 3px 4px; }
+
+  /* Picker: vertical list in left column on mobile */
+  .picker {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--line2) !important;
+    border-radius: 12px !important;
+    padding: 5px !important;
+    margin-bottom: 0 !important;
+  }
+
+  .merge-picker {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    background: var(--card-bg) !important;
+    border: 1px solid var(--line2) !important;
+    border-radius: 12px !important;
+    padding: 5px !important;
+    margin-bottom: 0 !important;
   }
 
   .pick-btn {
-    flex-direction: row;
-    align-items: center;
-    text-align: left;
-    min-width: unset;
-    max-width: unset;
-    flex-shrink: unset;
-    scroll-snap-align: unset;
-    padding: 10px 11px;
-    border-radius: 12px;
-    gap: 9px;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+    min-width: unset !important;
+    max-width: unset !important;
+    flex-shrink: unset !important;
+    scroll-snap-align: unset !important;
+    padding: 7px 6px !important;
+    border-radius: 8px !important;
+    gap: 4px !important;
+    border: 1px solid transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    width: 100% !important;
+    transform: none !important;
   }
 
-  .pick-icon { width: 30px; height: 30px; border-radius: 8px; }
-  .pick-icon svg { width: 15px; height: 15px; }
+  .pick-btn.act-pdf { background: rgba(79,140,255,.14) !important; color: var(--c1) !important; }
+  .pick-btn.act-xl  { background: rgba(139,92,246,.14) !important; color: var(--c2) !important; }
+  .pick-btn.act-img { background: rgba(52,211,153,.14) !important; color: var(--c3) !important; }
+  .pick-btn.act-img2{ background: rgba(52,211,153,.14) !important; color: var(--c4) !important; }
+  .pick-btn.act-ppt { background: rgba(224,64,251,.14) !important; color: var(--c6) !important; }
+
+  .pick-btn:hover { background: rgba(255,255,255,.05) !important; color: var(--snow) !important; box-shadow: none !important; }
+
+  .pick-icon { width: 22px !important; height: 22px !important; border-radius: 6px !important; flex-shrink: 0 !important; }
+  .pick-icon svg { width: 11px !important; height: 11px !important; }
 
   .pick-label {
-    font-size: 11px;
-    font-weight: 700;
-    text-align: left;
-    line-height: 1.2;
-    white-space: normal;
-    word-break: break-word;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    line-height: 1.2 !important;
+    white-space: normal !important;
+    word-break: break-word !important;
   }
 
-  .pick-sub {
-    display: block;
-    font-size: 9px;
-    font-family: 'DM Mono', monospace;
-    opacity: .55;
-    text-align: left;
-    line-height: 1.3;
-    white-space: nowrap;
-  }
+  .pick-sub { display: none !important; }
+  .pick-arrow { display: none !important; }
 
-  .pick-arrow { display: none; }
+  /* Cards — compact, no overflow */
+  .card { padding: 12px !important; border-radius: 12px !important; }
+  .res-card { padding: 12px !important; }
 
-  /* Cards — full width, less padding */
-  .card { padding: 14px; border-radius: 14px; }
+  /* Drop zone — compact tap target */
+  .drop-zone { padding: 14px 10px !important; border-radius: 10px !important; border-style: solid !important; border-width: 1px !important; }
 
-  /* Drop zone — comfortable but not oversized */
-  .drop-zone { padding: 28px 16px; }
-  .dz-ring { width: 48px; height: 48px; margin-bottom: 10px; }
-  .dz-ring svg { width: 19px; height: 19px; }
-  .dz-title { font-size: 13px; }
-  .dz-hint { font-size: 11px; }
+  /* Ring icon smaller */
+  .dz-ring { width: 32px !important; height: 32px !important; margin-bottom: 6px !important; }
+  .dz-ring svg { width: 14px !important; height: 14px !important; }
+  .dz-ring::before { display: none !important; }
 
-  /* Replace "Drag & drop" text on mobile */
-  .dz-hint .desktop-hint { display: none; }
-  .dz-hint .mobile-hint { display: inline; }
+  .dz-title { font-size: 11px !important; margin-bottom: 3px !important; }
+  .dz-hint { font-size: 9.5px !important; }
 
-  /* Buttons — larger tap targets */
-  .btn-cvt { padding: 16px; font-size: 15px; }
-  .btn-dl { padding: 16px; font-size: 15px; }
+  /* MOBILE: hide desktop hint text */
+  .dz-hint .desktop-hint { display: none !important; }
+  .dz-hint .mobile-hint { display: inline !important; }
+
+  /* Section labels — tighter */
+  .sec-label { font-size: 9px !important; margin-bottom: 10px !important; }
+
+  /* Buttons */
+  .btn-cvt { padding: 14px !important; font-size: 13px !important; }
+  .btn-dl { padding: 14px !important; font-size: 13px !important; }
+
+  /* Format options — smaller */
+  .fmt-opt { padding: 6px 8px !important; font-size: 10px !important; }
+
+  /* Sheet mode / ppt source buttons */
+  .sheet-mode-btn, .ppt-src-btn { padding: 8px 10px !important; font-size: 11px !important; }
+  .sm-label, .ppt-sub-label { font-size: 11px !important; }
+  .sm-sub, .ppt-sub-sub { font-size: 9px !important; }
 
   /* Settings FAB */
-  .settings-fab { bottom: 76px; right: 14px; }
+  .settings-fab { bottom: 76px !important; right: 14px !important; }
 
   /* Desktop-only elements hidden on mobile */
   .desktop-only { display: none !important; }
   .kbd-hint { display: none !important; }
   .sidebar-section-label { display: none !important; }
-
-  /* Mobile: full-width result cards */
-  .res-card { padding: 16px; }
 
   /* Mobile topbar settings button */
   .mobile-settings-btn {
@@ -2255,12 +2396,7 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     cursor: pointer; color: var(--fog);
     transition: color .15s;
   }
-
-  .mobile-settings-btn svg {
-    width: 17px; height: 17px;
-    stroke: currentColor; fill: none;
-    stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
-  }
+  .mobile-settings-btn svg { width: 17px; height: 17px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 }
 
 /* ── SIDEBAR WRAP (no longer used) ── */
@@ -2268,6 +2404,192 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   .desktop-sidebar-wrap { display: contents; }
   .desktop-content-wrap { display: contents; }
 }
+
+/* ══ MORE OPTIONS COLLAPSIBLE ══ */
+.more-opts-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: 1px dashed var(--line2);
+  border-radius: 10px;
+  padding: 10px 14px;
+  cursor: pointer;
+  color: var(--fog);
+  font-family: 'Syne', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  margin-top: 14px;
+  margin-bottom: 0;
+  transition: color .15s, border-color .15s, background .15s;
+  letter-spacing: .01em;
+}
+.more-opts-toggle:hover {
+  color: var(--snow);
+  border-color: var(--mist);
+  background: rgba(255,255,255,.03);
+}
+.more-opts-toggle.open {
+  color: var(--snow);
+  border-color: var(--line);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+  background: rgba(255,255,255,.03);
+}
+.more-opts-toggle svg {
+  width: 14px; height: 14px;
+  stroke: currentColor; fill: none;
+  stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round;
+  transition: transform .22s cubic-bezier(.4,0,.2,1);
+  flex-shrink: 0;
+}
+.more-opts-toggle.open svg { transform: rotate(180deg); }
+.more-opts-toggle-left {
+  display: flex; align-items: center; gap: 8px;
+}
+.more-opts-toggle-left svg {
+  width: 13px; height: 13px; color: var(--c1);
+}
+.more-opts-badge {
+  font-size: 9px;
+  font-family: 'DM Mono', monospace;
+  background: rgba(79,140,255,.15);
+  color: var(--c1);
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-weight: 700;
+  letter-spacing: .05em;
+  display: none;
+}
+.more-opts-toggle.has-active .more-opts-badge { display: inline; }
+
+.more-opts-body {
+  display: none;
+  border: 1px dashed var(--line2);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 14px;
+  background: rgba(255,255,255,.015);
+  margin-bottom: 14px;
+}
+.more-opts-body.open { display: block; }
+
+.more-opts-body .sec-label {
+  font-size: 9.5px;
+  margin-top: 12px;
+  margin-bottom: 6px;
+}
+.more-opts-body .sec-label:first-child { margin-top: 0; }
+
+/* Option rows inside more-opts */
+.mo-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+.mo-row:last-child { border-bottom: none; padding-bottom: 0; }
+.mo-row:first-child { padding-top: 0; }
+.mo-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--snow);
+  line-height: 1.3;
+}
+.mo-sub {
+  font-size: 10px;
+  font-family: 'DM Mono', monospace;
+  color: var(--fog);
+  margin-top: 2px;
+}
+.mo-control {
+  flex-shrink: 0;
+}
+.mo-select {
+  background: var(--ink3);
+  border: 1px solid var(--line2);
+  border-radius: 8px;
+  color: var(--snow);
+  font-family: 'Syne', sans-serif;
+  font-size: 11px;
+  padding: 6px 9px;
+  cursor: pointer;
+  min-width: 110px;
+}
+.mo-toggle-switch {
+  position: relative; display: inline-block; width: 36px; height: 20px;
+}
+.mo-toggle-switch input { opacity: 0; width: 0; height: 0; }
+.mo-slider {
+  position: absolute; cursor: pointer; inset: 0;
+  background: var(--line2); border-radius: 99px; transition: .2s;
+}
+.mo-slider::before {
+  content: ''; position: absolute;
+  width: 14px; height: 14px; border-radius: 50%;
+  left: 3px; top: 3px; background: #fff;
+  transition: .2s; box-shadow: 0 1px 4px rgba(0,0,0,.3);
+}
+.mo-toggle-switch input:checked + .mo-slider { background: var(--c1); }
+.mo-toggle-switch input:checked + .mo-slider::before { transform: translateX(16px); }
+
+/* Range input in more-opts */
+.mo-range-row {
+  display: flex; align-items: center; gap: 10px; margin-top: 8px;
+}
+.mo-range-row label {
+  font-size: 11px; font-family: 'DM Mono', monospace;
+  color: var(--fog); white-space: nowrap; min-width: 80px;
+}
+.mo-range-row input[type=range] {
+  flex: 1;
+}
+.mo-range-val {
+  font-size: 11px; font-family: 'DM Mono', monospace;
+  color: var(--c1); min-width: 36px; text-align: right;
+}
+
+/* Chip group (for multi-select options) */
+.mo-chip-group {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;
+}
+.mo-chip {
+  background: var(--ink3);
+  border: 1px solid var(--line2);
+  border-radius: 99px;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  color: var(--fog);
+  cursor: pointer;
+  transition: all .15s;
+  font-weight: 600;
+}
+.mo-chip:hover { border-color: var(--mist); color: var(--snow); }
+.mo-chip.active {
+  background: rgba(79,140,255,.12);
+  border-color: rgba(79,140,255,.4);
+  color: var(--c1);
+}
+
+/* Light theme fixes for more-opts */
+[data-theme="white-blue"] .more-opts-toggle,
+[data-theme="purple-modern"] .more-opts-toggle {
+  border-color: var(--line2);
+  color: var(--fog);
+}
+[data-theme="white-blue"] .more-opts-toggle:hover,
+[data-theme="purple-modern"] .more-opts-toggle:hover { color: var(--snow); }
+[data-theme="white-blue"] .more-opts-body,
+[data-theme="purple-modern"] .more-opts-body { background: rgba(255,255,255,0.5); }
+[data-theme="white-blue"] .mo-select,
+[data-theme="purple-modern"] .mo-select { background: rgba(255,255,255,0.9); color: var(--snow); }
+[data-theme="white-blue"] .mo-chip,
+[data-theme="purple-modern"] .mo-chip { background: rgba(255,255,255,0.7); color: var(--fog); }
 
 </style>
 </head>
@@ -2346,12 +2668,17 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 
 <!-- ══ CONVERT TAB CONTENT ══ -->
 <div class="main-content active" id="contentConvert">
+<div class="split-layout" id="convertSplitLayout">
+
+<!-- LEFT: TOOL PICKER SIDEBAR -->
+<div class="split-left" id="convertSidebarLeft">
+  <div class="split-left-label">Convert Tools</div>
 
 <!-- PICKER -->
 <div class="picker" style="grid-template-columns:1fr 1fr">
   <button class="pick-btn act-pdf" id="tabPdf" onclick="switchMode('pdf')">
     <div class="pick-icon" style="background:rgba(0,229,255,.1);color:var(--c1)">
-      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="8" y="12" width="8" height="1.5" rx=".5"/><rect x="8" y="15" width="5" height="1.5" rx=".5"/></svg>
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" fill="rgba(0,229,255,.15)" stroke="currentColor" stroke-width="1.8"/><polyline points="14 2 14 8 20 8" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="8" y="12" width="8" height="1.5" rx=".5" fill="currentColor"/><rect x="8" y="15" width="5" height="1.5" rx=".5" fill="currentColor"/></svg>
     </div>
     <div>
       <div class="pick-label">PDF → Excel</div>
@@ -2361,7 +2688,7 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   </button>
   <button class="pick-btn" id="tabXl" onclick="switchMode('xl')">
     <div class="pick-icon" style="background:rgba(123,92,250,.1);color:var(--c2)">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" fill="rgba(123,92,250,.15)" stroke="currentColor" stroke-width="1.8"/><path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="1.8" fill="none"/><text x="5.5" y="7.5" font-size="4" fill="currentColor" font-family="monospace" font-weight="bold">XLS</text></svg>
     </div>
     <div>
       <div class="pick-label">Excel → PDF</div>
@@ -2371,7 +2698,7 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   </button>
   <button class="pick-btn" id="tabImg" onclick="switchMode('img')">
     <div class="pick-icon" style="background:rgba(255,107,53,.1);color:var(--c3)">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="rgba(255,107,53,.15)" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><polyline points="21 15 16 10 5 21" stroke="currentColor" stroke-width="1.8" fill="none"/></svg>
     </div>
     <div>
       <div class="pick-label">PDF → Images</div>
@@ -2381,7 +2708,7 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   </button>
   <button class="pick-btn" id="tabImg2" onclick="switchMode('img2')">
     <div class="pick-icon" style="background:rgba(0,214,143,.1);color:var(--c4)">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="rgba(0,214,143,.15)" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><polyline points="21 15 16 10 5 21" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M3 9h18M9 21V9" stroke="currentColor" stroke-width="0.8" stroke-dasharray="2 2" fill="none"/></svg>
     </div>
     <div>
       <div class="pick-label">Excel → Images</div>
@@ -2391,7 +2718,7 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   </button>
   <button class="pick-btn" id="tabImg3" onclick="switchMode('img3')">
     <div class="pick-icon" style="background:rgba(245,158,11,.1);color:#F59E0B">
-      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/><path d="M14 2H6a2 2 0 0 0-2 2v0" stroke-dasharray="3 2"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="rgba(245,158,11,.15)" stroke="currentColor" stroke-width="1.8"/><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"/><polyline points="21 15 16 10 5 21" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M14 2H6a2 2 0 0 0-2 2v0" stroke="currentColor" stroke-dasharray="3 2" stroke-width="1.5" fill="none"/></svg>
     </div>
     <div>
       <div class="pick-label">Images → PDF</div>
@@ -2401,7 +2728,7 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   </button>
   <button class="pick-btn" id="tabPpt" onclick="switchMode('ppt')">
     <div class="pick-icon" style="background:rgba(224,64,251,.1);color:var(--c6)">
-      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h4a2 2 0 0 1 0 4H7V8z"/></svg>
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2" fill="rgba(224,64,251,.15)" stroke="currentColor" stroke-width="1.8"/><path d="M8 21h8M12 17v4" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M7 8h4a2 2 0 0 1 0 4H7V8z" fill="rgba(224,64,251,.3)" stroke="currentColor" stroke-width="1.2"/></svg>
     </div>
     <div>
       <div class="pick-label">→ PowerPoint</div>
@@ -2410,6 +2737,10 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     <span class="pick-arrow">›</span>
   </button>
 </div>
+</div><!-- /split-left -->
+
+<!-- RIGHT: CONTENT PANELS -->
+<div class="split-right">
 
 <!-- ══ PDF → EXCEL ══ -->
 <div class="panel active" id="panelPdf">
@@ -2484,6 +2815,74 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
         </button>
       </div>
     </div>
+    <!-- More Options: PDF→Excel -->
+    <button class="more-opts-toggle" id="moreOptsPdfBtn" onclick="toggleMoreOpts('Pdf')">
+      <span class="more-opts-toggle-left">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        More Options
+        <span class="more-opts-badge" id="moreOptsPdfBadge">active</span>
+      </span>
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="more-opts-body" id="moreOptsPdfBody">
+      <div class="sec-label">Data Extraction</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Auto-detect header row</div><div class="mo-sub">First row treated as column headers</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="pdfOptHeader" checked onchange="updateMoreOptsBadge('Pdf')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Trim whitespace</div><div class="mo-sub">Remove leading/trailing spaces from cells</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="pdfOptTrim" checked onchange="updateMoreOptsBadge('Pdf')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Merge duplicate header cols</div><div class="mo-sub">Collapse identical column names</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="pdfOptMergeCols" onchange="updateMoreOptsBadge('Pdf')"><span class="mo-slider"></span></label>
+      </div>
+
+      <div class="sec-label">Output Format</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Output file type</div><div class="mo-sub">Excel workbook or CSV text</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="pdfOptOutFormat" onchange="updateMoreOptsBadge('Pdf')">
+            <option value="xlsx">.xlsx (Excel)</option>
+            <option value="csv">.csv (Comma-separated)</option>
+            <option value="tsv">.tsv (Tab-separated)</option>
+          </select>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Max rows per sheet</div><div class="mo-sub">Limit data rows extracted</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="pdfOptRowLimit" onchange="updateMoreOptsBadge('Pdf')">
+            <option value="0">No limit</option>
+            <option value="500">500 rows</option>
+            <option value="1000">1,000 rows</option>
+            <option value="5000">5,000 rows</option>
+            <option value="10000">10,000 rows</option>
+          </select>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Number format</div><div class="mo-sub">How numeric values are stored</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="pdfOptNumFmt" onchange="updateMoreOptsBadge('Pdf')">
+            <option value="auto">Auto-detect</option>
+            <option value="text">Keep as text</option>
+            <option value="number">Force numeric</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sec-label">Page Range</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Extract pages</div><div class="mo-sub">Leave blank to extract all pages</div></div>
+        <div class="mo-control">
+          <input type="text" id="pdfOptPageRange" placeholder="e.g. 1-3, 5, 7" onchange="updateMoreOptsBadge('Pdf')"
+            style="background:var(--ink3);border:1px solid var(--line2);border-radius:8px;color:var(--snow);font-family:'DM Mono',monospace;font-size:11px;padding:6px 9px;width:130px;outline:none"/>
+        </div>
+      </div>
+    </div>
+
     <!-- Password Protection -->
     <div class="pw-section" id="pwSectionPdf" style="margin-top:14px">
       <button class="pw-toggle" onclick="togglePwSection('Pdf')">
@@ -2550,6 +2949,76 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
       <div class="f-info"><div class="f-name" id="chipXlName"></div><div class="f-size" id="chipXlSize"></div></div>
       <button class="f-rm" id="rmXl"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
+    <!-- More Options: Excel→PDF -->
+    <button class="more-opts-toggle" id="moreOptsXlBtn" onclick="toggleMoreOpts('Xl')">
+      <span class="more-opts-toggle-left">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        More Options
+        <span class="more-opts-badge" id="moreOptsXlBadge">active</span>
+      </span>
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="more-opts-body" id="moreOptsXlBody">
+      <div class="sec-label">Page Layout</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Orientation</div><div class="mo-sub">Portrait or landscape pages</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="xlOptOrientation" onchange="updateMoreOptsBadge('Xl')">
+            <option value="portrait">Portrait</option>
+            <option value="landscape">Landscape</option>
+          </select>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Page size</div><div class="mo-sub">Output paper dimensions</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="xlOptPageSize" onchange="updateMoreOptsBadge('Xl')">
+            <option value="a4">A4</option>
+            <option value="letter">Letter (US)</option>
+            <option value="a3">A3</option>
+            <option value="legal">Legal</option>
+          </select>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Fit to page width</div><div class="mo-sub">Auto-scale wide tables to fit</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="xlOptFitWidth" checked onchange="updateMoreOptsBadge('Xl')"><span class="mo-slider"></span></label>
+      </div>
+
+      <div class="sec-label">Content</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Include gridlines</div><div class="mo-sub">Show cell borders in output</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="xlOptGridlines" checked onchange="updateMoreOptsBadge('Xl')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Include row numbers</div><div class="mo-sub">Show row index numbers</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="xlOptRowNums" onchange="updateMoreOptsBadge('Xl')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Font size scale</div><div class="mo-sub">Adjust relative text size</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="xlOptFontScale" onchange="updateMoreOptsBadge('Xl')">
+            <option value="0.8">Small (80%)</option>
+            <option value="1" selected>Normal (100%)</option>
+            <option value="1.2">Large (120%)</option>
+            <option value="1.5">XL (150%)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sec-label">Sheet Selection</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Which sheets to export</div><div class="mo-sub">All sheets or specific ones</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="xlOptSheets" onchange="updateMoreOptsBadge('Xl')">
+            <option value="all">All sheets</option>
+            <option value="active">Active sheet only</option>
+            <option value="visible">Visible sheets only</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <!-- Password Protection -->
     <div class="pw-section" id="pwSectionXl" style="margin-top:14px">
       <button class="pw-toggle" onclick="togglePwSection('Xl')">
@@ -2633,6 +3102,56 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
         <span class="slider-val c3" id="qualImgVal">92%</span>
       </div>
     </div>
+    <!-- More Options: PDF→Images -->
+    <button class="more-opts-toggle" id="moreOptsImgBtn" onclick="toggleMoreOpts('Img')">
+      <span class="more-opts-toggle-left">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        More Options
+        <span class="more-opts-badge" id="moreOptsImgBadge">active</span>
+      </span>
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="more-opts-body" id="moreOptsImgBody">
+      <div class="sec-label">Page Range</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Extract specific pages</div><div class="mo-sub">e.g. 1-3, 5, 8 — blank = all</div></div>
+        <div class="mo-control">
+          <input type="text" id="imgOptPageRange" placeholder="All pages" onchange="updateMoreOptsBadge('Img')"
+            style="background:var(--ink3);border:1px solid var(--line2);border-radius:8px;color:var(--snow);font-family:'DM Mono',monospace;font-size:11px;padding:6px 9px;width:120px;outline:none"/>
+        </div>
+      </div>
+
+      <div class="sec-label">Image Options</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Background color</div><div class="mo-sub">Fill for transparent areas</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="imgOptBg" onchange="updateMoreOptsBadge('Img')">
+            <option value="white">White</option>
+            <option value="transparent">Transparent (PNG only)</option>
+            <option value="black">Black</option>
+          </select>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Output naming</div><div class="mo-sub">How output files are named</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="imgOptNaming" onchange="updateMoreOptsBadge('Img')">
+            <option value="page">page_1, page_2…</option>
+            <option value="filename">filename_1, filename_2…</option>
+            <option value="sequential">001, 002…</option>
+          </select>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Crop margins</div><div class="mo-sub">Auto-trim blank page borders</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="imgOptCrop" onchange="updateMoreOptsBadge('Img')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Single ZIP archive</div><div class="mo-sub">Bundle all images in one file</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="imgOptZip" checked onchange="updateMoreOptsBadge('Img')"><span class="mo-slider"></span></label>
+      </div>
+    </div>
+
     <!-- Password Protection -->
     <div class="pw-section" id="pwSectionImg" style="margin-top:14px">
       <button class="pw-toggle" onclick="togglePwSection('Img')">
@@ -2707,6 +3226,57 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
         <span class="slider-val c4" id="qualImg2Val">92%</span>
       </div>
     </div>
+    <!-- More Options: Excel→Images -->
+    <button class="more-opts-toggle" id="moreOptsImg2Btn" onclick="toggleMoreOpts('Img2')">
+      <span class="more-opts-toggle-left">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        More Options
+        <span class="more-opts-badge" id="moreOptsImg2Badge">active</span>
+      </span>
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="more-opts-body" id="moreOptsImg2Body">
+      <div class="sec-label">Sheet Selection</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Export sheets</div><div class="mo-sub">Which sheets to convert to images</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="img2OptSheets" onchange="updateMoreOptsBadge('Img2')">
+            <option value="all">All sheets</option>
+            <option value="active">Active sheet only</option>
+            <option value="visible">Visible sheets only</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sec-label">Image Options</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Background color</div><div class="mo-sub">Page/canvas background fill</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="img2OptBg" onchange="updateMoreOptsBadge('Img2')">
+            <option value="white">White</option>
+            <option value="transparent">Transparent (PNG only)</option>
+            <option value="black">Black</option>
+          </select>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Include header row</div><div class="mo-sub">Show column header styling</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="img2OptHeader" checked onchange="updateMoreOptsBadge('Img2')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Max rows per image</div><div class="mo-sub">Limit rows captured per sheet</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="img2OptRowLimit" onchange="updateMoreOptsBadge('Img2')">
+            <option value="0">All rows</option>
+            <option value="50">50 rows</option>
+            <option value="100">100 rows</option>
+            <option value="200">200 rows</option>
+            <option value="500">500 rows</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <!-- Password Protection -->
     <div class="pw-section" id="pwSectionImg2" style="margin-top:14px">
       <button class="pw-toggle" onclick="togglePwSection('Img2')">
@@ -2810,6 +3380,59 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
         </button>
       </div>
     </div>
+    <!-- More Options: Images→PDF -->
+    <button class="more-opts-toggle" id="moreOptsImg3Btn" onclick="toggleMoreOpts('Img3')">
+      <span class="more-opts-toggle-left">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        More Options
+        <span class="more-opts-badge" id="moreOptsImg3Badge">active</span>
+      </span>
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="more-opts-body" id="moreOptsImg3Body">
+      <div class="sec-label">Page Margins</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Page margin</div><div class="mo-sub">Space around images on page</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="img3OptMargin" onchange="updateMoreOptsBadge('Img3')">
+            <option value="0">No margin</option>
+            <option value="10" selected>Small (10pt)</option>
+            <option value="20">Medium (20pt)</option>
+            <option value="40">Large (40pt)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sec-label">Image Quality</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Image compression</div><div class="mo-sub">Trade-off between size and quality</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="img3OptCompression" onchange="updateMoreOptsBadge('Img3')">
+            <option value="none">None (lossless)</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High (smaller file)</option>
+          </select>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Auto-rotate pages</div><div class="mo-sub">Rotate page to match image orientation</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="img3OptAutoRotate" checked onchange="updateMoreOptsBadge('Img3')"><span class="mo-slider"></span></label>
+      </div>
+
+      <div class="sec-label">Document Info</div>
+      <div class="mo-row">
+        <div><div class="mo-label">PDF title</div><div class="mo-sub">Embedded document title</div></div>
+        <div class="mo-control">
+          <input type="text" id="img3OptTitle" placeholder="My Document" onchange="updateMoreOptsBadge('Img3')"
+            style="background:var(--ink3);border:1px solid var(--line2);border-radius:8px;color:var(--snow);font-family:'DM Mono',monospace;font-size:11px;padding:6px 9px;width:130px;outline:none"/>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Add page numbers</div><div class="mo-sub">Show footer page numbers</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="img3OptPageNums" onchange="updateMoreOptsBadge('Img3')"><span class="mo-slider"></span></label>
+      </div>
+    </div>
+
     <!-- Password Protection -->
     <div class="pw-section" id="pwSectionImg3" style="margin-top:14px">
       <button class="pw-toggle" onclick="togglePwSection('Img3')">
@@ -2864,24 +3487,91 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     <div class="sec-label">Add Source Files</div>
     <!-- Multi-drop zone: PDFs, Excels, Images -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px">
-      <div class="ppt-add-btn" onclick="document.getElementById('inPptMultiPdf').click()">
-        <svg viewBox="0 0 24 24" style="color:var(--c6)"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        <div class="ppt-add-label">+ PDF</div>
-        <div class="ppt-add-sub">multiple pages</div>
+
+      <!-- PDF card -->
+      <div onclick="document.getElementById('inPptMultiPdf').click()" style="cursor:pointer;border:1.5px solid rgba(139,92,246,.25);border-radius:14px;background:rgba(139,92,246,.05);padding:14px 10px 12px;text-align:center;transition:all .2s;position:relative;overflow:hidden" onmouseover="this.style.borderColor='rgba(139,92,246,.55)';this.style.background='rgba(139,92,246,.1)'" onmouseout="this.style.borderColor='rgba(139,92,246,.25)';this.style.background='rgba(139,92,246,.05)'">
+        <!-- mini slide mockup with PDF pages -->
+        <svg viewBox="0 0 56 44" width="56" height="44" style="display:block;margin:0 auto 8px">
+          <!-- slide bg -->
+          <rect x="2" y="2" width="52" height="40" rx="4" fill="rgba(139,92,246,.12)" stroke="rgba(139,92,246,.4)" stroke-width="1"/>
+          <!-- PDF doc icon left -->
+          <rect x="8" y="10" width="14" height="18" rx="2" fill="rgba(139,92,246,.2)" stroke="rgba(139,92,246,.5)" stroke-width="1"/>
+          <path d="M16 10v5h6" fill="none" stroke="rgba(139,92,246,.5)" stroke-width="1"/>
+          <line x1="10" y1="17" x2="20" y2="17" stroke="rgba(139,92,246,.4)" stroke-width="1"/>
+          <line x1="10" y1="20" x2="18" y2="20" stroke="rgba(139,92,246,.3)" stroke-width="1"/>
+          <line x1="10" y1="23" x2="20" y2="23" stroke="rgba(139,92,246,.3)" stroke-width="1"/>
+          <!-- arrow -->
+          <path d="M25 22 L30 22" stroke="rgba(139,92,246,.7)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M28 19.5 L30.5 22 L28 24.5" fill="none" stroke="rgba(139,92,246,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- slide preview right -->
+          <rect x="32" y="10" width="18" height="13" rx="2" fill="rgba(139,92,246,.15)" stroke="rgba(139,92,246,.5)" stroke-width="1"/>
+          <line x1="34" y1="14" x2="48" y2="14" stroke="rgba(139,92,246,.5)" stroke-width="1.2"/>
+          <line x1="34" y1="17" x2="44" y2="17" stroke="rgba(139,92,246,.3)" stroke-width="1"/>
+          <line x1="34" y1="20" x2="46" y2="20" stroke="rgba(139,92,246,.3)" stroke-width="1"/>
+          <!-- stacked slides hint -->
+          <rect x="33" y="25" width="16" height="2" rx="1" fill="rgba(139,92,246,.2)"/>
+          <rect x="34" y="28" width="14" height="2" rx="1" fill="rgba(139,92,246,.15)"/>
+        </svg>
+        <div style="font-size:12px;font-weight:700;color:var(--c6);margin-bottom:2px">+ PDF</div>
+        <div style="font-size:9.5px;font-family:'DM Mono',monospace;color:var(--fog);line-height:1.4">Each page<br>→ 1 slide</div>
         <input type="file" id="inPptMultiPdf" accept=".pdf" multiple style="display:none"/>
       </div>
-      <div class="ppt-add-btn" onclick="document.getElementById('inPptMultiXl').click()">
-        <svg viewBox="0 0 24 24" style="color:var(--c4)"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
-        <div class="ppt-add-label">+ Excel</div>
-        <div class="ppt-add-sub">.xlsx / .csv</div>
+
+      <!-- Excel card -->
+      <div onclick="document.getElementById('inPptMultiXl').click()" style="cursor:pointer;border:1.5px solid rgba(0,214,143,.25);border-radius:14px;background:rgba(0,214,143,.05);padding:14px 10px 12px;text-align:center;transition:all .2s;position:relative;overflow:hidden" onmouseover="this.style.borderColor='rgba(0,214,143,.55)';this.style.background='rgba(0,214,143,.1)'" onmouseout="this.style.borderColor='rgba(0,214,143,.25)';this.style.background='rgba(0,214,143,.05)'">
+        <svg viewBox="0 0 56 44" width="56" height="44" style="display:block;margin:0 auto 8px">
+          <!-- slide bg -->
+          <rect x="2" y="2" width="52" height="40" rx="4" fill="rgba(0,214,143,.10)" stroke="rgba(0,214,143,.4)" stroke-width="1"/>
+          <!-- Excel grid icon left -->
+          <rect x="7" y="9" width="16" height="18" rx="2" fill="rgba(0,214,143,.15)" stroke="rgba(0,214,143,.5)" stroke-width="1"/>
+          <line x1="7" y1="14" x2="23" y2="14" stroke="rgba(0,214,143,.4)" stroke-width="1"/>
+          <line x1="14" y1="9" x2="14" y2="27" stroke="rgba(0,214,143,.3)" stroke-width="1"/>
+          <rect x="9" y="16" width="3" height="3" rx=".5" fill="rgba(0,214,143,.4)"/>
+          <rect x="9" y="21" width="3" height="3" rx=".5" fill="rgba(0,214,143,.3)"/>
+          <rect x="15" y="16" width="4" height="3" rx=".5" fill="rgba(0,214,143,.25)"/>
+          <rect x="15" y="21" width="4" height="3" rx=".5" fill="rgba(0,214,143,.2)"/>
+          <!-- arrow -->
+          <path d="M26 22 L30 22" stroke="rgba(0,214,143,.7)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M28.5 19.5 L31 22 L28.5 24.5" fill="none" stroke="rgba(0,214,143,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- slide with table preview right -->
+          <rect x="32" y="10" width="18" height="13" rx="2" fill="rgba(0,214,143,.12)" stroke="rgba(0,214,143,.5)" stroke-width="1"/>
+          <line x1="32" y1="14" x2="50" y2="14" stroke="rgba(0,214,143,.4)" stroke-width="1"/>
+          <!-- bar chart mini -->
+          <rect x="34" y="21" width="3" height="5" rx=".5" fill="rgba(0,214,143,.5)"/>
+          <rect x="38" y="18" width="3" height="8" rx=".5" fill="rgba(0,214,143,.6)"/>
+          <rect x="42" y="23" width="3" height="3" rx=".5" fill="rgba(0,214,143,.4)"/>
+          <rect x="46" y="20" width="2" height="6" rx=".5" fill="rgba(0,214,143,.5)"/>
+        </svg>
+        <div style="font-size:12px;font-weight:700;color:var(--c4);margin-bottom:2px">+ Excel</div>
+        <div style="font-size:9.5px;font-family:'DM Mono',monospace;color:var(--fog);line-height:1.4">Tables &amp; charts<br>→ slides</div>
         <input type="file" id="inPptMultiXl" accept=".xlsx,.xls,.csv" multiple style="display:none"/>
       </div>
-      <div class="ppt-add-btn" onclick="document.getElementById('inPptMultiImg').click()">
-        <svg viewBox="0 0 24 24" style="color:var(--c3)"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-        <div class="ppt-add-label">+ Images</div>
-        <div class="ppt-add-sub">JPG · PNG · WEBP</div>
+
+      <!-- Images card -->
+      <div onclick="document.getElementById('inPptMultiImg').click()" style="cursor:pointer;border:1.5px solid rgba(52,211,153,.25);border-radius:14px;background:rgba(52,211,153,.05);padding:14px 10px 12px;text-align:center;transition:all .2s;position:relative;overflow:hidden" onmouseover="this.style.borderColor='rgba(52,211,153,.55)';this.style.background='rgba(52,211,153,.1)'" onmouseout="this.style.borderColor='rgba(52,211,153,.25)';this.style.background='rgba(52,211,153,.05)'">
+        <svg viewBox="0 0 56 44" width="56" height="44" style="display:block;margin:0 auto 8px">
+          <!-- slide bg -->
+          <rect x="2" y="2" width="52" height="40" rx="4" fill="rgba(52,211,153,.08)" stroke="rgba(52,211,153,.4)" stroke-width="1"/>
+          <!-- stacked photos left -->
+          <rect x="5" y="14" width="14" height="11" rx="2" fill="rgba(52,211,153,.1)" stroke="rgba(52,211,153,.35)" stroke-width="1"/>
+          <rect x="7" y="11" width="14" height="11" rx="2" fill="rgba(52,211,153,.15)" stroke="rgba(52,211,153,.4)" stroke-width="1"/>
+          <rect x="9" y="8" width="14" height="11" rx="2" fill="rgba(52,211,153,.2)" stroke="rgba(52,211,153,.5)" stroke-width="1"/>
+          <!-- mini mountain/sun in top photo -->
+          <circle cx="13" cy="11" r="1.5" fill="rgba(52,211,153,.7)"/>
+          <polyline points="10,18 13,14 16,18" fill="none" stroke="rgba(52,211,153,.6)" stroke-width="1" stroke-linecap="round"/>
+          <!-- arrow -->
+          <path d="M26 22 L30 22" stroke="rgba(52,211,153,.7)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M28.5 19.5 L31 22 L28.5 24.5" fill="none" stroke="rgba(52,211,153,.7)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- slide with full-bleed photo right -->
+          <rect x="32" y="10" width="18" height="13" rx="2" fill="rgba(52,211,153,.15)" stroke="rgba(52,211,153,.5)" stroke-width="1"/>
+          <circle cx="37" cy="15" r="2" fill="rgba(52,211,153,.5)"/>
+          <polyline points="33,23 37,18 41,21 44,17 50,23" fill="rgba(52,211,153,.2)" stroke="rgba(52,211,153,.5)" stroke-width="1" stroke-linecap="round"/>
+        </svg>
+        <div style="font-size:12px;font-weight:700;color:var(--c3);margin-bottom:2px">+ Images</div>
+        <div style="font-size:9.5px;font-family:'DM Mono',monospace;color:var(--fog);line-height:1.4">Photos<br>→ full slides</div>
         <input type="file" id="inPptMultiImg" accept="image/jpeg,image/png,image/webp,image/gif,image/bmp" multiple style="display:none"/>
       </div>
+
     </div>
     <!-- Drop zone -->
     <div class="drop-zone dz-c6" id="dzPptMulti" style="padding:28px 20px">
@@ -3393,10 +4083,17 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   </div>
 </div>
 
+</div><!-- /split-right -->
+</div><!-- /split-layout -->
 </div><!-- /contentConvert -->
 
 <!-- ══ MERGE TAB CONTENT ══ -->
 <div class="main-content" id="contentMerge">
+<div class="split-layout" id="mergeSplitLayout">
+
+<!-- LEFT: MERGE PICKER SIDEBAR -->
+<div class="split-left" id="mergeSidebarLeft">
+  <div class="split-left-label">Merge Tools</div>
 
 <!-- MERGE PICKER -->
 <div class="merge-picker">
@@ -3421,6 +4118,10 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     <span class="pick-arrow">›</span>
   </button>
 </div>
+</div><!-- /split-left -->
+
+<!-- RIGHT: MERGE CONTENT PANELS -->
+<div class="split-right">
 
 <!-- ══ MERGE EXCEL ══ -->
 <div class="panel active" id="mergePanelXl">
@@ -3455,6 +4156,61 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
         </button>
       </div>
     </div>
+    <!-- More Options: Merge Excel -->
+    <button class="more-opts-toggle" id="moreOptsMxlBtn" onclick="toggleMoreOpts('Mxl')">
+      <span class="more-opts-toggle-left">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        More Options
+        <span class="more-opts-badge" id="moreOptsMxlBadge">active</span>
+      </span>
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="more-opts-body" id="moreOptsMxlBody">
+      <div class="sec-label">Output Format</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Output file type</div><div class="mo-sub">Excel workbook or CSV text</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="mxlOptFormat" onchange="updateMoreOptsBadge('Mxl')">
+            <option value="xlsx">.xlsx (Excel)</option>
+            <option value="csv">.csv (Comma-separated)</option>
+            <option value="tsv">.tsv (Tab-separated)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sec-label">Header Handling</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Skip duplicate headers</div><div class="mo-sub">Remove repeated header rows when stacking</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="mxlOptSkipHeaders" checked onchange="updateMoreOptsBadge('Mxl')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Add source filename column</div><div class="mo-sub">Track which file each row came from</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="mxlOptSourceCol" onchange="updateMoreOptsBadge('Mxl')"><span class="mo-slider"></span></label>
+      </div>
+
+      <div class="sec-label">Data Cleaning</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Remove empty rows</div><div class="mo-sub">Drop fully blank rows before merging</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="mxlOptRemoveEmpty" onchange="updateMoreOptsBadge('Mxl')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Trim whitespace</div><div class="mo-sub">Strip leading/trailing spaces from cells</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="mxlOptTrim" checked onchange="updateMoreOptsBadge('Mxl')"><span class="mo-slider"></span></label>
+      </div>
+
+      <div class="sec-label">Sheet Naming</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Sheet name style</div><div class="mo-sub">How output sheets are labeled</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="mxlOptSheetName" onchange="updateMoreOptsBadge('Mxl')">
+            <option value="filename">From filename</option>
+            <option value="original">Original sheet names</option>
+            <option value="numbered">Sheet 1, Sheet 2…</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
     <!-- Password Protection -->
     <div class="pw-section" id="pwSectionMxl" style="margin-top:14px">
       <button class="pw-toggle" onclick="togglePwSection('Mxl')">
@@ -3546,6 +4302,62 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
       <div id="mpdfAllFiles" style="display:flex;flex-direction:column;gap:18px"></div>
     </div>
 
+    <!-- More Options: Merge PDF -->
+    <button class="more-opts-toggle" id="moreOptsMpdfBtn" onclick="toggleMoreOpts('Mpdf')">
+      <span class="more-opts-toggle-left">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        More Options
+        <span class="more-opts-badge" id="moreOptsMpdfBadge">active</span>
+      </span>
+      <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="more-opts-body" id="moreOptsMpdfBody">
+      <div class="sec-label">Page Order</div>
+      <div class="mo-row">
+        <div><div class="mo-label">File order</div><div class="mo-sub">How to sequence the merged files</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="mpdfOptOrder" onchange="updateMoreOptsBadge('Mpdf')">
+            <option value="manual">Manual (drag to reorder)</option>
+            <option value="alpha">Alphabetical by name</option>
+            <option value="alpha-rev">Reverse alphabetical</option>
+          </select>
+        </div>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Reverse page order</div><div class="mo-sub">Reverse all selected pages</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="mpdfOptReverse" onchange="updateMoreOptsBadge('Mpdf')"><span class="mo-slider"></span></label>
+      </div>
+
+      <div class="sec-label">Output Quality</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Compression level</div><div class="mo-sub">Reduce output file size</div></div>
+        <div class="mo-control">
+          <select class="mo-select" id="mpdfOptCompression" onchange="updateMoreOptsBadge('Mpdf')">
+            <option value="none">None (preserve quality)</option>
+            <option value="medium" selected>Medium</option>
+            <option value="high">High (smaller file)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="sec-label">Document Options</div>
+      <div class="mo-row">
+        <div><div class="mo-label">Add blank separator pages</div><div class="mo-sub">Insert blank page between each PDF</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="mpdfOptSeparator" onchange="updateMoreOptsBadge('Mpdf')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Add page numbers</div><div class="mo-sub">Show footer page numbers in output</div></div>
+        <label class="mo-toggle-switch"><input type="checkbox" id="mpdfOptPageNums" onchange="updateMoreOptsBadge('Mpdf')"><span class="mo-slider"></span></label>
+      </div>
+      <div class="mo-row">
+        <div><div class="mo-label">Output PDF title</div><div class="mo-sub">Embedded document title metadata</div></div>
+        <div class="mo-control">
+          <input type="text" id="mpdfOptTitle" placeholder="Merged Document" onchange="updateMoreOptsBadge('Mpdf')"
+            style="background:var(--ink3);border:1px solid var(--line2);border-radius:8px;color:var(--snow);font-family:'DM Mono',monospace;font-size:11px;padding:6px 9px;width:130px;outline:none"/>
+        </div>
+      </div>
+    </div>
+
     <!-- Password Protection -->
     <div class="pw-section" id="pwSectionMpdf" style="margin-top:4px;margin-bottom:4px">
       <button class="pw-toggle" onclick="togglePwSection('Mpdf')">
@@ -3595,6 +4407,8 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   </div>
 </div>
 
+</div><!-- /split-right -->
+</div><!-- /split-layout -->
 </div><!-- /contentMerge -->
 
 <!-- ══ LINK CONVERTER TAB CONTENT ══ -->
@@ -3859,8 +4673,8 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 
     <!-- DROP ZONE -->
     <div class="card" style="padding:0;overflow:hidden">
-      <div class="drop-zone dz-c1" id="dzVideo" onclick="document.getElementById('inVideo').click()" style="border-radius:16px;border:none">
-        <input type="file" id="inVideo" accept="video/*,audio/*" style="display:none"/>
+      <div class="drop-zone dz-c1" id="dzVideo" style="border-radius:16px;border:none">
+        <input type="file" id="inVideo" accept="video/*,audio/*" style="position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;z-index:2"/>
         <div class="dz-ring c1">
           <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="26" height="26"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
         </div>
@@ -4072,6 +4886,32 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 
     </div>
 
+    <!-- PASSWORD PROTECTION -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="pw-section" id="pwSectionVideo" style="margin:0;border:none;border-radius:0">
+        <button class="pw-toggle" onclick="togglePwSection('Video')">
+          <span class="pw-toggle-left">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Password Protect Output
+          </span>
+          <span style="display:flex;align-items:center;gap:6px">
+            <span class="pw-active-badge" id="pwBadgeVideo" style="display:none">🔒 ON</span>
+            <svg class="pw-chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div class="pw-body">
+          <div class="pw-input-row">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--fog);fill:none;stroke-width:2;stroke-linecap:round;flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input class="pw-input" id="pwInputVideo" type="password" placeholder="Leave blank for no protection" autocomplete="new-password" oninput="updatePwBadge('Video')"/>
+            <button class="pw-eye" onclick="togglePwEye('pwInputVideo','pwEyeVideo')" tabindex="-1">
+              <svg id="pwEyeVideo" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="pw-hint">🔐 Output will be wrapped in an encrypted HTML file. Recipients open it in any browser and enter the password to download.</div>
+        </div>
+      </div>
+    </div>
+
     <!-- PROGRESS -->
     <div class="vid-prog-wrap" id="vidProgWrap">
       <div class="vid-prog-bar"><div class="vid-prog-fill" id="vidProgFill"></div></div>
@@ -4179,11 +5019,87 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 
     </div>
 
+    <div class="sheet-divider" style="margin-top:4px"></div>
+
+    <div style="padding:12px 20px 8px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--fog)">Default Tab on Open</div>
+    <div style="padding:0 20px 20px;display:grid;grid-template-columns:1fr 1fr;gap:8px" id="defaultTabGrid">
+
+      <button class="default-tab-opt" data-tab="convert" onclick="setDefaultTab('convert')">
+        <div class="dt-opt-icon" style="background:rgba(79,140,255,.12);color:var(--c1)">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </div>
+        <div>
+          <div class="dt-opt-label">Convert</div>
+          <div class="dt-opt-sub">PDF · Excel · Images</div>
+        </div>
+      </button>
+
+      <button class="default-tab-opt" data-tab="merge" onclick="setDefaultTab('merge')">
+        <div class="dt-opt-icon" style="background:rgba(52,211,153,.12);color:var(--c3)">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+        </div>
+        <div>
+          <div class="dt-opt-label">Merge</div>
+          <div class="dt-opt-sub">Combine files</div>
+        </div>
+      </button>
+
+      <button class="default-tab-opt" data-tab="link" onclick="setDefaultTab('link')">
+        <div class="dt-opt-icon" style="background:rgba(139,92,246,.12);color:var(--c2)">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div>
+          <div class="dt-opt-label">Link</div>
+          <div class="dt-opt-sub">Share &amp; upload</div>
+        </div>
+      </button>
+
+      <button class="default-tab-opt" data-tab="video" onclick="setDefaultTab('video')">
+        <div class="dt-opt-icon" style="background:rgba(245,158,11,.12);color:var(--c5)">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <div>
+          <div class="dt-opt-label">Video</div>
+          <div class="dt-opt-sub">Extract audio</div>
+        </div>
+      </button>
+
+    </div>
+
     <button class="sheet-close-btn" onclick="closeSettings()">Close</button>
   </div>
 </div>
 
 <script>
+/* ══════════════════════════════════════════════════════════
+   MORE OPTIONS SYSTEM
+   ══════════════════════════════════════════════════════════ */
+
+window.toggleMoreOpts = function(id) {
+  var btn = document.getElementById('moreOpts' + id + 'Btn');
+  var body = document.getElementById('moreOpts' + id + 'Body');
+  if (!btn || !body) return;
+  var isOpen = body.classList.contains('open');
+  btn.classList.toggle('open', !isOpen);
+  body.classList.toggle('open', !isOpen);
+};
+
+window.updateMoreOptsBadge = function(id) {
+  var btn = document.getElementById('moreOpts' + id + 'Btn');
+  if (!btn) return;
+  // Check if any non-default values are set in this section
+  var body = document.getElementById('moreOpts' + id + 'Body');
+  if (!body) return;
+  // Look for any select not at default (index 0) or unchecked default-on toggles
+  var selects = body.querySelectorAll('select');
+  var checks = body.querySelectorAll('input[type=checkbox]');
+  var textInputs = body.querySelectorAll('input[type=text]');
+  var hasActive = false;
+  selects.forEach(function(s){ if(s.selectedIndex !== 0) hasActive = true; });
+  textInputs.forEach(function(t){ if(t.value.trim()) hasActive = true; });
+  btn.classList.toggle('has-active', hasActive);
+};
+
 /* ══════════════════════════════════════════════════════════
    PASSWORD PROTECTION SYSTEM
    ══════════════════════════════════════════════════════════ */
@@ -4424,6 +5340,7 @@ function applyTheme(id){
 }
 function openSettings(){
   document.getElementById('settingsOverlay').classList.add('open');
+  syncDefaultTabUI();
 }
 function closeSettings(){
   document.getElementById('settingsOverlay').classList.remove('open');
@@ -4436,6 +5353,35 @@ function handleOverlayClick(e){
   const saved=localStorage.getItem('fs-theme');
   applyTheme(saved && THEMES.includes(saved) ? saved : 'white-blue');
 })();
+
+/* ══ DEFAULT TAB MANAGER ══ */
+const DEFAULT_TABS = ['convert','merge','link','video'];
+function setDefaultTab(tab){
+  if(!DEFAULT_TABS.includes(tab)) tab='convert';
+  localStorage.setItem('ramix-default-tab', tab);
+  syncDefaultTabUI();
+  // Immediately navigate to the selected tab
+  switchMainTab(tab);
+  if(typeof updateDtNav === 'function') updateDtNav(tab);
+  if(typeof updateMobileNav === 'function') updateMobileNav(tab);
+  // Close settings after short delay so user sees the change
+  setTimeout(closeSettings, 220);
+}
+function syncDefaultTabUI(){
+  const saved = localStorage.getItem('ramix-default-tab') || 'convert';
+  document.querySelectorAll('.default-tab-opt').forEach(btn=>{
+    btn.classList.toggle('active-dt', btn.dataset.tab === saved);
+  });
+}
+/* Apply default tab on load */
+document.addEventListener('DOMContentLoaded', function(){
+  const saved = localStorage.getItem('ramix-default-tab');
+  if(saved && DEFAULT_TABS.includes(saved) && saved !== 'convert'){
+    switchMainTab(saved);
+    if(typeof updateDtNav === 'function') updateDtNav(saved);
+    if(typeof updateMobileNav === 'function') updateMobileNav(saved);
+  }
+});
 
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
@@ -6652,9 +7598,22 @@ async function convertVideoToAudio() {
 
     // ── Download button ──
     document.getElementById('dlVideoLabel').textContent = ext.toUpperCase();
-    document.getElementById('dlVideo').onclick = () => {
-      const a = document.createElement('a');
-      a.href = url; a.download = outName; a.click();
+    document.getElementById('dlVideo').onclick = async () => {
+      const btn = document.getElementById('dlVideo');
+      const origHtml = btn.innerHTML;
+      const pw = (document.getElementById('pwInputVideo') || {}).value || '';
+      if (pw.trim()) {
+        btn.disabled = true;
+        btn.innerHTML = '🔒 Encrypting…';
+        const {blob: encBlob, filename: encName} = await maybeEncrypt('Video', finalBlob, outName.replace(/\.[^.]+$/,''), '.'+ext);
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+        const ea = document.createElement('a');
+        ea.href = URL.createObjectURL(encBlob); ea.download = encName; ea.click();
+      } else {
+        const a = document.createElement('a');
+        a.href = url; a.download = outName; a.click();
+      }
     };
 
     vidSetProg(100, 'Done!');
@@ -8952,10 +9911,16 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
     document.querySelectorAll('.dz-hint').forEach(function(el){
       var html = el.innerHTML;
       if(!html.includes('desktop-hint')){
+        // Build mobile version: strip drag-drop, use "Tap to browse"
+        var mobileHtml = html
+          .replace(/[Dd]rag\s*(?:&amp;|&|and)\s*drop\s+or\s+/gi,'')
+          .replace(/or\s+drag\s*(?:&amp;|&|and)\s*drop/gi,'')
+          .replace(/drag\s*(?:&amp;|&|and)\s*drop/gi,'Tap to browse')
+          .replace(/<b [^>]*>Browse<\/b>\s*/gi,'');
+        // Prepend "Tap to browse" label
+        mobileHtml = '<b class="c1">Tap to browse</b> &nbsp;·&nbsp; ' + mobileHtml.replace(/^\s*·\s*/,'').trim();
         el.innerHTML = '<span class="desktop-hint">' + html + '</span>' +
-          '<span class="mobile-hint" style="display:none">' +
-          html.replace(/[Dd]rag.*?drop or /gi,'Tap to ').replace(/drag.*drop/gi,'Tap to browse') +
-          '</span>';
+          '<span class="mobile-hint" style="display:none">' + mobileHtml + '</span>';
       }
     });
   }
