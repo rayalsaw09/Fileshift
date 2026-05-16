@@ -1,8 +1,8 @@
 [{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
         "namespace": "android_app",
         "package_name": "com.fileshift.converter",
-        "sha256_cert_fingerprints": ["42:A8:EE:AD:07:A0:4C:11:56:C7:C0:6A:1D:74:74:F3:9F:1C:A8:0B:B1:0F:41:88:75:2A:7E:84:F6:95:EA:26"]
-      }
-    }]
+        "sha256_cert_fingerprints": ["3C:C3:C2:95:C9:3D:7A:8D:4B:F8:E2:49:93:9E:90:AE:89:F1:F6:FA:49:0C:23:2C:97:A3:45:59:39:4D:B2:D6"]
+    }
+}]
