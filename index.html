@@ -5375,11 +5375,16 @@ function syncDefaultTabUI(){
 }
 /* Apply default tab on load */
 document.addEventListener('DOMContentLoaded', function(){
-  const saved = localStorage.getItem('ramix-default-tab');
-  if(saved && DEFAULT_TABS.includes(saved) && saved !== 'convert'){
+  const saved = localStorage.getItem('ramix-default-tab') || 'convert';
+  if(DEFAULT_TABS.includes(saved)){
+    // Switch content immediately
     switchMainTab(saved);
-    if(typeof updateDtNav === 'function') updateDtNav(saved);
-    if(typeof updateMobileNav === 'function') updateMobileNav(saved);
+    // Nav bars (mobile/desktop) are injected by applyLayout shortly after —
+    // use a small delay so they exist before we try to update them
+    setTimeout(function(){
+      if(typeof updateDtNav === 'function') updateDtNav(saved);
+      if(typeof updateMobileNav === 'function') updateMobileNav(saved);
+    }, 50);
   }
 });
 
@@ -9805,24 +9810,25 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
   // ── Inject mobile bottom nav ──
   function buildMobileBottomNav(){
     if(document.getElementById('mobileBottomNav')) return;
+    var savedTab = (localStorage.getItem('ramix-default-tab') || 'convert');
     var nav = document.createElement('div');
     nav.id = 'mobileBottomNav';
     nav.className = 'mobile-bottom-nav';
     nav.innerHTML = `
-      <button class="mobile-nav-btn active" id="mobileNavConvert" onclick="switchMainTab('convert');updateMobileNav('convert')">
+      <button class="mobile-nav-btn${savedTab==='convert'?' active':''}" id="mobileNavConvert" onclick="switchMainTab('convert');updateMobileNav('convert')">
         <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
         Convert
       </button>
-      <button class="mobile-nav-btn" id="mobileNavMerge" onclick="switchMainTab('merge');updateMobileNav('merge')">
+      <button class="mobile-nav-btn${savedTab==='merge'?' active':''}" id="mobileNavMerge" onclick="switchMainTab('merge');updateMobileNav('merge')">
         <svg viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
         Merge
       </button>
-      <button class="mobile-nav-btn" id="mobileNavLink" onclick="switchMainTab('link');updateMobileNav('link')" style="position:relative">
+      <button class="mobile-nav-btn${savedTab==='link'?' active':''}" id="mobileNavLink" onclick="switchMainTab('link');updateMobileNav('link')" style="position:relative">
         <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
         Link
         <span class="mobile-nav-new-dot"></span>
       </button>
-      <button class="mobile-nav-btn" id="mobileNavVideo" onclick="switchMainTab('video');updateMobileNav('video')">
+      <button class="mobile-nav-btn${savedTab==='video'?' active':''}" id="mobileNavVideo" onclick="switchMainTab('video');updateMobileNav('video')">
         <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
         Video
       </button>
