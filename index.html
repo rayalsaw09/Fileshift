@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Fileshift — Convert Anything</title>
+<title>RΛMIX — Convert Anything</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -696,8 +696,9 @@
   color: var(--fog);
 }
 [data-theme="white-blue"] .logo-name,
-[data-theme="purple-modern"] .logo-name {
-  background: linear-gradient(135deg, var(--snow) 40%, var(--fog));
+[data-theme="purple-modern"] .logo-name,
+[data-theme="dark-navy"] .logo-name {
+  background: linear-gradient(135deg, var(--c1) 0%, var(--c2) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -953,7 +954,7 @@ header{
 .logo-icon svg{width:22px;height:22px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1}
 .logo-name{
   font-size:24px;font-weight:800;letter-spacing:-.04em;
-  background:linear-gradient(135deg,#fff 50%,var(--mist));
+  background:linear-gradient(135deg,var(--c1) 0%,var(--c2) 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
 .tagline-wrap{
@@ -1178,8 +1179,11 @@ header{
   font-family:'DM Mono',monospace;font-size:12px;font-weight:500;
   cursor:pointer;text-align:center;transition:all .18s;
 }
+.fmt-opt.on-c1{border-color:rgba(79,140,255,.4);background:rgba(79,140,255,.08);color:var(--c1)}
+.fmt-opt.on-c2{border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.08);color:var(--c2)}
 .fmt-opt.on-c3{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08);color:var(--c3)}
 .fmt-opt.on-c4{border-color:rgba(52,211,153,.4);background:rgba(52,211,153,.08);color:var(--c4)}
+.fmt-opt.on-c5{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.08);color:var(--c5)}
 .fmt-opt:not([class*="on-"]):hover{border-color:var(--line2);color:var(--mist);background:rgba(255,255,255,.04)}
 
 /* ── SLIDER ── */
@@ -2278,7 +2282,7 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     <div class="logo-icon">
       <svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
     </div>
-    <span class="logo-name">Fileshift</span>
+    <span class="logo-name">RΛMIX</span>
   </div>
   <div class="header-right">
     <div class="tagline-wrap" style="align-self:flex-end">
@@ -2333,6 +2337,10 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
     Link
     <span style="position:absolute;top:6px;right:6px;font-size:8px;font-family:'DM Mono',monospace;background:linear-gradient(135deg,var(--c1),var(--c2));color:#000;font-weight:700;padding:1px 5px;border-radius:99px;line-height:1.4">NEW</span>
+  </button>
+  <button class="main-tab-btn" id="mainTabVideo" onclick="switchMainTab('video')">
+    <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+    Video
   </button>
 </div>
 
@@ -3799,10 +3807,321 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 
 </div><!-- /contentLink -->
 
+<!-- ══ VIDEO → AUDIO TAB CONTENT ══ -->
+<div class="main-content" id="contentVideo">
+<style>
+/* ── VIDEO TAB SPECIFIC ── */
+.vid-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:0}
+@media(max-width:600px){.vid-grid{grid-template-columns:1fr}}
+.vid-section{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px}
+.vid-section-title{font-size:10px;font-family:'DM Mono',monospace;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--fog);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.vid-section-title svg{opacity:.6}
+.fmt-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+@media(max-width:500px){.fmt-grid{grid-template-columns:repeat(3,1fr)}}
+.fmt-card{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 6px 8px;border:1.5px solid var(--line2);border-radius:10px;background:rgba(255,255,255,.02);cursor:pointer;transition:all .16s;position:relative}
+.fmt-card:hover{border-color:var(--line2);background:rgba(255,255,255,.05)}
+.fmt-card.active{border-color:rgba(79,140,255,.6);background:rgba(79,140,255,.1)}
+.fmt-card .fmt-name{font-size:12px;font-weight:700;font-family:'DM Mono',monospace;color:var(--fog);transition:color .16s}
+.fmt-card.active .fmt-name{color:var(--c1)}
+.fmt-card .fmt-desc{font-size:9px;color:var(--fog);font-family:'DM Mono',monospace;opacity:.7;text-align:center;line-height:1.3}
+.fmt-card .fmt-badge{position:absolute;top:4px;right:4px;font-size:7px;padding:1px 4px;border-radius:4px;font-family:'DM Mono',monospace;font-weight:700;background:rgba(52,211,153,.15);color:var(--c3);letter-spacing:.05em}
+.fmt-icon{width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:rgba(79,140,255,.1);color:var(--c1);margin-bottom:2px;transition:all .16s}
+.fmt-card.active .fmt-icon{background:rgba(79,140,255,.2)}
+.vopt-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.vopt-row:last-child{border-bottom:none;padding-bottom:0}
+.vopt-row:first-child{padding-top:0}
+.vopt-label{font-size:12px;font-weight:600;color:var(--snow)}
+.vopt-sub{font-size:10px;color:var(--fog);font-family:'DM Mono',monospace;margin-top:1px}
+.vopt-ctrl{display:flex;gap:5px;align-items:center;flex-shrink:0}
+.vopt-pill{padding:5px 10px;border:1px solid var(--line2);border-radius:7px;font-size:11px;font-family:'DM Mono',monospace;font-weight:600;color:var(--fog);cursor:pointer;background:rgba(255,255,255,.02);transition:all .15s}
+.vopt-pill:hover{border-color:var(--mist);color:var(--mist)}
+.vopt-pill.active{border-color:rgba(79,140,255,.5);background:rgba(79,140,255,.1);color:var(--c1)}
+.vopt-select{background:var(--card-bg);border:1px solid var(--line2);border-radius:7px;color:var(--snow);font-size:11px;font-family:'DM Mono',monospace;padding:5px 8px;cursor:pointer;outline:none}
+.vopt-toggle{width:36px;height:20px;border-radius:10px;background:var(--line2);border:none;cursor:pointer;position:relative;transition:background .2s;flex-shrink:0}
+.vopt-toggle.on{background:var(--c1)}
+.vopt-toggle::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
+.vopt-toggle.on::after{transform:translateX(16px)}
+.vid-prog-wrap{margin-top:16px;display:none}
+.vid-prog-bar{height:4px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:6px}
+.vid-prog-fill{height:100%;background:linear-gradient(90deg,var(--c1),var(--c2));border-radius:99px;transition:width .3s;width:0%}
+.vid-prog-lbl{font-size:11px;color:var(--fog);font-family:'DM Mono',monospace}
+.vid-preview{margin-top:16px;display:none}
+.vid-preview audio{width:100%;border-radius:8px;margin-bottom:10px}
+.vid-waveform{width:100%;height:60px;background:rgba(79,140,255,.05);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.vid-waveform canvas{width:100%;height:100%}
+.vid-meta-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.vid-meta-item{background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:8px;padding:8px 10px;text-align:center}
+.vid-meta-val{font-size:13px;font-weight:700;color:var(--snow);font-family:'DM Mono',monospace}
+.vid-meta-key{font-size:9px;color:var(--fog);font-family:'DM Mono',monospace;margin-top:2px;text-transform:uppercase;letter-spacing:.08em}
+</style>
+
+  <div style="max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:16px">
+
+    <!-- DROP ZONE -->
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="drop-zone dz-c1" id="dzVideo" onclick="document.getElementById('inVideo').click()" style="border-radius:16px;border:none">
+        <input type="file" id="inVideo" accept="video/*,audio/*" style="display:none"/>
+        <div class="dz-ring c1">
+          <svg viewBox="0 0 24 24" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="26" height="26"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        </div>
+        <p class="dz-title">Drop your video or audio file</p>
+        <p class="dz-hint">or <b class="c1">click to browse</b> &nbsp;·&nbsp; MP4 · MKV · MOV · AVI · WEBM · MP3 · WAV · OGG</p>
+      </div>
+      <div class="file-chip" id="chipVideo" style="display:none;margin:0 16px 14px">
+        <div class="f-badge c1">VID</div>
+        <div class="f-info"><div class="f-name" id="chipVideoName"></div><div class="f-size" id="chipVideoSize"></div></div>
+        <button class="f-rm" id="rmVideo"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+    </div>
+
+    <!-- OUTPUT FORMAT -->
+    <div class="card">
+      <div class="vid-section-title">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        Output Format
+      </div>
+      <div class="fmt-grid" id="fmtRowVideo">
+        <button class="fmt-card active" data-fmt="mp3" onclick="selectVideoFmt('mp3')">
+          <div class="fmt-icon"><svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>
+          <span class="fmt-name">MP3</span>
+          <span class="fmt-desc">Universal<br>Compressed</span>
+          <span class="fmt-badge">POPULAR</span>
+        </button>
+        <button class="fmt-card" data-fmt="wav" onclick="selectVideoFmt('wav')">
+          <div class="fmt-icon"><svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+          <span class="fmt-name">WAV</span>
+          <span class="fmt-desc">Lossless<br>Uncompressed</span>
+          <span class="fmt-badge" style="background:rgba(52,211,153,.15);color:var(--c3)">LOSSLESS</span>
+        </button>
+        <button class="fmt-card" data-fmt="ogg" onclick="selectVideoFmt('ogg')">
+          <div class="fmt-icon"><svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/></svg></div>
+          <span class="fmt-name">OGG</span>
+          <span class="fmt-desc">Open<br>Compressed</span>
+        </button>
+        <button class="fmt-card" data-fmt="aac" onclick="selectVideoFmt('aac')">
+          <div class="fmt-icon"><svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M8 12h8"/></svg></div>
+          <span class="fmt-name">AAC</span>
+          <span class="fmt-desc">Apple / M4A<br>High Quality</span>
+        </button>
+        <button class="fmt-card" data-fmt="flac" onclick="selectVideoFmt('flac')">
+          <div class="fmt-icon"><svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/></svg></div>
+          <span class="fmt-name">FLAC</span>
+          <span class="fmt-desc">Studio<br>Lossless</span>
+          <span class="fmt-badge" style="background:rgba(245,158,11,.15);color:var(--c5)">HI-FI</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ADVANCED OPTIONS grid -->
+    <div class="vid-grid">
+
+      <!-- Audio Settings -->
+      <div class="vid-section">
+        <div class="vid-section-title">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          Audio Settings
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Sample Rate</div>
+            <div class="vopt-sub">Audio frequency (Hz)</div>
+          </div>
+          <div class="vopt-ctrl">
+            <select class="vopt-select" id="vSampleRate">
+              <option value="44100">44,100 Hz (CD)</option>
+              <option value="48000" selected>48,000 Hz (HD)</option>
+              <option value="96000">96,000 Hz (Studio)</option>
+              <option value="22050">22,050 Hz (Small)</option>
+              <option value="16000">16,000 Hz (Voice)</option>
+              <option value="8000">8,000 Hz (Phone)</option>
+            </select>
+          </div>
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Channels</div>
+            <div class="vopt-sub">Stereo or mono output</div>
+          </div>
+          <div class="vopt-ctrl">
+            <button class="vopt-pill active" id="vChStereo" onclick="setVidChannels('stereo')">Stereo</button>
+            <button class="vopt-pill" id="vChMono" onclick="setVidChannels('mono')">Mono</button>
+          </div>
+        </div>
+        <div class="vopt-row" id="vBitrateRow">
+          <div>
+            <div class="vopt-label">Bitrate</div>
+            <div class="vopt-sub">Quality vs file size</div>
+          </div>
+          <div class="vopt-ctrl">
+            <select class="vopt-select" id="vBitrate">
+              <option value="64">64 kbps (Small)</option>
+              <option value="128" selected>128 kbps (Good)</option>
+              <option value="192">192 kbps (Better)</option>
+              <option value="256">256 kbps (High)</option>
+              <option value="320">320 kbps (Best)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trim & Extract -->
+      <div class="vid-section">
+        <div class="vid-section-title">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>
+          Trim & Extract
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Trim Audio</div>
+            <div class="vopt-sub">Extract a specific segment</div>
+          </div>
+          <button class="vopt-toggle" id="vTrimToggle" onclick="toggleVidTrim()"></button>
+        </div>
+        <div id="vTrimControls" style="display:none;padding-top:10px">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div>
+              <div style="font-size:10px;color:var(--fog);font-family:'DM Mono',monospace;margin-bottom:4px">START (seconds)</div>
+              <input type="number" id="vTrimStart" min="0" value="0" step="0.1" style="width:100%;background:var(--card-bg);border:1px solid var(--line2);border-radius:7px;color:var(--snow);font-size:12px;font-family:'DM Mono',monospace;padding:6px 8px;outline:none" placeholder="0"/>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--fog);font-family:'DM Mono',monospace;margin-bottom:4px">END (seconds)</div>
+              <input type="number" id="vTrimEnd" min="0" value="" step="0.1" style="width:100%;background:var(--card-bg);border:1px solid var(--line2);border-radius:7px;color:var(--snow);font-size:12px;font-family:'DM Mono',monospace;padding:6px 8px;outline:none" placeholder="auto"/>
+            </div>
+          </div>
+        </div>
+        <div class="vopt-row" style="margin-top:4px">
+          <div>
+            <div class="vopt-label">Normalize Volume</div>
+            <div class="vopt-sub">Auto-level audio peaks</div>
+          </div>
+          <button class="vopt-toggle" id="vNormToggle" onclick="toggleVidNorm()"></button>
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Remove Silence</div>
+            <div class="vopt-sub">Strip silent gaps</div>
+          </div>
+          <button class="vopt-toggle" id="vSilenceToggle" onclick="toggleVidSilence()"></button>
+        </div>
+      </div>
+
+      <!-- Effects -->
+      <div class="vid-section">
+        <div class="vid-section-title">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Audio Effects
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Speed</div>
+            <div class="vopt-sub" id="vSpeedLbl">1.0× (normal)</div>
+          </div>
+          <input type="range" id="vSpeed" min="0.25" max="4" step="0.05" value="1" style="width:90px;accent-color:var(--c1)" oninput="updateVidSpeedLbl()"/>
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Pitch Shift</div>
+            <div class="vopt-sub" id="vPitchLbl">0 semitones</div>
+          </div>
+          <input type="range" id="vPitch" min="-12" max="12" step="1" value="0" style="width:90px;accent-color:var(--c2)" oninput="updateVidPitchLbl()"/>
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Fade In</div>
+            <div class="vopt-sub" id="vFadeInLbl">Off</div>
+          </div>
+          <input type="range" id="vFadeIn" min="0" max="10" step="0.5" value="0" style="width:90px;accent-color:var(--c3)" oninput="updateVidFadeLbls()"/>
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Fade Out</div>
+            <div class="vopt-sub" id="vFadeOutLbl">Off</div>
+          </div>
+          <input type="range" id="vFadeOut" min="0" max="10" step="0.5" value="0" style="width:90px;accent-color:var(--c3)" oninput="updateVidFadeLbls()"/>
+        </div>
+      </div>
+
+      <!-- Volume & Info -->
+      <div class="vid-section">
+        <div class="vid-section-title">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+          Volume & Output
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Volume</div>
+            <div class="vopt-sub" id="vVolLbl">100%</div>
+          </div>
+          <input type="range" id="vVol" min="0" max="200" step="5" value="100" style="width:90px;accent-color:var(--c1)" oninput="updateVidVolLbl()"/>
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Reverse Audio</div>
+            <div class="vopt-sub">Play backwards</div>
+          </div>
+          <button class="vopt-toggle" id="vReverseToggle" onclick="toggleVidReverse()"></button>
+        </div>
+        <div class="vopt-row">
+          <div>
+            <div class="vopt-label">Output Filename</div>
+            <div class="vopt-sub">Custom name (optional)</div>
+          </div>
+        </div>
+        <input type="text" id="vCustomName" placeholder="Leave blank for auto" style="width:100%;background:var(--card-bg);border:1px solid var(--line2);border-radius:7px;color:var(--snow);font-size:12px;font-family:'DM Mono',monospace;padding:7px 10px;outline:none;margin-top:4px"/>
+      </div>
+
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="vid-prog-wrap" id="vidProgWrap">
+      <div class="vid-prog-bar"><div class="vid-prog-fill" id="vidProgFill"></div></div>
+      <div class="vid-prog-lbl" id="vidProgLbl">Processing…</div>
+    </div>
+
+    <!-- MSG -->
+    <div class="msg" id="msgVideo"><svg id="msgVideoIcon" viewBox="0 0 24 24"></svg><span id="msgVideoText"></span></div>
+
+    <!-- CONVERT BUTTON -->
+    <button class="go-btn" id="btnVideo" style="width:100%;font-size:15px;padding:14px" onclick="convertVideoToAudio()">
+      <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      Extract Audio
+    </button>
+
+    <!-- RESULT -->
+    <div id="videoResult" style="display:none">
+      <div class="card">
+        <!-- Audio Preview Player -->
+        <div class="vid-section-title" style="margin-bottom:12px">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8"/></svg>
+          Preview & Download
+        </div>
+        <audio id="vidAudioPreview" controls style="width:100%;border-radius:8px;margin-bottom:14px"></audio>
+        <!-- Waveform -->
+        <div class="vid-waveform"><canvas id="vidWaveCanvas"></canvas></div>
+        <!-- Meta -->
+        <div class="vid-meta-grid">
+          <div class="vid-meta-item"><div class="vid-meta-val" id="vmDuration">—</div><div class="vid-meta-key">Duration</div></div>
+          <div class="vid-meta-item"><div class="vid-meta-val" id="vmSize">—</div><div class="vid-meta-key">File Size</div></div>
+          <div class="vid-meta-item"><div class="vid-meta-val" id="vmFormat">—</div><div class="vid-meta-key">Format</div></div>
+        </div>
+        <!-- Download -->
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="go-btn" id="dlVideo" style="flex:1;font-size:14px;padding:12px">
+            <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download <span id="dlVideoLabel"></span>
+          </button>
+          <button class="again-btn" id="againVideo" style="flex:0 0 auto;padding:12px 18px;margin-top:0">New File</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /contentVideo -->
+
 
 <footer>
-  <div class="foot-brand">Fileshift</div>
-  <div class="foot-copy">© 2025 Fileshift · All conversions run locally in your browser</div>
+  <div class="foot-brand">RΛMIX</div>
+  <div class="foot-copy">© 2025 RΛMIX · All conversions run locally in your browser</div>
 </footer>
 
 </div><!-- /shell -->
@@ -3817,34 +4136,16 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   <div class="settings-sheet" id="settingsSheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">App Settings</div>
-    <div class="sheet-sub">Personalise how Fileshift looks</div>
+    <div class="sheet-sub">Personalise how RΛMIX looks</div>
     <div class="sheet-divider"></div>
 
     <div style="padding:0 20px 12px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--fog)">Choose theme</div>
 
     <div class="theme-grid-modal">
 
-      <!-- Dark Teal -->
-      <button class="theme-opt" data-t="dark-teal" onclick="applyTheme('dark-teal')">
-        <div class="theme-check-badge">✓</div>
-        <div class="theme-swatch" style="background:#0C0C10">
-          <div class="sw-topbar" style="background:#1de9b6"></div>
-          <div class="sw-card" style="background:#13131C">
-            <div class="sw-line" style="background:#1de9b6;opacity:.4;width:80%"></div>
-            <div class="sw-line" style="background:#1de9b6;opacity:.2;width:55%"></div>
-            <div class="sw-btn" style="background:#1de9b6"></div>
-          </div>
-        </div>
-        <div class="theme-opt-info">
-          <div class="theme-opt-name">Dark Teal</div>
-          <div class="theme-opt-desc">Original theme</div>
-        </div>
-      </button>
-
-      <!-- Clean Blue -->
+      <!-- White -->
       <button class="theme-opt" data-t="white-blue" onclick="applyTheme('white-blue')">
         <div class="theme-check-badge" style="background:#2563EB;color:#fff">✓</div>
-        <div class="theme-rec">Recommended</div>
         <div class="theme-swatch" style="background:#EFF6FF">
           <div class="sw-topbar" style="background:#2563EB"></div>
           <div class="sw-card" style="background:#fff">
@@ -3854,29 +4155,12 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
           </div>
         </div>
         <div class="theme-opt-info">
-          <div class="theme-opt-name">Clean Blue</div>
-          <div class="theme-opt-desc">Trusted · Professional</div>
+          <div class="theme-opt-name">White</div>
+          <div class="theme-opt-desc">Clean · Professional</div>
         </div>
       </button>
 
-      <!-- Purple Modern -->
-      <button class="theme-opt" data-t="purple-modern" onclick="applyTheme('purple-modern')">
-        <div class="theme-check-badge" style="background:#7C3AED;color:#fff">✓</div>
-        <div class="theme-swatch" style="background:#FAF5FF">
-          <div class="sw-topbar" style="background:#7C3AED"></div>
-          <div class="sw-card" style="background:#fff">
-            <div class="sw-line" style="background:#7C3AED;opacity:.4;width:80%"></div>
-            <div class="sw-line" style="background:#7C3AED;opacity:.2;width:55%"></div>
-            <div class="sw-btn" style="background:#7C3AED"></div>
-          </div>
-        </div>
-        <div class="theme-opt-info">
-          <div class="theme-opt-name">Purple Modern</div>
-          <div class="theme-opt-desc">Trendy · Stands out</div>
-        </div>
-      </button>
-
-      <!-- Dark Navy -->
+      <!-- Black -->
       <button class="theme-opt" data-t="dark-navy" onclick="applyTheme('dark-navy')">
         <div class="theme-check-badge" style="background:#3B82F6;color:#fff">✓</div>
         <div class="theme-swatch" style="background:#0F172A">
@@ -3888,8 +4172,8 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
           </div>
         </div>
         <div class="theme-opt-info">
-          <div class="theme-opt-name">Dark Navy</div>
-          <div class="theme-opt-desc">Premium · Best of both</div>
+          <div class="theme-opt-name">Black</div>
+          <div class="theme-opt-desc">Dark · Premium</div>
         </div>
       </button>
 
@@ -3989,7 +4273,7 @@ input::placeholder{color:#6b6b88}
 </div>
 <button class="btn" id="decBtn" onclick="decrypt()">🔓 Decrypt &amp; Download</button>
 <div class="err" id="err">❌ Wrong password or corrupted file.</div>
-<div class="footer">Encrypted with AES-256-GCM · Fileshift</div>
+<div class="footer">Encrypted with AES-256-GCM · RΛMIX</div>
 </div>
 <script>
 const B64='${b64}';
@@ -4044,7 +4328,7 @@ async function encryptBlobToLinkZip(blob, password, filename){
     '2. Open "' + htmlName + '" in Chrome, Firefox, or Edge\n' +
     '3. Enter the password you were given\n' +
     '4. Your original file will be decrypted and saved\n\n' +
-    'Encrypted with AES-256-GCM · Fileshift\n'
+    'Encrypted with AES-256-GCM · RΛMIX\n'
   );
   const zipBlob = await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:1}});
   return {zipBlob, zipName: baseName + '_protected.zip'};
@@ -4079,7 +4363,7 @@ p{font-size:12px;font-family:monospace;color:#6b6b88;margin-bottom:20px;line-hei
 <div class="fn">${safeFilename}</div>
 <p>Click below to download the protected file,<br>then open it in your browser to unlock.</p>
 <a id="dl" class="btn">⬇️ Download Protected File</a>
-<div class="note">After downloading: open the .html file in Chrome/Firefox/Edge<br>→ enter the password → your file will be decrypted &amp; saved.<br><br>Shared via <b>Fileshift</b></div>
+<div class="note">After downloading: open the .html file in Chrome/Firefox/Edge<br>→ enter the password → your file will be decrypted &amp; saved.<br><br>Shared via <b>RΛMIX</b></div>
 </div>
 <script>
 (function(){
@@ -4129,9 +4413,9 @@ window.copyLinkPassword=function(){
 };
 
 /* ══ THEME MANAGER ══ */
-const THEMES=['dark-teal','white-blue','purple-modern','dark-navy'];
+const THEMES=['white-blue','dark-navy'];
 function applyTheme(id){
-  if(!THEMES.includes(id))id='dark-teal';
+  if(!THEMES.includes(id))id='white-blue';
   document.documentElement.setAttribute('data-theme',id);
   localStorage.setItem('fs-theme',id);
   document.querySelectorAll('.theme-opt').forEach(b=>{
@@ -4147,10 +4431,10 @@ function closeSettings(){
 function handleOverlayClick(e){
   if(e.target===document.getElementById('settingsOverlay'))closeSettings();
 }
-/* Load saved theme immediately */
+/* Load saved theme — default to white-blue for first-time visitors */
 (function(){
-  const saved=localStorage.getItem('fs-theme')||'dark-teal';
-  applyTheme(saved);
+  const saved=localStorage.getItem('fs-theme');
+  applyTheme(saved && THEMES.includes(saved) ? saved : 'white-blue');
 })();
 
 pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -4292,7 +4576,7 @@ document.getElementById('btnCvtPdf').addEventListener('click',async()=>{
     prog('Pdf',15,`Found ${totalPages} page(s)`,`${totalPages} page${totalPages>1?'s':''} to process`);
 
     const wb=XLSX.utils.book_new();
-    wb.Props={Title:'Converted from '+pdfFile.name,Author:'Fileshift',CreatedDate:new Date()};
+    wb.Props={Title:'Converted from '+pdfFile.name,Author:'RΛMIX',CreatedDate:new Date()};
     const tables=[];
 
     // ══ PHASE 1: Text extraction ══
@@ -4399,7 +4683,7 @@ document.getElementById('btnCvtPdf').addEventListener('click',async()=>{
             }
           }catch(imgErr){
             // Individual image extraction failed — will fall back to full page snapshot
-            console.warn('[Fileshift] Image object extraction failed:',imgErr.message);
+            console.warn('[RΛMIX] Image object extraction failed:',imgErr.message);
           }
         }
 
@@ -4416,7 +4700,7 @@ document.getElementById('btnCvtPdf').addEventListener('click',async()=>{
           });
         }
       }catch(pageErr){
-        console.warn(`[Fileshift] Image scan error page ${p}:`,pageErr.message);
+        console.warn(`[RΛMIX] Image scan error page ${p}:`,pageErr.message);
       }
     }
 
@@ -4556,7 +4840,7 @@ function addImagesToWorkbook(wb, images){
   // Build a simple "Images" sheet with labels and image info
   // The actual image injection happens via patchXlsxWithImages() called at write time
   const rows=[];
-  rows.push(['PDF Images extracted by Fileshift','','','']);
+  rows.push(['PDF Images extracted by RΛMIX','','','']);
   rows.push(['']);
   images.forEach((img,i)=>{
     rows.push([`Image ${i+1}: ${img.label}`,'','Width: '+img.width+'px','Height: '+img.height+'px']);
@@ -4751,7 +5035,7 @@ async function patchXlsxWithImages(xlsxArrayBuffer, images){
     const finalBuffer=await zip.generateAsync({type:'arraybuffer',compression:'DEFLATE',compressionOptions:{level:6}});
     return finalBuffer;
   }catch(e){
-    console.warn('[Fileshift] Image patching failed:',e.message);
+    console.warn('[RΛMIX] Image patching failed:',e.message);
     return xlsxArrayBuffer; // return original if patching fails
   }
 }
@@ -4924,7 +5208,7 @@ function validateAndSplitHeaders(grid, consensusCols){
         const merged2=new RegExp(`^${hb}\\s+${ha}$`,'i');
         if(merged1.test(cellLower)||merged2.test(cellLower)){
           // This cell is a merged header — flag it
-          console.warn(`[Fileshift] Merged header detected: "${cell}" at col ${ci}. Will attempt split.`);
+          console.warn(`[RΛMIX] Merged header detected: "${cell}" at col ${ci}. Will attempt split.`);
           splitOccurred=true;
         }
       }
@@ -5060,7 +5344,7 @@ function validatePageConsistency(pageLayouts, consensusCols){
   const expectedCount=consensusCols?.length||0;
   const mismatches=pageLayouts.filter(pl=>pl.cols&&Math.abs(pl.cols.length-expectedCount)>1);
   if(mismatches.length){
-    console.info(`[Fileshift] ${mismatches.length} page(s) had layout differing from consensus (${expectedCount} cols). Auto-normalised.`);
+    console.info(`[RΛMIX] ${mismatches.length} page(s) had layout differing from consensus (${expectedCount} cols). Auto-normalised.`);
   }
 }
 
@@ -5151,7 +5435,7 @@ function detectTables(items, totalPages){
           row.map(item=>(item.text||item||'').trim()).filter(Boolean).join('  ')
         ).filter(Boolean);
         tableRows=rows.slice(dataStart);
-        console.info(`[Fileshift] Captured ${preambleLines.length} preamble line(s) from page 1 header block.`);
+        console.info(`[RΛMIX] Captured ${preambleLines.length} preamble line(s) from page 1 header block.`);
       }
     }
 
@@ -5680,7 +5964,7 @@ document.getElementById('btnCvtXl').addEventListener('click',async()=>{
           doc.setFont('helvetica','normal');
           doc.setFontSize(8);
           doc.setTextColor(180,200,230);
-          doc.text('Fileshift · Converted in-browser · fileshift.app',ML+8,PH-MB/2+3);
+          doc.text('RΛMIX · Converted in-browser · fileshift.app',ML+8,PH-MB/2+3);
           const pgTxt=`Page ${pg}`;
           const pgW=doc.getTextWidth(pgTxt);
           doc.text(pgTxt,PW-MR-pgW,PH-MB/2+3);
@@ -6162,8 +6446,393 @@ document.getElementById('btnCvtImg3').addEventListener('click',async()=>{
 // ═══════════════════════════════════════════════════════════════════
 // MAIN TAB SWITCHER (Convert / Merge)
 // ═══════════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════
+// VIDEO → AUDIO  (full rewrite)
+// ═══════════════════════════════════════════════════════════════════
+let videoFile = null;
+let videoAudioFmt = 'mp3';
+let videoAudioBlob = null;
+let vidTrimEnabled = false;
+let vidNormEnabled = false;
+let vidSilenceEnabled = false;
+let vidReverseEnabled = false;
+let vidChannels = 'stereo';
+
+// ── Format card switcher ──
+function selectVideoFmt(fmt) {
+  videoAudioFmt = fmt;
+  document.querySelectorAll('#fmtRowVideo .fmt-card').forEach(b => {
+    b.classList.toggle('active', b.dataset.fmt === fmt);
+  });
+  // Show/hide bitrate row (not relevant for WAV/FLAC)
+  const bitrateRow = document.getElementById('vBitrateRow');
+  if(bitrateRow) bitrateRow.style.display = (fmt === 'wav' || fmt === 'flac') ? 'none' : 'flex';
+}
+
+// ── Toggles ──
+function toggleVidTrim() {
+  vidTrimEnabled = !vidTrimEnabled;
+  document.getElementById('vTrimToggle').classList.toggle('on', vidTrimEnabled);
+  document.getElementById('vTrimControls').style.display = vidTrimEnabled ? 'block' : 'none';
+}
+function toggleVidNorm() {
+  vidNormEnabled = !vidNormEnabled;
+  document.getElementById('vNormToggle').classList.toggle('on', vidNormEnabled);
+}
+function toggleVidSilence() {
+  vidSilenceEnabled = !vidSilenceEnabled;
+  document.getElementById('vSilenceToggle').classList.toggle('on', vidSilenceEnabled);
+}
+function toggleVidReverse() {
+  vidReverseEnabled = !vidReverseEnabled;
+  document.getElementById('vReverseToggle').classList.toggle('on', vidReverseEnabled);
+}
+function setVidChannels(ch) {
+  vidChannels = ch;
+  document.getElementById('vChStereo').classList.toggle('active', ch === 'stereo');
+  document.getElementById('vChMono').classList.toggle('active', ch === 'mono');
+}
+
+// ── Label updaters ──
+function updateVidSpeedLbl() {
+  const v = parseFloat(document.getElementById('vSpeed').value);
+  document.getElementById('vSpeedLbl').textContent = v.toFixed(2) + '× ' + (v === 1 ? '(normal)' : v < 1 ? '(slower)' : '(faster)');
+}
+function updateVidPitchLbl() {
+  const v = parseInt(document.getElementById('vPitch').value);
+  document.getElementById('vPitchLbl').textContent = (v > 0 ? '+' : '') + v + ' semitone' + (Math.abs(v) !== 1 ? 's' : '');
+}
+function updateVidFadeLbls() {
+  const fi = parseFloat(document.getElementById('vFadeIn').value);
+  const fo = parseFloat(document.getElementById('vFadeOut').value);
+  document.getElementById('vFadeInLbl').textContent = fi === 0 ? 'Off' : fi + 's';
+  document.getElementById('vFadeOutLbl').textContent = fo === 0 ? 'Off' : fo + 's';
+}
+function updateVidVolLbl() {
+  document.getElementById('vVolLbl').textContent = document.getElementById('vVol').value + '%';
+}
+
+// ── Drop & pick ──
+(function(){
+  const dz = document.getElementById('dzVideo');
+  const inp = document.getElementById('inVideo');
+  ['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('over'); }));
+  ['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('over'); }));
+  dz.addEventListener('drop', ev => { const f = ev.dataTransfer.files[0]; if(f) pickVideo(f); });
+  inp.addEventListener('change', () => { if(inp.files[0]) pickVideo(inp.files[0]); });
+})();
+
+function pickVideo(f) {
+  const isVideo = f.type.startsWith('video/');
+  const isAudio = f.type.startsWith('audio/');
+  const ext = f.name.split('.').pop().toLowerCase();
+  const validExts = ['mp4','mkv','mov','avi','webm','flv','wmv','mp3','wav','ogg','aac','m4a','flac','opus'];
+  if (!isVideo && !isAudio && !validExts.includes(ext)) {
+    document.getElementById('msgVideo').className = 'msg error show';
+    document.getElementById('msgVideoText').textContent = 'Unsupported file type. Please upload a video or audio file.';
+    return;
+  }
+  videoFile = f;
+  document.getElementById('chipVideoName').textContent = f.name;
+  document.getElementById('chipVideoSize').textContent = fmtBytes(f.size);
+  document.getElementById('chipVideo').style.display = 'flex';
+  document.getElementById('dzVideo').style.display = 'none';
+  clearMsg('Video');
+  document.getElementById('videoResult').style.display = 'none';
+  // Auto-fill custom name
+  const base = f.name.replace(/\.[^.]+$/,'');
+  document.getElementById('vCustomName').placeholder = base + '.' + videoAudioFmt;
+}
+
+document.getElementById('rmVideo').addEventListener('click', resetVideo);
+document.getElementById('againVideo').addEventListener('click', resetVideo);
+
+function resetVideo() {
+  videoFile = null; videoAudioBlob = null;
+  document.getElementById('inVideo').value = '';
+  document.getElementById('chipVideo').style.display = 'none';
+  document.getElementById('dzVideo').style.display = '';
+  document.getElementById('videoResult').style.display = 'none';
+  clearMsg('Video');
+  document.getElementById('vidProgWrap').style.display = 'none';
+  document.getElementById('vidProgFill').style.width = '0%';
+}
+
+function vidSetProg(pct, lbl) {
+  document.getElementById('vidProgWrap').style.display = 'block';
+  document.getElementById('vidProgFill').style.width = pct + '%';
+  document.getElementById('vidProgLbl').textContent = lbl;
+}
+
+// ── Core converter ──
+async function convertVideoToAudio() {
+  if (!videoFile) {
+    document.getElementById('msgVideo').className = 'msg error show';
+    document.getElementById('msgVideoText').textContent = 'Please upload a video or audio file first.';
+    return;
+  }
+  const btn = document.getElementById('btnVideo');
+  btn.disabled = true;
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg> Processing…';
+  clearMsg('Video');
+  document.getElementById('videoResult').style.display = 'none';
+  vidSetProg(5, 'Reading file…');
+
+  try {
+    const arrayBuffer = await videoFile.arrayBuffer();
+    vidSetProg(20, 'Decoding audio track…');
+
+    const targetSR = parseInt(document.getElementById('vSampleRate').value) || 48000;
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: targetSR });
+
+    let audioBuffer;
+    try {
+      audioBuffer = await audioCtx.decodeAudioData(arrayBuffer.slice(0));
+    } catch(e) {
+      throw new Error('Could not decode audio. The file may have no audio track, or the codec is unsupported in this browser.');
+    }
+
+    vidSetProg(40, 'Applying effects…');
+
+    // ── Apply all processing ──
+    audioBuffer = await applyVideoEffects(audioBuffer, audioCtx, targetSR);
+
+    vidSetProg(65, 'Encoding ' + videoAudioFmt.toUpperCase() + '…');
+
+    // ── Encode ──
+    let finalBlob, ext = videoAudioFmt;
+    const wavBlob = audioBufferToWavFull(audioBuffer);
+
+    if (videoAudioFmt === 'wav') {
+      finalBlob = wavBlob;
+    } else if (videoAudioFmt === 'flac') {
+      finalBlob = wavBlob; ext = 'wav';
+      document.getElementById('msgVideo').className = 'msg info show';
+      document.getElementById('msgVideoText').textContent = 'FLAC in-browser encoding is not yet supported — saved as lossless WAV instead.';
+    } else {
+      // Try MediaRecorder for mp3/ogg/aac
+      const mimeMap = {
+        mp3: ['audio/mpeg','audio/mp3'],
+        ogg: ['audio/ogg;codecs=opus','audio/ogg'],
+        aac: ['audio/mp4;codecs=aac','audio/mp4','audio/aac','audio/x-m4a']
+      };
+      const candidates = mimeMap[videoAudioFmt] || [];
+      const mimeType = candidates.find(m => { try { return MediaRecorder.isTypeSupported(m); } catch(e){return false;} });
+      if (mimeType) {
+        finalBlob = await encodeViaMediaRecorderFull(audioBuffer, audioCtx, mimeType);
+        ext = videoAudioFmt === 'aac' ? 'm4a' : videoAudioFmt;
+      } else {
+        finalBlob = wavBlob; ext = 'wav';
+        document.getElementById('msgVideo').className = 'msg info show';
+        document.getElementById('msgVideoText').textContent = videoAudioFmt.toUpperCase() + ' encoding not supported in this browser — saved as WAV.';
+      }
+    }
+
+    vidSetProg(90, 'Finalising…');
+
+    videoAudioBlob = finalBlob;
+    const customName = document.getElementById('vCustomName').value.trim();
+    const baseName = customName || videoFile.name.replace(/\.[^.]+$/, '');
+    const outName = baseName.replace(/\.[a-zA-Z0-9]+$/, '') + '.' + ext;
+
+    // ── Preview ──
+    const url = URL.createObjectURL(finalBlob);
+    const audioEl = document.getElementById('vidAudioPreview');
+    audioEl.src = url;
+
+    // ── Waveform ──
+    drawWaveform(audioBuffer);
+
+    // ── Meta ──
+    const dur = audioBuffer.duration;
+    const mins = Math.floor(dur/60), secs = Math.floor(dur%60);
+    document.getElementById('vmDuration').textContent = mins + ':' + String(secs).padStart(2,'0');
+    document.getElementById('vmSize').textContent = fmtBytes(finalBlob.size);
+    document.getElementById('vmFormat').textContent = ext.toUpperCase();
+
+    // ── Download button ──
+    document.getElementById('dlVideoLabel').textContent = ext.toUpperCase();
+    document.getElementById('dlVideo').onclick = () => {
+      const a = document.createElement('a');
+      a.href = url; a.download = outName; a.click();
+    };
+
+    vidSetProg(100, 'Done!');
+    document.getElementById('videoResult').style.display = 'block';
+    audioCtx.close();
+
+  } catch(err) {
+    document.getElementById('msgVideo').className = 'msg error show';
+    document.getElementById('msgVideoText').textContent = err.message || 'Conversion failed.';
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Extract Audio';
+    setTimeout(() => { document.getElementById('vidProgWrap').style.display = 'none'; }, 1200);
+  }
+}
+
+// ── Apply all effects to AudioBuffer ──
+async function applyVideoEffects(buffer, audioCtx, targetSR) {
+  const numCh = vidChannels === 'mono' ? 1 : Math.min(buffer.numberOfChannels, 2);
+  const speed = parseFloat(document.getElementById('vSpeed').value) || 1;
+  const pitch = parseInt(document.getElementById('vPitch').value) || 0;
+  const vol = parseFloat(document.getElementById('vVol').value) / 100 || 1;
+  const fadeIn = parseFloat(document.getElementById('vFadeIn').value) || 0;
+  const fadeOut = parseFloat(document.getElementById('vFadeOut').value) || 0;
+
+  // Determine trim bounds
+  let startSec = 0, endSec = buffer.duration;
+  if (vidTrimEnabled) {
+    startSec = Math.max(0, parseFloat(document.getElementById('vTrimStart').value) || 0);
+    const te = parseFloat(document.getElementById('vTrimEnd').value);
+    if (te && te > startSec) endSec = Math.min(te, buffer.duration);
+  }
+
+  const startSample = Math.floor(startSec * buffer.sampleRate);
+  const endSample = Math.min(Math.floor(endSec * buffer.sampleRate), buffer.length);
+  const srcLen = endSample - startSample;
+
+  // Target length adjusted for speed
+  const outLen = Math.ceil(srcLen / speed);
+  const outSR = targetSR;
+  const outBuf = new AudioBuffer({ numberOfChannels: numCh, length: outLen, sampleRate: outSR });
+
+  for (let ch = 0; ch < numCh; ch++) {
+    const srcCh = ch < buffer.numberOfChannels ? ch : 0;
+    const src = buffer.getChannelData(srcCh);
+    const dst = outBuf.getChannelData(ch);
+
+    // Simple linear-interpolation resample + speed change
+    for (let i = 0; i < outLen; i++) {
+      const srcIdx = startSample + i * speed * (buffer.sampleRate / outSR);
+      const lo = Math.floor(srcIdx), hi = Math.min(lo+1, src.length-1);
+      const t = srcIdx - lo;
+      dst[i] = (src[lo] || 0) * (1-t) + (src[hi] || 0) * t;
+    }
+
+    // Volume
+    if (vol !== 1) for (let i = 0; i < outLen; i++) dst[i] *= vol;
+
+    // Normalize
+    if (vidNormEnabled) {
+      let peak = 0;
+      for (let i = 0; i < outLen; i++) { const a = Math.abs(dst[i]); if(a>peak) peak=a; }
+      if (peak > 0.001) { const g = 0.95/peak; for (let i=0;i<outLen;i++) dst[i]*=g; }
+    }
+
+    // Fade in
+    if (fadeIn > 0) {
+      const fadeInSamples = Math.min(Math.floor(fadeIn * outSR), outLen);
+      for (let i = 0; i < fadeInSamples; i++) dst[i] *= i / fadeInSamples;
+    }
+
+    // Fade out
+    if (fadeOut > 0) {
+      const fadeOutSamples = Math.min(Math.floor(fadeOut * outSR), outLen);
+      for (let i = 0; i < fadeOutSamples; i++) dst[outLen - 1 - i] *= i / fadeOutSamples;
+    }
+
+    // Reverse
+    if (vidReverseEnabled) dst.reverse();
+
+    // Remove silence (simple gate: zero out samples below threshold)
+    if (vidSilenceEnabled) {
+      const thresh = 0.01;
+      for (let i = 0; i < outLen; i++) if (Math.abs(dst[i]) < thresh) dst[i] = 0;
+    }
+  }
+
+  // Pitch shift (simple — via playback rate trick on OfflineAudioContext)
+  if (pitch !== 0) {
+    const semiFactor = Math.pow(2, pitch/12);
+    const shiftedLen = Math.ceil(outLen / semiFactor);
+    const shiftedBuf = new AudioBuffer({ numberOfChannels: numCh, length: shiftedLen, sampleRate: outSR });
+    for (let ch = 0; ch < numCh; ch++) {
+      const src = outBuf.getChannelData(ch);
+      const dst = shiftedBuf.getChannelData(ch);
+      for (let i = 0; i < shiftedLen; i++) {
+        const srcIdx = i * semiFactor;
+        const lo = Math.floor(srcIdx), hi = Math.min(lo+1, outLen-1);
+        const t = srcIdx - lo;
+        dst[i] = (src[lo]||0)*(1-t) + (src[hi]||0)*t;
+      }
+    }
+    return shiftedBuf;
+  }
+
+  return outBuf;
+}
+
+// ── Draw waveform ──
+function drawWaveform(buffer) {
+  const canvas = document.getElementById('vidWaveCanvas');
+  if (!canvas) return;
+  canvas.width = canvas.parentElement.offsetWidth || 600;
+  canvas.height = 60;
+  const ctx = canvas.getContext('2d');
+  const data = buffer.getChannelData(0);
+  const step = Math.ceil(data.length / canvas.width);
+  const mid = canvas.height / 2;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const grad = ctx.createLinearGradient(0,0,canvas.width,0);
+  grad.addColorStop(0,'#4F8CFF'); grad.addColorStop(1,'#8B5CF6');
+  ctx.strokeStyle = grad;
+  ctx.lineWidth = 1.2;
+  ctx.beginPath();
+  for (let i = 0; i < canvas.width; i++) {
+    let min = 1, max = -1;
+    for (let j = 0; j < step; j++) {
+      const v = data[i*step+j] || 0;
+      if(v<min) min=v; if(v>max) max=v;
+    }
+    ctx.moveTo(i, mid + min*mid*0.9);
+    ctx.lineTo(i, mid + max*mid*0.9);
+  }
+  ctx.stroke();
+}
+
+// ── Encode via MediaRecorder ──
+function encodeViaMediaRecorderFull(audioBuffer, audioCtx, mimeType) {
+  return new Promise((resolve, reject) => {
+    const dest = audioCtx.createMediaStreamDestination();
+    const src = audioCtx.createBufferSource();
+    src.buffer = audioBuffer;
+    src.connect(dest);
+    const rec = new MediaRecorder(dest.stream, { mimeType });
+    const chunks = [];
+    rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+    rec.onstop = () => resolve(new Blob(chunks, { type: mimeType }));
+    rec.onerror = e => reject(new Error('MediaRecorder error'));
+    rec.start(100);
+    src.start(0);
+    src.onended = () => setTimeout(() => rec.stop(), 200);
+  });
+}
+
+// ── WAV encoder ──
+function audioBufferToWavFull(buffer) {
+  const numCh = buffer.numberOfChannels;
+  const sr = buffer.sampleRate;
+  const len = buffer.length;
+  const byteLen = len * numCh * 2;
+  const ab = new ArrayBuffer(44 + byteLen);
+  const view = new DataView(ab);
+  const ws = (off,s) => { for(let i=0;i<s.length;i++) view.setUint8(off+i,s.charCodeAt(i)); };
+  ws(0,'RIFF'); view.setUint32(4,36+byteLen,true); ws(8,'WAVE');
+  ws(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true);
+  view.setUint16(22,numCh,true); view.setUint32(24,sr,true);
+  view.setUint32(28,sr*numCh*2,true); view.setUint16(32,numCh*2,true);
+  view.setUint16(34,16,true); ws(36,'data'); view.setUint32(40,byteLen,true);
+  let off=44;
+  for(let i=0;i<len;i++) for(let ch=0;ch<numCh;ch++){
+    const s=Math.max(-1,Math.min(1,buffer.getChannelData(ch)[i]));
+    view.setInt16(off,s<0?s*0x8000:s*0x7FFF,true);off+=2;
+  }
+  return new Blob([ab],{type:'audio/wav'});
+}
+
 function switchMainTab(tab){
-  ['convert','merge','link'].forEach(t=>{
+  ['convert','merge','link','video'].forEach(t=>{
     const tabEl=document.getElementById('mainTab'+t.charAt(0).toUpperCase()+t.slice(1));
     const contEl=document.getElementById('content'+t.charAt(0).toUpperCase()+t.slice(1));
     if(tabEl) tabEl.classList.toggle('active',t===tab);
@@ -8077,7 +8746,7 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
     if(title) lines.push('📁 *' + title + '*');
     if(fname)  lines.push('File: ' + fname + ' (' + size + ')');
     if(pw) lines.push('🔒 Password: *' + pw + '*');
-    lines.push('_Shared via Fileshift_');
+    lines.push('_Shared via RΛMIX_');
     lines.push(linkFinalURL);
     window.open('https://wa.me/?text='+encodeURIComponent(lines.join('\n')),'_blank');
   };
@@ -8086,7 +8755,7 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
     if(!linkFinalURL) return;
     var title = (document.getElementById('linkTitle').value||linkFile&&linkFile.name||'File').trim();
     var pw = document.getElementById('pwInputLink') ? document.getElementById('pwInputLink').value.trim() : '';
-    var text = title + (pw ? ' 🔒 Password: ' + pw : '') + ' — via Fileshift';
+    var text = title + (pw ? ' 🔒 Password: ' + pw : '') + ' — via RΛMIX';
     window.open('https://t.me/share/url?url='+encodeURIComponent(linkFinalURL)+'&text='+encodeURIComponent(text),'_blank');
   };
 
@@ -8094,7 +8763,7 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
     if(!linkFinalURL) return;
     var title = (document.getElementById('linkTitle').value||linkFile&&linkFile.name||'File').trim();
     var pw = document.getElementById('pwInputLink') ? document.getElementById('pwInputLink').value.trim() : '';
-    var body  = (title ? title + '\n' : '') + linkFinalURL + (pw ? '\n\nPassword: ' + pw : '') + '\n\nShared via Fileshift';
+    var body  = (title ? title + '\n' : '') + linkFinalURL + (pw ? '\n\nPassword: ' + pw : '') + '\n\nShared via RΛMIX';
     window.location.href = 'mailto:?subject='+encodeURIComponent('Sharing: '+title)+'&body='+encodeURIComponent(body);
   };
 
@@ -8161,7 +8830,7 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
         <div class="logo-icon" style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 0 14px rgba(0,229,255,.2)">
           <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
         </div>
-        <span class="logo-name" style="font-size:18px;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,#fff 40%,var(--mist));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fileshift</span>
+        <span class="logo-name" style="font-size:18px;font-weight:800;letter-spacing:-.04em;">RΛMIX</span>
       </div>
       <div class="mobile-topbar-right">
         <span class="mobile-topbar-badge">100% In-Browser</span>
@@ -8194,13 +8863,17 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
         Link
         <span class="mobile-nav-new-dot"></span>
       </button>
+      <button class="mobile-nav-btn" id="mobileNavVideo" onclick="switchMainTab('video');updateMobileNav('video')">
+        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        Video
+      </button>
     `;
     document.body.appendChild(nav);
   }
 
   // ── Update bottom nav active state ──
   window.updateMobileNav = function(tab){
-    ['convert','merge','link'].forEach(function(t){
+    ['convert','merge','link','video'].forEach(function(t){
       var btn = document.getElementById('mobileNav' + t.charAt(0).toUpperCase() + t.slice(1));
       if(btn) btn.classList.toggle('active', t === tab);
     });
@@ -8219,7 +8892,7 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
         <div class="logo-icon" style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;box-shadow:0 0 0 1px rgba(79,140,255,.2),0 4px 16px rgba(79,140,255,.15)">
           <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;position:relative;z-index:1"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
         </div>
-        <span class="logo-name" style="font-size:20px;font-weight:800;letter-spacing:-.04em;background:linear-gradient(135deg,#fff 40%,var(--mist));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Fileshift</span>
+        <span class="logo-name" style="font-size:20px;font-weight:800;letter-spacing:-.04em;">RΛMIX</span>
       </a>
       <div class="dt-nav-tabs">
         <button class="dt-nav-tab active" id="dtTabConvert" onclick="switchMainTab('convert');updateDtNav('convert')">
@@ -8234,6 +8907,10 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
           <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
           Link
           <span class="dt-nav-badge">NEW</span>
+        </button>
+        <button class="dt-nav-tab" id="dtTabVideo" onclick="switchMainTab('video');updateDtNav('video')">
+          <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          Video
         </button>
       </div>
       <div class="dt-navbar-right">
@@ -8264,7 +8941,7 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
 
   // ── Update desktop navbar active tab ──
   window.updateDtNav = function(tab){
-    ['convert','merge','link'].forEach(function(t){
+    ['convert','merge','link','video'].forEach(function(t){
       var btn = document.getElementById('dtTab' + t.charAt(0).toUpperCase() + t.slice(1));
       if(btn) btn.classList.toggle('active', t === tab);
     });
