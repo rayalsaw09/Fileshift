@@ -5638,13 +5638,13 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
       </div>
       <div style="padding:0 16px 4px;display:flex;flex-direction:column;gap:2px">
 
-        <!-- Default filename prefix -->
+        <!-- Default filename override -->
         <div class="settings-input-row">
           <div class="settings-toggle-info">
-            <div class="settings-toggle-label">Filename prefix</div>
-            <div class="settings-toggle-sub">Prepended to every exported file</div>
+            <div class="settings-toggle-label">Custom output filename</div>
+            <div class="settings-toggle-sub">Replaces auto-generated name on every export (extension kept)</div>
           </div>
-          <input class="settings-text-input" id="stInputPrefix" type="text" maxlength="24" placeholder="ramix_" oninput="saveSetting('filenamePrefix',this.value.trim())" />
+          <input class="settings-text-input" id="stInputPrefix" type="text" maxlength="64" placeholder="e.g. my_export" oninput="saveSetting('filenamePrefix',this.value.trim())" />
         </div>
 
         <!-- PDF image quality -->
@@ -6089,10 +6089,12 @@ document.addEventListener('DOMContentLoaded', function(){
       if(typeof updateMobileNav === 'function') updateMobileNav(saved);
     }, 50);
   }
+  /* Sync settings toggles so they reflect localStorage state on first load */
+  syncSettingsUI();
 });
 
 /* ══ SETTINGS: TOGGLES & PREFERENCES ══ */
-const SETTING_DEFAULTS = {
+var SETTING_DEFAULTS = {
   autoDownload: true,
   confirmClear: false,
   haptic: true,
@@ -6101,33 +6103,47 @@ const SETTING_DEFAULTS = {
 };
 
 function loadSettings(){
-  const raw = localStorage.getItem('ramix-settings');
-  try { return raw ? Object.assign({}, SETTING_DEFAULTS, JSON.parse(raw)) : Object.assign({}, SETTING_DEFAULTS); }
-  catch(e){ return Object.assign({}, SETTING_DEFAULTS); }
+  try {
+    var raw = localStorage.getItem('ramix-settings');
+    var parsed = raw ? JSON.parse(raw) : {};
+    // Merge: defaults first, then saved values override
+    var out = {};
+    var keys = Object.keys(SETTING_DEFAULTS);
+    for(var i=0;i<keys.length;i++){
+      var k = keys[i];
+      out[k] = (parsed && Object.prototype.hasOwnProperty.call(parsed, k)) ? parsed[k] : SETTING_DEFAULTS[k];
+    }
+    return out;
+  } catch(e) {
+    return Object.assign({}, SETTING_DEFAULTS);
+  }
 }
-function saveSettings(s){ localStorage.setItem('ramix-settings', JSON.stringify(s)); }
-function getSetting(key){ return loadSettings()[key]; }
+function saveSettings(s){ try{ localStorage.setItem('ramix-settings', JSON.stringify(s)); }catch(e){} }
+function getSetting(key){
+  var val = loadSettings()[key];
+  return (val === undefined) ? SETTING_DEFAULTS[key] : val;
+}
 function saveSetting(key, val){
-  const s = loadSettings(); s[key] = val; saveSettings(s);
+  var s = loadSettings(); s[key] = val; saveSettings(s);
 }
 function toggleSetting(key){
-  const s = loadSettings();
+  var s = loadSettings();
   s[key] = !s[key];
   saveSettings(s);
-  const id = 'stBtn' + key.charAt(0).toUpperCase() + key.slice(1);
-  const btn = document.getElementById(id);
+  var id = 'stBtn' + key.charAt(0).toUpperCase() + key.slice(1);
+  var btn = document.getElementById(id);
   if(btn) btn.setAttribute('aria-checked', s[key] ? 'true' : 'false');
   if(s.haptic && navigator.vibrate) navigator.vibrate(10);
 }
 function syncSettingsUI(){
-  const s = loadSettings();
+  var s = loadSettings();
   ['autoDownload','confirmClear','haptic'].forEach(function(key){
-    const btn = document.getElementById('stBtn' + key.charAt(0).toUpperCase() + key.slice(1));
+    var btn = document.getElementById('stBtn' + key.charAt(0).toUpperCase() + key.slice(1));
     if(btn) btn.setAttribute('aria-checked', s[key] ? 'true' : 'false');
   });
-  const pfx = document.getElementById('stInputPrefix');
+  var pfx = document.getElementById('stInputPrefix');
   if(pfx) pfx.value = s.filenamePrefix || '';
-  const ql = document.getElementById('stSelectPdfQuality');
+  var ql = document.getElementById('stSelectPdfQuality');
   if(ql) ql.value = s.pdfQuality || '0.85';
 }
 function resetAllSettings(){
@@ -6148,25 +6164,28 @@ function resetAllSettings(){
 
 /* ══ APPLY SETTINGS IN PRACTICE ══ */
 
-/* 1. Filename prefix — wrap all download anchor triggers */
+/* 1. Filename override — replaces the stem, keeps the extension */
 function applyFilenamePrefix(name){
-  const prefix = (getSetting('filenamePrefix') || '').trim();
-  if(!prefix) return name;
-  // Avoid double-prefix
-  if(name.startsWith(prefix)) return name;
-  return prefix + name;
+  const custom = (getSetting('filenamePrefix') || '').trim();
+  if(!custom) return name;
+  // Extract extension (everything after the last dot, e.g. ".xlsx", ".pdf", ".zip")
+  const dotIdx = name.lastIndexOf('.');
+  const ext = dotIdx !== -1 ? name.slice(dotIdx) : '';
+  return custom + ext;
 }
 
 /* 2. Auto-download — central download helper used by all converters */
 function triggerDownload(url, filename){
-  const name = applyFilenamePrefix(filename);
-  if(!getSetting('autoDownload')){
+  var name = applyFilenamePrefix(filename);
+  var autoDownload = getSetting('autoDownload');
+  // Explicit boolean: treat anything not strictly false as true (default-safe)
+  if(autoDownload === false){
     // Store pending download, show toast instead of auto-triggering
-    window._pendingDownload = {url, filename: name};
+    window._pendingDownload = {url: url, filename: name};
     showDownloadToast(name, url);
     return;
   }
-  const a = document.createElement('a');
+  var a = document.createElement('a');
   a.href = url; a.download = name;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
 }
@@ -11010,6 +11029,659 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
   isMob.addEventListener('change', function(){
     if(isMob.matches) init();
   });
+
+})();
+</script>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     RAMIX SMART FEATURES — No paid AI required
+     1. AI Command Bar (Claude API via built-in)
+     2. File Intelligence Dashboard
+     3. Smart Quick Actions on file drop
+     4. Privacy-first branding (always visible)
+     5. Keyboard shortcut palette (⌘K)
+     6. Micro-interactions & animated feedback
+     7. Onboarding tour (first visit)
+     ═══════════════════════════════════════════════════════════════ -->
+<style>
+/* ── AI COMMAND BAR ── */
+#rmAiBar{
+  position:fixed;inset:0;z-index:9000;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(8px);
+}
+#rmAiBar.open{display:flex}
+#rmAiBarInner{
+  width:min(600px,92vw);background:var(--ink2);border:1px solid var(--line2);
+  border-radius:20px;overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04);
+}
+#rmAiInput{
+  width:100%;background:none;border:none;outline:none;
+  font-family:'Syne',sans-serif;font-size:15px;color:var(--snow);
+  padding:18px 56px 18px 20px;
+  caret-color:var(--c1);
+}
+#rmAiInput::placeholder{color:var(--fog)}
+#rmAiInputWrap{
+  display:flex;align-items:center;
+  border-bottom:1px solid var(--line);
+  position:relative;
+}
+#rmAiSendBtn{
+  position:absolute;right:12px;background:var(--c1);border:none;cursor:pointer;
+  width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:#fff;transition:background .15s,transform .1s;
+}
+#rmAiSendBtn:hover{background:var(--c1d);transform:scale(1.05)}
+#rmAiSendBtn svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+#rmAiResponse{
+  max-height:340px;overflow-y:auto;padding:16px 20px;
+  font-size:13px;line-height:1.65;color:var(--snow);
+  display:none;
+}
+#rmAiResponse::-webkit-scrollbar{width:3px}
+#rmAiResponse::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+#rmAiSuggestions{
+  display:flex;flex-wrap:wrap;gap:6px;padding:12px 16px;
+  border-top:1px solid var(--line);
+}
+.rmAiSugg{
+  background:var(--ink3);border:1px solid var(--line2);border-radius:8px;
+  padding:5px 10px;font-size:11px;color:var(--fog);cursor:pointer;
+  font-family:'DM Mono',monospace;transition:all .15s;white-space:nowrap;
+}
+.rmAiSugg:hover{background:rgba(79,140,255,.12);border-color:var(--c1);color:var(--snow)}
+#rmAiBarFooter{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:8px 16px;border-top:1px solid var(--line);
+}
+.rmAiBarBadge{
+  font-size:10px;font-family:'DM Mono',monospace;color:var(--fog);
+  background:rgba(79,140,255,.08);border:1px solid rgba(79,140,255,.2);
+  border-radius:6px;padding:2px 8px;
+}
+#rmAiLoading{display:none;align-items:center;gap:8px;padding:16px 20px;color:var(--fog);font-size:13px}
+.rmAiDot{width:6px;height:6px;border-radius:50%;background:var(--c1);animation:rmAiBounce .8s ease-in-out infinite}
+.rmAiDot:nth-child(2){animation-delay:.15s;background:var(--c2)}
+.rmAiDot:nth-child(3){animation-delay:.3s;background:var(--c3)}
+@keyframes rmAiBounce{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-5px);opacity:1}}
+
+/* ── AI BAR TRIGGER BUTTON ── */
+#rmAiTrigger{
+  position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:800;
+  background:linear-gradient(135deg,var(--c1),var(--c2));
+  border:none;border-radius:99px;cursor:pointer;
+  padding:10px 20px;display:flex;align-items:center;gap:8px;
+  font-family:'Syne',sans-serif;font-size:12px;font-weight:700;color:#fff;
+  box-shadow:0 4px 20px rgba(79,140,255,.35);
+  transition:transform .2s,box-shadow .2s;
+  white-space:nowrap;
+}
+#rmAiTrigger:hover{transform:translateX(-50%) scale(1.05);box-shadow:0 6px 28px rgba(79,140,255,.5)}
+#rmAiTrigger svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+/* Desktop: show in sidebar */
+@media(min-width:800px){
+  #rmAiTrigger{
+    position:static;transform:none;bottom:auto;left:auto;
+    width:100%;justify-content:center;border-radius:12px;
+    margin-bottom:12px;
+    box-shadow:0 4px 16px rgba(79,140,255,.25);
+  }
+  #rmAiTrigger:hover{transform:scale(1.02)}
+}
+
+/* ── FILE INTELLIGENCE PANEL ── */
+#rmFileIntel{
+  display:none;
+  margin:0 0 14px;
+  background:linear-gradient(135deg,rgba(79,140,255,.07),rgba(139,92,246,.07));
+  border:1px solid rgba(79,140,255,.2);
+  border-radius:14px;padding:14px 16px;
+  animation:rmSlideIn .25s ease;
+}
+@keyframes rmSlideIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+#rmFileIntel.show{display:block}
+.rmfi-title{font-size:11px;font-weight:700;font-family:'DM Mono',monospace;color:var(--c1);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.rmfi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+.rmfi-stat{background:rgba(0,0,0,.2);border-radius:10px;padding:10px;text-align:center}
+.rmfi-val{font-size:18px;font-weight:800;font-family:'Syne',sans-serif;color:var(--snow)}
+.rmfi-lbl{font-size:10px;color:var(--fog);font-family:'DM Mono',monospace;margin-top:2px}
+.rmfi-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.rmfi-tag{font-size:10px;border-radius:6px;padding:3px 8px;font-family:'DM Mono',monospace;border:1px solid}
+.rmfi-actions{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.rmfi-action{
+  background:none;border:1px solid var(--line2);border-radius:8px;cursor:pointer;
+  padding:5px 10px;font-size:11px;color:var(--fog);font-family:'DM Mono',monospace;
+  transition:all .15s;white-space:nowrap;
+}
+.rmfi-action:hover{background:rgba(79,140,255,.12);border-color:var(--c1);color:var(--snow)}
+.rmfi-action svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vertical-align:middle;margin-right:3px}
+
+/* ── PRIVACY BADGE BAR ── */
+#rmPrivacyBar{
+  display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;
+  padding:10px 16px;margin:8px 0;
+}
+.rmPrivBadge{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.2);
+  border-radius:99px;padding:4px 10px;
+  font-size:10px;font-family:'DM Mono',monospace;color:var(--c3);font-weight:600;
+}
+.rmPrivBadge svg{width:11px;height:11px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── KEYBOARD SHORTCUT PALETTE ── */
+#rmKbOverlay{
+  position:fixed;inset:0;z-index:9001;display:none;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(8px);
+}
+#rmKbOverlay.open{display:flex}
+#rmKbPalette{
+  width:min(480px,90vw);background:var(--ink2);border:1px solid var(--line2);
+  border-radius:20px;overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.55);
+  padding:0 0 16px;
+}
+.rmKbHeader{padding:18px 20px 14px;border-bottom:1px solid var(--line)}
+.rmKbTitle{font-size:16px;font-weight:800;font-family:'Syne',sans-serif;color:var(--snow)}
+.rmKbSub{font-size:11px;color:var(--fog);font-family:'DM Mono',monospace;margin-top:2px}
+.rmKbSection{padding:12px 20px 0;font-size:10px;font-family:'DM Mono',monospace;color:var(--fog);text-transform:uppercase;letter-spacing:.06em}
+.rmKbRow{display:flex;align-items:center;justify-content:space-between;padding:8px 20px;transition:background .12s;border-radius:8px;margin:0 8px}
+.rmKbRow:hover{background:rgba(255,255,255,.03)}
+.rmKbDesc{font-size:12px;color:var(--snow)}
+.rmKbKeys{display:flex;align-items:center;gap:4px}
+.rmKbKey{
+  background:var(--ink3);border:1px solid var(--line2);border-radius:6px;
+  padding:2px 7px;font-size:10px;font-family:'DM Mono',monospace;color:var(--fog);
+  box-shadow:0 2px 0 var(--line);
+}
+
+/* ── ONBOARDING TOUR ── */
+#rmTour{position:fixed;inset:0;z-index:9002;pointer-events:none}
+#rmTour.active{pointer-events:all}
+#rmTourOverlay{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+#rmTourCard{
+  position:absolute;background:var(--ink2);border:1px solid var(--line2);
+  border-radius:18px;padding:20px;width:280px;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+  transition:all .3s cubic-bezier(.2,.8,.2,1);
+}
+#rmTourCard::before{
+  content:'';position:absolute;width:12px;height:12px;
+  background:var(--ink2);border:1px solid var(--line2);
+  border-right:none;border-bottom:none;
+  transform:rotate(45deg);
+  top:-7px;left:24px;
+}
+.rmTourStep{font-size:10px;font-family:'DM Mono',monospace;color:var(--c1);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.rmTourTitle{font-size:15px;font-weight:700;color:var(--snow);margin-bottom:6px}
+.rmTourDesc{font-size:12px;color:var(--fog);line-height:1.55}
+.rmTourBtns{display:flex;gap:8px;margin-top:14px}
+.rmTourNext{background:var(--c1);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s}
+.rmTourNext:hover{background:var(--c1d)}
+.rmTourSkip{background:none;border:none;color:var(--fog);font-size:12px;cursor:pointer;padding:7px 10px;transition:color .15s}
+.rmTourSkip:hover{color:var(--snow)}
+.rmTourDots{display:flex;gap:5px;align-items:center;margin-left:auto}
+.rmTourDot{width:6px;height:6px;border-radius:50%;background:var(--line2);transition:background .2s}
+.rmTourDot.active{background:var(--c1)}
+
+/* ── MICRO INTERACTION: RIPPLE ── */
+.rmRipple{position:absolute;border-radius:50%;background:rgba(79,140,255,.25);transform:scale(0);animation:rmRippleAnim .55s ease-out forwards;pointer-events:none}
+@keyframes rmRippleAnim{to{transform:scale(4);opacity:0}}
+
+/* ── CONVERT SUCCESS BURST ── */
+@keyframes rmBurst{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.12)}100%{transform:scale(1);opacity:1}}
+.res-card.show{animation:rmBurst .35s cubic-bezier(.2,.8,.2,1)}
+
+/* ── LIGHT THEME OVERRIDES ── */
+[data-theme="white-blue"] #rmAiBarInner,
+[data-theme="purple-modern"] #rmAiBarInner,
+[data-theme="white-blue"] #rmKbPalette,
+[data-theme="purple-modern"] #rmKbPalette{background:rgba(255,255,255,.97);border-color:var(--line)}
+[data-theme="white-blue"] .rmAiSugg,
+[data-theme="purple-modern"] .rmAiSugg{background:rgba(0,0,0,.04);border-color:var(--line)}
+[data-theme="white-blue"] .rmfi-stat,
+[data-theme="purple-modern"] .rmfi-stat{background:rgba(0,0,0,.04)}
+[data-theme="white-blue"] #rmTourCard,
+[data-theme="purple-modern"] #rmTourCard{background:rgba(255,255,255,.97);border-color:var(--line)}
+[data-theme="white-blue"] .rmKbRow:hover,
+[data-theme="purple-modern"] .rmKbRow:hover{background:rgba(0,0,0,.04)}
+</style>
+
+<!-- ── AI Command Bar HTML ── -->
+<div id="rmAiBar" onclick="if(event.target===this)rmCloseAiBar()">
+  <div id="rmAiBarInner">
+    <div id="rmAiInputWrap">
+      <input id="rmAiInput" placeholder="Ask RΛMIX anything… e.g. 'how do I compress a PDF?'" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter')rmAiAsk();if(event.key==='Escape')rmCloseAiBar()"/>
+      <button id="rmAiSendBtn" onclick="rmAiAsk()">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+    <div id="rmAiLoading">
+      <div class="rmAiDot"></div><div class="rmAiDot"></div><div class="rmAiDot"></div>
+      <span style="font-size:12px;font-family:'DM Mono',monospace">RΛMIX is thinking…</span>
+    </div>
+    <div id="rmAiResponse"></div>
+    <div id="rmAiSuggestions">
+      <button class="rmAiSugg" onclick="rmAiFill('What tools does RAMIX have?')">✨ What can RΛMIX do?</button>
+      <button class="rmAiSugg" onclick="rmAiFill('How do I convert a PDF to Excel?')">📊 PDF → Excel guide</button>
+      <button class="rmAiSugg" onclick="rmAiFill('How do I merge multiple PDFs?')">📎 Merge PDFs</button>
+      <button class="rmAiSugg" onclick="rmAiFill('Is my file safe? Does it get uploaded?')">🔒 Privacy info</button>
+      <button class="rmAiSugg" onclick="rmAiFill('How do I convert images to PDF?')">🖼️ Images → PDF</button>
+    </div>
+    <div id="rmAiBarFooter">
+      <span class="rmAiBarBadge">✨ Powered by Claude AI</span>
+      <span style="font-size:10px;font-family:'DM Mono',monospace;color:var(--fog)">Esc to close</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Keyboard Shortcut Palette ── -->
+<div id="rmKbOverlay" onclick="if(event.target===this)rmCloseKb()">
+  <div id="rmKbPalette">
+    <div class="rmKbHeader">
+      <div class="rmKbTitle">Keyboard Shortcuts</div>
+      <div class="rmKbSub">Power-user controls for RΛMIX</div>
+    </div>
+    <div class="rmKbSection">Navigation</div>
+    <div class="rmKbRow"><span class="rmKbDesc">AI Command Bar</span><span class="rmKbKeys"><span class="rmKbKey">⌘</span><span class="rmKbKey">K</span></span></div>
+    <div class="rmKbRow"><span class="rmKbDesc">Keyboard shortcuts</span><span class="rmKbKeys"><span class="rmKbKey">?</span></span></div>
+    <div class="rmKbRow"><span class="rmKbDesc">Close any overlay</span><span class="rmKbKeys"><span class="rmKbKey">Esc</span></span></div>
+    <div class="rmKbSection">Tools</div>
+    <div class="rmKbRow"><span class="rmKbDesc">PDF → Excel</span><span class="rmKbKeys"><span class="rmKbKey">⌘</span><span class="rmKbKey">1</span></span></div>
+    <div class="rmKbRow"><span class="rmKbDesc">Excel → PDF</span><span class="rmKbKeys"><span class="rmKbKey">⌘</span><span class="rmKbKey">2</span></span></div>
+    <div class="rmKbRow"><span class="rmKbDesc">PDF → Images</span><span class="rmKbKeys"><span class="rmKbKey">⌘</span><span class="rmKbKey">3</span></span></div>
+    <div class="rmKbRow"><span class="rmKbDesc">Images → PDF</span><span class="rmKbKeys"><span class="rmKbKey">⌘</span><span class="rmKbKey">4</span></span></div>
+    <div class="rmKbRow"><span class="rmKbDesc">Merge PDFs</span><span class="rmKbKeys"><span class="rmKbKey">⌘</span><span class="rmKbKey">M</span></span></div>
+    <div class="rmKbRow" style="padding-top:12px;margin-top:4px;border-top:1px solid var(--line)">
+      <button onclick="rmCloseKb()" style="background:none;border:none;color:var(--fog);cursor:pointer;font-size:12px;font-family:'DM Mono',monospace">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Onboarding Tour HTML ── -->
+<div id="rmTour">
+  <div id="rmTourOverlay" onclick="rmTourEnd()"></div>
+  <div id="rmTourCard">
+    <div class="rmTourStep" id="rmTourStep">Step 1 of 4</div>
+    <div class="rmTourTitle" id="rmTourTitle"></div>
+    <div class="rmTourDesc" id="rmTourDesc"></div>
+    <div class="rmTourBtns">
+      <button class="rmTourNext" id="rmTourNextBtn" onclick="rmTourNext()">Next →</button>
+      <button class="rmTourSkip" onclick="rmTourEnd()">Skip tour</button>
+      <div class="rmTourDots" id="rmTourDots"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   RAMIX SMART FEATURES ENGINE
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+
+/* ── 1. AI COMMAND BAR ── */
+var RAMIX_SYSTEM = `You are the helpful assistant built into RΛMIX, a 100% browser-based file conversion tool. RΛMIX has these tools:
+- PDF → Excel (extract tables to .xlsx)
+- Excel → PDF (export spreadsheets beautifully)
+- PDF → Images (PNG/JPG/WEBP per page)
+- Excel → Images (render sheets as images)
+- Images → PDF (combine any images into PDF)
+- → PowerPoint (PDF/images → .pptx presentation)
+- Merge PDFs (combine multiple PDFs, pick pages)
+- Merge Excel (stack sheets or rows)
+- Share Link (upload file and get shareable link with QR code)
+- Video → Audio (extract MP3/WAV/OGG from video)
+
+ALL processing happens 100% in the browser — files NEVER leave the device. No upload, no server, no tracking. It is completely free and private.
+
+Keep answers SHORT (2-4 sentences max), practical, and friendly. Use bullet points only for multi-step instructions. Mention which specific tool to use when relevant. Never make up features that don't exist.`;
+
+window.rmOpenAiBar = function(){
+  document.getElementById('rmAiBar').classList.add('open');
+  setTimeout(function(){ document.getElementById('rmAiInput').focus(); }, 80);
+};
+window.rmCloseAiBar = function(){
+  document.getElementById('rmAiBar').classList.remove('open');
+  document.getElementById('rmAiInput').value = '';
+  document.getElementById('rmAiResponse').style.display = 'none';
+  document.getElementById('rmAiLoading').style.display = 'none';
+  document.getElementById('rmAiSuggestions').style.display = 'flex';
+};
+window.rmAiFill = function(txt){
+  document.getElementById('rmAiInput').value = txt;
+  document.getElementById('rmAiInput').focus();
+  rmAiAsk();
+};
+window.rmAiAsk = async function(){
+  var q = document.getElementById('rmAiInput').value.trim();
+  if(!q) return;
+  document.getElementById('rmAiSuggestions').style.display = 'none';
+  document.getElementById('rmAiResponse').style.display = 'none';
+  document.getElementById('rmAiLoading').style.display = 'flex';
+  try{
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:400,
+        system: RAMIX_SYSTEM,
+        messages:[{role:'user',content:q}]
+      })
+    });
+    var data = await resp.json();
+    var txt = (data.content||[]).map(function(b){return b.text||''}).join('');
+    document.getElementById('rmAiLoading').style.display = 'none';
+    var el = document.getElementById('rmAiResponse');
+    el.style.display = 'block';
+    // Simple markdown: **bold**, newlines, bullet lists
+    el.innerHTML = txt
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/\n\n/g,'<br><br>')
+      .replace(/\n- /g,'<br>• ')
+      .replace(/^- /,'• ');
+  }catch(e){
+    document.getElementById('rmAiLoading').style.display = 'none';
+    var el2 = document.getElementById('rmAiResponse');
+    el2.style.display = 'block';
+    el2.textContent = 'Hmm, something went wrong. Try again in a moment.';
+  }
+};
+
+/* ── 2. FILE INTELLIGENCE DASHBOARD ── */
+// Called by file pick handlers — shows smart analysis of dropped file
+window.rmShowFileIntel = function(file, containerId, actions){
+  var panel = document.getElementById(containerId);
+  if(!panel) return;
+
+  var ext = (file.name.split('.').pop()||'').toLowerCase();
+  var mb = (file.size/1048576).toFixed(2);
+  var kb = (file.size/1024).toFixed(0);
+  var sizeStr = file.size > 1048576 ? mb+' MB' : kb+' KB';
+
+  // Estimate read time (rough: 1MB PDF ≈ 30 pages ≈ 5 min read)
+  var estPages = ext==='pdf' ? Math.max(1,Math.round(file.size/35000)) : null;
+  var estReadMin = estPages ? Math.max(1,Math.round(estPages*0.17)) : null;
+
+  // Privacy colour
+  var privColor = 'var(--c3)'; var privTxt = '🔒 Local Only';
+
+  // Build tags
+  var tags = [];
+  if(ext==='pdf') tags.push({t:'PDF Document',c:'rgba(79,140,255,.12)',b:'rgba(79,140,255,.3)',col:'var(--c1)'});
+  if(['xlsx','xls','csv'].includes(ext)) tags.push({t:'Spreadsheet',c:'rgba(52,211,153,.1)',b:'rgba(52,211,153,.3)',col:'var(--c3)'});
+  if(['jpg','jpeg','png','webp','gif'].includes(ext)) tags.push({t:'Image',c:'rgba(245,158,11,.1)',b:'rgba(245,158,11,.3)',col:'var(--c5)'});
+  if(file.size>5*1048576) tags.push({t:'Large File',c:'rgba(239,68,68,.08)',b:'rgba(239,68,68,.25)',col:'#f87171'});
+  else if(file.size<100*1024) tags.push({t:'Tiny File',c:'rgba(52,211,153,.08)',b:'rgba(52,211,153,.25)',col:'var(--c3)'});
+  tags.push({t:privTxt,c:'rgba(52,211,153,.08)',b:'rgba(52,211,153,.25)',col:'var(--c3)'});
+
+  var tagsHtml = tags.map(function(tg){
+    return '<span class="rmfi-tag" style="background:'+tg.c+';border-color:'+tg.b+';color:'+tg.col+'">'+tg.t+'</span>';
+  }).join('');
+
+  var statsHtml = '<div class="rmfi-stat"><div class="rmfi-val">'+sizeStr+'</div><div class="rmfi-lbl">File Size</div></div>';
+  if(estPages) statsHtml += '<div class="rmfi-stat"><div class="rmfi-val">~'+estPages+'</div><div class="rmfi-lbl">Est. Pages</div></div>';
+  if(estReadMin) statsHtml += '<div class="rmfi-stat"><div class="rmfi-val">'+estReadMin+'m</div><div class="rmfi-lbl">Read Time</div></div>';
+  statsHtml += '<div class="rmfi-stat"><div class="rmfi-val" style="font-size:13px">✓</div><div class="rmfi-lbl">Private</div></div>';
+
+  var actHtml = (actions||[]).map(function(a){
+    return '<button class="rmfi-action" onclick="'+a.fn+'">'+
+      '<svg viewBox="0 0 24 24">'+a.icon+'</svg>'+a.label+'</button>';
+  }).join('');
+
+  panel.innerHTML =
+    '<div class="rmfi-title"><svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>File Intelligence</div>'+
+    '<div class="rmfi-grid">'+statsHtml+'</div>'+
+    '<div class="rmfi-tags">'+tagsHtml+'</div>'+
+    (actHtml?'<div class="rmfi-actions">'+actHtml+'</div>':'');
+  panel.classList.add('show');
+};
+
+/* Inject intel panels into each tool's card area */
+function injectIntelPanels(){
+  var spots = [
+    {after:'chipPdf', id:'rmIntelPdf'},
+    {after:'chipXl',  id:'rmIntelXl'},
+    {after:'chipImg', id:'rmIntelImg'},
+  ];
+  spots.forEach(function(s){
+    var anchor = document.getElementById(s.after);
+    if(!anchor) return;
+    var d = document.createElement('div');
+    d.id = s.id; d.className = 'rmFileIntel'; d.style.cssText = '#rmFileIntel styles applied';
+    // Reuse #rmFileIntel class styles via inline
+    d.style.display='none';
+    d.style.margin='0 0 14px';
+    d.style.background='linear-gradient(135deg,rgba(79,140,255,.07),rgba(139,92,246,.07))';
+    d.style.border='1px solid rgba(79,140,255,.2)';
+    d.style.borderRadius='14px';
+    d.style.padding='14px 16px';
+    anchor.parentNode.insertBefore(d, anchor.nextSibling);
+  });
+}
+
+/* ── 3. PRIVACY BADGE BAR ── */
+function injectPrivacyBadges(){
+  var bar = document.createElement('div');
+  bar.id = 'rmPrivacyBar';
+  bar.innerHTML =
+    badge('shield','Local Processing')+
+    badge('lock','Zero Upload')+
+    badge('eye-off','Private by Design')+
+    badge('zap','Always Free');
+  // Insert before the main tabs row
+  var tabs = document.querySelector('.main-tabs');
+  if(tabs && tabs.parentNode) tabs.parentNode.insertBefore(bar, tabs);
+  // Also add to home screen
+  var homeGreet = document.querySelector('.rm-home-greeting');
+  if(homeGreet){
+    var bar2 = document.createElement('div');
+    bar2.style.cssText='display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:10px';
+    bar2.innerHTML =
+      smBadge('Local Processing')+smBadge('Zero Upload')+smBadge('Private by Design');
+    homeGreet.appendChild(bar2);
+  }
+}
+function badge(icon, txt){
+  var icons = {
+    shield:'<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>',
+    lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+    'eye-off':'<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>',
+    zap:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'
+  };
+  return '<span class="rmPrivBadge"><svg viewBox="0 0 24 24" width="11" height="11" stroke="currentColor" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">'+icons[icon]+'</svg>'+txt+'</span>';
+}
+function smBadge(txt){
+  return '<span style="background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.25);border-radius:99px;padding:3px 9px;font-size:10px;font-family:DM Mono,monospace;color:#34d399;font-weight:600">✓ '+txt+'</span>';
+}
+
+/* ── 4. AI TRIGGER BUTTON — inject into sidebar ── */
+function injectAiTrigger(){
+  var btn = document.createElement('button');
+  btn.id = 'rmAiTrigger';
+  btn.onclick = rmOpenAiBar;
+  btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Ask RΛMIX AI';
+  // Desktop: inject at top of sidebar
+  var sidebar = document.getElementById('convertSidebarLeft');
+  if(sidebar) sidebar.insertBefore(btn, sidebar.firstChild);
+  // Mobile: inject into home greeting
+  var homeGreet = document.querySelector('.rm-home-greeting');
+  if(homeGreet){
+    var mbtn = document.createElement('button');
+    mbtn.onclick = rmOpenAiBar;
+    mbtn.style.cssText='display:flex;align-items:center;gap:8px;margin:12px auto 0;background:linear-gradient(135deg,var(--c1),var(--c2));border:none;border-radius:99px;padding:10px 20px;font-family:Syne,sans-serif;font-size:12px;font-weight:700;color:#fff;cursor:pointer;box-shadow:0 4px 16px rgba(79,140,255,.3)';
+    mbtn.innerHTML='<svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Ask RΛMIX AI';
+    homeGreet.appendChild(mbtn);
+  }
+}
+
+/* ── 5. KEYBOARD SHORTCUTS ── */
+window.rmCloseKb = function(){ document.getElementById('rmKbOverlay').classList.remove('open'); };
+document.addEventListener('keydown', function(e){
+  var tag = document.activeElement && document.activeElement.tagName;
+  var isInput = tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT';
+  // ⌘K → AI bar
+  if((e.metaKey||e.ctrlKey) && e.key==='k'){
+    e.preventDefault();
+    if(document.getElementById('rmAiBar').classList.contains('open')) rmCloseAiBar();
+    else rmOpenAiBar();
+    return;
+  }
+  // ? → keyboard palette (not in input)
+  if(e.key==='?' && !isInput){
+    e.preventDefault();
+    document.getElementById('rmKbOverlay').classList.toggle('open');
+    return;
+  }
+  // Esc → close any overlay
+  if(e.key==='Escape'){
+    rmCloseAiBar();
+    rmCloseKb();
+    rmTourEnd();
+    return;
+  }
+  // ⌘1-4 → tool switch, ⌘M → merge
+  if((e.metaKey||e.ctrlKey) && !isInput){
+    var toolMap = {'1':'pdf','2':'xl','3':'img','4':'img3'};
+    if(toolMap[e.key]){
+      e.preventDefault();
+      if(typeof switchMode==='function') switchMode(toolMap[e.key]);
+      if(typeof switchMainTab==='function') switchMainTab('convert');
+    }
+    if(e.key.toLowerCase()==='m'){
+      e.preventDefault();
+      if(typeof switchMainTab==='function') switchMainTab('merge');
+    }
+  }
+});
+
+/* ── 6. MICRO-INTERACTIONS: RIPPLE on buttons ── */
+function addRipple(btn){
+  btn.style.position='relative';btn.style.overflow='hidden';
+  btn.addEventListener('click',function(e){
+    var r=document.createElement('span');
+    r.className='rmRipple';
+    var rect=btn.getBoundingClientRect();
+    var sz=Math.max(rect.width,rect.height);
+    r.style.cssText='width:'+sz+'px;height:'+sz+'px;left:'+(e.clientX-rect.left-sz/2)+'px;top:'+(e.clientY-rect.top-sz/2)+'px';
+    btn.appendChild(r);
+    setTimeout(function(){r.remove()},600);
+  });
+}
+function applyRipples(){
+  document.querySelectorAll('.btn-cvt,.btn-dl,.rmTourNext,.rmAiSendBtn').forEach(addRipple);
+}
+
+/* ── 7. ONBOARDING TOUR ── */
+var TOUR_STEPS = [
+  {
+    title:'Welcome to RΛMIX ✨',
+    desc:'Your all-in-one browser-based file toolkit. Convert PDFs, Excel files, images, and more — 100% private, nothing ever leaves your device.',
+    target:null
+  },
+  {
+    title:'AI Command Bar',
+    desc:'Press ⌘K anytime (or click "Ask RΛMIX AI") to get instant help with any task. Just type what you want to do in plain English.',
+    target:'rmAiTrigger'
+  },
+  {
+    title:'Smart Tools',
+    desc:'Pick a tool from the left sidebar or the home screen. Each tool shows a File Intelligence panel after you upload — analysing your file instantly.',
+    target:'convertSidebarLeft'
+  },
+  {
+    title:'Privacy First 🔒',
+    desc:'Every conversion runs entirely on your device. Files are never uploaded, never stored, never seen by any server. Close the tab and everything is gone.',
+    target:null
+  }
+];
+var _tourIdx = 0;
+window.rmTourNext = function(){
+  _tourIdx++;
+  if(_tourIdx >= TOUR_STEPS.length){ rmTourEnd(); return; }
+  rmTourRender();
+};
+window.rmTourEnd = function(){
+  document.getElementById('rmTour').classList.remove('active');
+  document.getElementById('rmTour').style.display='none';
+  try{ localStorage.setItem('ramix-toured','1'); }catch(e){}
+};
+function rmTourRender(){
+  var s = TOUR_STEPS[_tourIdx];
+  document.getElementById('rmTourStep').textContent='Step '+(_tourIdx+1)+' of '+TOUR_STEPS.length;
+  document.getElementById('rmTourTitle').textContent=s.title;
+  document.getElementById('rmTourDesc').textContent=s.desc;
+  document.getElementById('rmTourNextBtn').textContent=_tourIdx===TOUR_STEPS.length-1?'Get started →':'Next →';
+  // Dots
+  var dotsEl=document.getElementById('rmTourDots');
+  dotsEl.innerHTML=TOUR_STEPS.map(function(_,i){return '<div class="rmTourDot'+(i===_tourIdx?' active':'')+'" onclick="(_tourIdx='+i+',rmTourRender())"></div>'}).join('');
+  // Position card
+  var card=document.getElementById('rmTourCard');
+  if(s.target){
+    var el=document.getElementById(s.target);
+    if(el){
+      var rect=el.getBoundingClientRect();
+      card.style.top=(rect.bottom+16)+'px';
+      card.style.left=Math.min(rect.left, window.innerWidth-300)+'px';
+    }
+  } else {
+    card.style.top='50%';card.style.left='50%';
+    card.style.transform='translate(-50%,-50%)';
+  }
+}
+function rmStartTour(){
+  try{ if(localStorage.getItem('ramix-toured')) return; }catch(e){}
+  _tourIdx=0;
+  var t=document.getElementById('rmTour');
+  t.style.display='block';
+  setTimeout(function(){ t.classList.add('active'); rmTourRender(); },800);
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', function(){
+  injectIntelPanels();
+  injectPrivacyBadges();
+  injectAiTrigger();
+  applyRipples();
+  // Start tour after short delay for first-time visitors
+  setTimeout(rmStartTour, 1200);
+
+  // Patch existing pickPdf / pickXl / pickImg to show File Intelligence
+  var _origPickPdf = window.pickPdf;
+  if(typeof _origPickPdf==='function'){
+    window.pickPdf = function(f){
+      _origPickPdf(f);
+      var panel = document.getElementById('rmIntelPdf');
+      if(panel) rmShowFileIntel(f, 'rmIntelPdf', [
+        {label:'Ask AI about this file', icon:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+         fn:'rmOpenAiBar()'}
+      ]);
+    };
+  }
+  var _origPickXl = window.pickXl;
+  if(typeof _origPickXl==='function'){
+    window.pickXl = function(f){
+      _origPickXl(f);
+      var panel = document.getElementById('rmIntelXl');
+      if(panel) rmShowFileIntel(f, 'rmIntelXl', [
+        {label:'Ask AI about this file', icon:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+         fn:'rmOpenAiBar()'}
+      ]);
+    };
+  }
+  var _origPickImg = window.pickImg;
+  if(typeof _origPickImg==='function'){
+    window.pickImg = function(f){
+      _origPickImg(f);
+      var panel = document.getElementById('rmIntelImg');
+      if(panel) rmShowFileIntel(f, 'rmIntelImg', [
+        {label:'Ask AI about this file', icon:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+         fn:'rmOpenAiBar()'}
+      ]);
+    };
+  }
+});
 
 })();
 </script>
