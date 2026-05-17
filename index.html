@@ -10627,6 +10627,10 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
         <span class="logo-name" style="font-size:18px;font-weight:800;letter-spacing:-.04em;">RΛMIX</span>
       </div>
       <div class="mobile-topbar-right">
+        <button class="rm-topbar-home-btn" id="topbarHomeBtn" onclick="rmGoHome()" title="Home" style="display:none;align-items:center;gap:5px;background:rgba(255,255,255,.07);border:1px solid var(--line2);border-radius:8px;padding:5px 10px;color:var(--mist);font-size:11px;font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;transition:all .15s">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          Home
+        </button>
         <span class="mobile-topbar-badge">100% In-Browser</span>
         <button class="mobile-settings-btn" onclick="openSettings()" title="Settings">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -10645,22 +10649,9 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
     nav.id = 'mobileBottomNav';
     nav.className = 'mobile-bottom-nav';
     nav.innerHTML = `
-      <button class="mobile-nav-btn${savedTab==='convert'?' active':''}" id="mobileNavConvert" onclick="switchMainTab('convert');updateMobileNav('convert')">
-        <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-        Convert
-      </button>
-      <button class="mobile-nav-btn${savedTab==='merge'?' active':''}" id="mobileNavMerge" onclick="switchMainTab('merge');updateMobileNav('merge')">
-        <svg viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
-        Merge
-      </button>
-      <button class="mobile-nav-btn${savedTab==='link'?' active':''}" id="mobileNavLink" onclick="switchMainTab('link');updateMobileNav('link')" style="position:relative">
-        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-        Link
-        <span class="mobile-nav-new-dot"></span>
-      </button>
-      <button class="mobile-nav-btn${savedTab==='video'?' active':''}" id="mobileNavVideo" onclick="switchMainTab('video');updateMobileNav('video')">
-        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-        Video
+      <button class="mobile-nav-btn active" id="mobileNavHome" onclick="rmGoHome()">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        Home
       </button>
     `;
     document.body.appendChild(nav);
@@ -10668,10 +10659,9 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
 
   // ── Update bottom nav active state ──
   window.updateMobileNav = function(tab){
-    ['convert','merge','link','video'].forEach(function(t){
-      var btn = document.getElementById('mobileNav' + t.charAt(0).toUpperCase() + t.slice(1));
-      if(btn) btn.classList.toggle('active', t === tab);
-    });
+    // Single home button — always active on home, inactive on tool screens
+    var homeBtn = document.getElementById('mobileNavHome');
+    if(homeBtn) homeBtn.classList.toggle('active', !tab || tab === 'home');
   };
 
   // ── Desktop: inject top navbar and section headers ──
@@ -10872,6 +10862,10 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
     });
     document.body.classList.remove('rm-at-tool');
     document.body.classList.add('rm-at-home');
+    var homeBtn = document.getElementById('mobileNavHome');
+    if(homeBtn) homeBtn.classList.add('active');
+    var topbarHomeBtn = document.getElementById('topbarHomeBtn');
+    if(topbarHomeBtn) topbarHomeBtn.style.display = 'none';
     window.scrollTo(0,0);
   }
 
@@ -10894,6 +10888,10 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
 
     document.body.classList.add('rm-at-tool');
     document.body.classList.remove('rm-at-home');
+    var homeBtn = document.getElementById('mobileNavHome');
+    if(homeBtn) homeBtn.classList.remove('active');
+    var topbarHomeBtn = document.getElementById('topbarHomeBtn');
+    if(topbarHomeBtn) topbarHomeBtn.style.display = 'flex';
 
     // Update back bar for convert tools
     if(tab === 'convert' && subTool){
@@ -10944,8 +10942,7 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
   // ── Go back to home ──
   window.rmGoHome = function(){
     showHome();
-    // Also sync bottom nav back to "convert" as a neutral state
-    if(window.updateMobileNav) updateMobileNav('convert');
+    if(window.updateMobileNav) updateMobileNav('home');
   };
 
   // ── Override bottom nav on mobile to go through home ──
@@ -10960,33 +10957,12 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
   // Patch bottom nav buttons to go home first if needed
   // (The rmOpenTool function handles the actual switching)
 
-  // ── Override bottom-nav button onclick to show home screen with that section ──
-  // We do this by re-attaching click handlers after the nav is built
+  // ── Patch bottom nav button ──
   function patchBottomNav(){
-    var nav = document.getElementById('mobileBottomNav');
-    if(!nav) return;
-
-    // Remap each bottom nav button
-    var btnConvert = document.getElementById('mobileNavConvert');
-    var btnMerge   = document.getElementById('mobileNavMerge');
-    var btnLink    = document.getElementById('mobileNavLink');
-    var btnVideo   = document.getElementById('mobileNavVideo');
-
-    if(btnConvert) btnConvert.onclick = function(){
-      updateMobileNav('convert');
+    var homeBtn = document.getElementById('mobileNavHome');
+    if(homeBtn) homeBtn.onclick = function(){
       showHome();
-    };
-    if(btnMerge) btnMerge.onclick = function(){
-      updateMobileNav('merge');
-      showHome();
-    };
-    if(btnLink) btnLink.onclick = function(){
-      updateMobileNav('link');
-      rmOpenTool('link');
-    };
-    if(btnVideo) btnVideo.onclick = function(){
-      updateMobileNav('video');
-      rmOpenTool('video');
+      updateMobileNav('home');
     };
   }
 
