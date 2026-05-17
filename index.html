@@ -11199,10 +11199,10 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
 /* ── ONBOARDING TOUR ── */
 #rmTour{position:fixed;inset:0;z-index:9002;pointer-events:none}
 #rmTour.active{pointer-events:all}
-#rmTourOverlay{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+#rmTourOverlay{position:absolute;inset:0;z-index:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
 #rmTourCard{
-  position:absolute;background:var(--ink2);border:1px solid var(--line2);
-  border-radius:18px;padding:20px;width:280px;
+  position:absolute;z-index:1;background:var(--ink2);border:1px solid var(--line2);
+  border-radius:18px;padding:20px;max-width:280px;width:calc(100vw - 32px);
   box-shadow:0 20px 60px rgba(0,0,0,.6);
   transition:all .3s cubic-bezier(.2,.8,.2,1);
 }
@@ -11300,7 +11300,7 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
 </div>
 
 <!-- ── Onboarding Tour HTML ── -->
-<div id="rmTour">
+<div id="rmTour" style="display:none">
   <div id="rmTourOverlay" onclick="rmTourEnd()"></div>
   <div id="rmTourCard">
     <div class="rmTourStep" id="rmTourStep">Step 1 of 4</div>
@@ -11321,6 +11321,9 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
 (function(){
 
 /* ── 1. AI COMMAND BAR ── */
+// Gemini API key (free tier via Google AI Studio)
+window.RAMIX_API_KEY = 'AIzaSyDvm9oHjZxnBUGwdG3CNDdk26sYXMzf5kQ';
+
 var RAMIX_SYSTEM = `You are the helpful assistant built into RΛMIX, a 100% browser-based file conversion tool. RΛMIX has these tools:
 - PDF → Excel (extract tables to .xlsx)
 - Excel → PDF (export spreadsheets beautifully)
@@ -11359,35 +11362,80 @@ window.rmAiAsk = async function(){
   document.getElementById('rmAiSuggestions').style.display = 'none';
   document.getElementById('rmAiResponse').style.display = 'none';
   document.getElementById('rmAiLoading').style.display = 'flex';
-  try{
-    var resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:400,
-        system: RAMIX_SYSTEM,
-        messages:[{role:'user',content:q}]
-      })
-    });
-    var data = await resp.json();
-    var txt = (data.content||[]).map(function(b){return b.text||''}).join('');
+
+  // Built-in offline AI — instant answers, no internet needed
+  var answer = rmOfflineAI(q);
+  setTimeout(function(){
     document.getElementById('rmAiLoading').style.display = 'none';
     var el = document.getElementById('rmAiResponse');
     el.style.display = 'block';
-    // Simple markdown: **bold**, newlines, bullet lists
-    el.innerHTML = txt
-      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
-      .replace(/\n\n/g,'<br><br>')
-      .replace(/\n- /g,'<br>• ')
-      .replace(/^- /,'• ');
-  }catch(e){
-    document.getElementById('rmAiLoading').style.display = 'none';
-    var el2 = document.getElementById('rmAiResponse');
-    el2.style.display = 'block';
-    el2.textContent = 'Hmm, something went wrong. Try again in a moment.';
-  }
+    el.innerHTML = answer;
+  }, 400);
 };
+
+function rmOfflineAI(q){
+  var t = q.toLowerCase();
+
+  // PDF → Excel
+  if((t.includes('pdf') && (t.includes('excel')||t.includes('xlsx')||t.includes('spreadsheet'))) ||
+     t.includes('pdf to excel') || t.includes('pdf to xlsx')){
+    return 'Use the <strong>PDF → Excel</strong> tool in the left sidebar.<br><br>• Click <strong>PDF → Excel</strong><br>• Drop your PDF file<br>• Click <strong>Convert</strong><br>• Download the .xlsx file<br><br>Tables in your PDF are extracted automatically into rows and columns.';
+  }
+  // Excel → PDF
+  if((t.includes('excel')||t.includes('xlsx')) && t.includes('pdf')){
+    return 'Use the <strong>Excel → PDF</strong> tool.<br><br>• Click <strong>Excel → PDF</strong> in the sidebar<br>• Drop your .xlsx file<br>• Click <strong>Convert</strong> and download your PDF.';
+  }
+  // Merge PDFs
+  if(t.includes('merge') && t.includes('pdf')){
+    return 'Use the <strong>Merge PDFs</strong> tab at the top.<br><br>• Switch to the <strong>Merge</strong> tab<br>• Drop multiple PDF files<br>• Drag to reorder if needed<br>• Click <strong>Merge & Download</strong>';
+  }
+  // PDF → Images
+  if(t.includes('pdf') && (t.includes('image')||t.includes('png')||t.includes('jpg')||t.includes('jpeg'))){
+    return 'Use the <strong>PDF → Images</strong> tool.<br><br>• Select <strong>PDF → Images</strong> in the sidebar<br>• Drop your PDF<br>• Choose format: PNG, JPG, or WEBP<br>• Each page becomes a separate image file.';
+  }
+  // Images → PDF
+  if((t.includes('image')||t.includes('png')||t.includes('jpg')||t.includes('photo')) && t.includes('pdf')){
+    return 'Use the <strong>Images → PDF</strong> tool.<br><br>• Select <strong>Images → PDF</strong> in the sidebar<br>• Drop one or more images<br>• Reorder by dragging<br>• Click <strong>Convert to PDF</strong>';
+  }
+  // Compress PDF
+  if(t.includes('compress') || t.includes('reduce size') || t.includes('smaller')){
+    return 'RΛMIX can reduce PDF size via the <strong>PDF → Images</strong> tool:<br><br>• Convert PDF to images at lower quality<br>• Then convert images back to PDF<br><br>This reduces file size significantly. A dedicated compress tool is coming soon!';
+  }
+  // Video → Audio
+  if(t.includes('video') || t.includes('audio') || t.includes('mp3') || t.includes('mp4') || t.includes('extract audio')){
+    return 'Use the <strong>Video → Audio</strong> tool.<br><br>• Select <strong>Video → Audio</strong> in the sidebar<br>• Drop your video file (MP4, MOV, etc.)<br>• Choose output: MP3, WAV, or OGG<br>• Click <strong>Extract Audio</strong>';
+  }
+  // PowerPoint / PPTX
+  if(t.includes('pptx')||t.includes('powerpoint')||t.includes('presentation')||t.includes('slides')){
+    return 'Use the <strong>→ PowerPoint</strong> tool.<br><br>• Select <strong>→ PowerPoint</strong> in the sidebar<br>• Drop a PDF or images<br>• Each page/image becomes a slide<br>• Download as .pptx';
+  }
+  // Merge Excel
+  if(t.includes('merge') && (t.includes('excel')||t.includes('xlsx')||t.includes('spreadsheet'))){
+    return 'Use the <strong>Merge Excel</strong> tab.<br><br>• Switch to the <strong>Merge</strong> tab<br>• Select <strong>Merge Excel</strong><br>• Drop multiple .xlsx files<br>• Choose to stack rows or combine sheets<br>• Download merged file.';
+  }
+  // Share / link
+  if(t.includes('share')||t.includes('link')||t.includes('qr')){
+    return 'Use the <strong>Share Link</strong> tool.<br><br>• Select <strong>Share Link</strong> in the sidebar<br>• Drop any file<br>• Get a shareable link + QR code instantly<br>• Anyone with the link can download the file.';
+  }
+  // Privacy / safety
+  if(t.includes('safe')||t.includes('privacy')||t.includes('upload')||t.includes('server')||t.includes('data')){
+    return '🔒 <strong>Your files never leave your device.</strong><br><br>All conversions run 100% in your browser using JavaScript. Nothing is uploaded to any server. Close the tab and everything is gone — no logs, no storage, no tracking.';
+  }
+  // What tools / features
+  if(t.includes('what') && (t.includes('tool')||t.includes('feature')||t.includes('do')||t.includes('can'))){
+    return 'RΛMIX has these tools:<br><br>• <strong>PDF → Excel</strong> — extract tables<br>• <strong>Excel → PDF</strong> — export sheets<br>• <strong>PDF → Images</strong> — PNG/JPG per page<br>• <strong>Images → PDF</strong> — combine photos<br>• <strong>→ PowerPoint</strong> — make .pptx slides<br>• <strong>Merge PDFs</strong> — combine files<br>• <strong>Merge Excel</strong> — stack spreadsheets<br>• <strong>Video → Audio</strong> — extract MP3/WAV<br>• <strong>Share Link</strong> — shareable link + QR<br><br>All 100% free and private.';
+  }
+  // How to use / getting started
+  if(t.includes('how') && (t.includes('start')||t.includes('use')||t.includes('begin')||t.includes('work'))){
+    return 'Getting started is easy:<br><br>1. Pick a tool from the <strong>left sidebar</strong><br>2. <strong>Drop your file</strong> onto the upload zone<br>3. Choose output options if shown<br>4. Click <strong>Convert</strong> and download<br><br>Everything runs in your browser — no sign-up needed.';
+  }
+  // Watermark
+  if(t.includes('watermark')){
+    return 'Use the <strong>Watermark</strong> tool in the sidebar.<br><br>• Drop your PDF or image<br>• Type your watermark text<br>• Adjust opacity, position, and size<br>• Download the watermarked file.';
+  }
+  // Default fallback
+  return 'I can help you with any RΛMIX tool! Try asking things like:<br><br>• "How do I merge PDFs?"<br>• "How do I convert PDF to Excel?"<br>• "How do I extract audio from a video?"<br>• "Is my file safe?"<br>• "What tools does RAMIX have?"';
+}
 
 /* ── 2. FILE INTELLIGENCE DASHBOARD ── */
 // Called by file pick handlers — shows smart analysis of dropped file
@@ -11616,22 +11664,30 @@ function rmTourRender(){
   // Dots
   var dotsEl=document.getElementById('rmTourDots');
   dotsEl.innerHTML=TOUR_STEPS.map(function(_,i){return '<div class="rmTourDot'+(i===_tourIdx?' active':'')+'" onclick="(_tourIdx='+i+',rmTourRender())"></div>'}).join('');
-  // Position card
+  // Position card — always centered and fully inside viewport
   var card=document.getElementById('rmTourCard');
+  var W=window.innerWidth, H=window.innerHeight;
+  var cw=Math.min(W-32, 280); // card width capped to screen
+  card.style.width=cw+'px';
+  card.style.transform='none';
+  card.style.left=Math.round((W-cw)/2)+'px';
   if(s.target){
     var el=document.getElementById(s.target);
     if(el){
       var rect=el.getBoundingClientRect();
-      card.style.top=(rect.bottom+16)+'px';
-      card.style.left=Math.min(rect.left, window.innerWidth-300)+'px';
+      var top=rect.bottom+16;
+      // If card would go off bottom, show it above the element
+      if(top+200 > H) top=Math.max(8, rect.top-220);
+      card.style.top=Math.max(8,top)+'px';
+    } else {
+      card.style.top=Math.round((H-220)/2)+'px';
     }
   } else {
-    card.style.top='50%';card.style.left='50%';
-    card.style.transform='translate(-50%,-50%)';
+    card.style.top=Math.round((H-220)/2)+'px';
   }
 }
 function rmStartTour(){
-  try{ if(localStorage.getItem('ramix-toured')) return; }catch(e){}
+  try{ localStorage.removeItem('ramix-toured'); }catch(e){}
   _tourIdx=0;
   var t=document.getElementById('rmTour');
   t.style.display='block';
