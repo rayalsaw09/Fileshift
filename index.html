@@ -2794,7 +2794,7 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 /* Hide old sidebar-based layout on mobile — replaced by home/tool screens */
 @media(max-width:799px){
   /* App shell: full screen, no scroll when home is showing */
-  .shell { padding: 0 0 80px !important; max-width: 100% !important; }
+  .shell { padding: 0 0 24px !important; max-width: 100% !important; }
 
   /* Hide old desktop-style sidebar layout */
   .split-left, .split-left-label { display: none !important; }
@@ -2910,15 +2910,15 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     margin-bottom: 16px;
   }
   .rm-back-btn {
-    width: 34px; height: 34px; border-radius: 10px;
+    width: 38px; height: 38px; border-radius: 12px;
     background: var(--ink3); border: 1px solid var(--line2);
     display: flex; align-items: center; justify-content: center;
     cursor: pointer; color: var(--snow); flex-shrink: 0;
     touch-action: manipulation;
-    transition: background .15s;
+    transition: background .15s, transform .1s;
   }
-  .rm-back-btn:active { background: var(--line2); }
-  .rm-back-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+  .rm-back-btn:active { background: var(--line2); transform: scale(.93); }
+  .rm-back-btn svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
 
   .rm-back-info { flex: 1; min-width: 0; }
   .rm-back-title { font-size: 15px; font-weight: 800; color: var(--snow); letter-spacing: -.02em; line-height: 1.2; }
@@ -2994,6 +2994,61 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     <p>100% In-Browser · Zero Upload · Always Free</p>
   </div>
 
+  <!-- Link + Video (no heading) -->
+  <div class="rm-tools-grid" style="margin-bottom:20px">
+
+    <button class="rm-tool-card wide" style="--card-glow:rgba(79,140,255,.14)" onclick="rmOpenTool('link')">
+      <div class="rm-card-icon" style="background:rgba(79,140,255,.12);color:var(--c1)">
+        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Share Link <span style="font-size:9px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border-radius:99px;padding:1px 6px;font-family:'DM Mono',monospace;font-weight:700;vertical-align:middle">NEW</span></div>
+        <div class="rm-card-sub">Upload file and get a shareable link</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+    <button class="rm-tool-card wide" style="--card-glow:rgba(245,158,11,.14)" onclick="rmOpenTool('video')">
+      <div class="rm-card-icon" style="background:rgba(245,158,11,.12);color:var(--c5)">
+        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Video → Audio</div>
+        <div class="rm-card-sub">Extract MP3, WAV, OGG from video</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+  </div>
+
+  <!-- Merge Tools -->
+  <div class="rm-section-lbl">Merge</div>
+  <div class="rm-tools-grid" style="margin-bottom:20px">
+
+    <button class="rm-tool-card wide" style="--card-glow:rgba(52,211,153,.14)" onclick="rmOpenTool('merge','pdf')">
+      <div class="rm-card-icon" style="background:rgba(52,211,153,.12);color:var(--c3)">
+        <svg viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Merge PDFs</div>
+        <div class="rm-card-sub">Combine multiple PDFs, pick pages</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+    <button class="rm-tool-card wide" style="--card-glow:rgba(52,211,153,.14)" onclick="rmOpenTool('merge','xl')">
+      <div class="rm-card-icon" style="background:rgba(139,92,246,.12);color:var(--c2)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/><path d="M3 14h18" stroke-dasharray="3 2"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Merge Excel</div>
+        <div class="rm-card-sub">Combine sheets or stack rows</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+  </div>
+
   <!-- Convert Tools -->
   <div class="rm-section-lbl">Convert</div>
   <div class="rm-tools-grid">
@@ -3060,62 +3115,6 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
       <div class="rm-card-body">
         <div class="rm-card-title">→ PowerPoint</div>
         <div class="rm-card-sub">PDF · Images<br>→ .pptx</div>
-      </div>
-      <div class="rm-card-arrow">›</div>
-    </button>
-
-  </div>
-
-  <!-- Merge Tools -->
-  <div class="rm-section-lbl">Merge</div>
-  <div class="rm-tools-grid" style="margin-bottom:20px">
-
-    <button class="rm-tool-card wide" style="--card-glow:rgba(52,211,153,.14)" onclick="rmOpenTool('merge','pdf')">
-      <div class="rm-card-icon" style="background:rgba(52,211,153,.12);color:var(--c3)">
-        <svg viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
-      </div>
-      <div class="rm-card-body">
-        <div class="rm-card-title">Merge PDFs</div>
-        <div class="rm-card-sub">Combine multiple PDFs, pick pages</div>
-      </div>
-      <div class="rm-card-arrow">›</div>
-    </button>
-
-    <button class="rm-tool-card wide" style="--card-glow:rgba(52,211,153,.14)" onclick="rmOpenTool('merge','xl')">
-      <div class="rm-card-icon" style="background:rgba(139,92,246,.12);color:var(--c2)">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/><path d="M3 14h18" stroke-dasharray="3 2"/></svg>
-      </div>
-      <div class="rm-card-body">
-        <div class="rm-card-title">Merge Excel</div>
-        <div class="rm-card-sub">Combine sheets or stack rows</div>
-      </div>
-      <div class="rm-card-arrow">›</div>
-    </button>
-
-  </div>
-
-  <!-- Other Tools -->
-  <div class="rm-section-lbl">More Tools</div>
-  <div class="rm-tools-grid">
-
-    <button class="rm-tool-card wide" style="--card-glow:rgba(79,140,255,.14)" onclick="rmOpenTool('link')">
-      <div class="rm-card-icon" style="background:rgba(79,140,255,.12);color:var(--c1)">
-        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
-      </div>
-      <div class="rm-card-body">
-        <div class="rm-card-title">Share Link <span style="font-size:9px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border-radius:99px;padding:1px 6px;font-family:'DM Mono',monospace;font-weight:700;vertical-align:middle">NEW</span></div>
-        <div class="rm-card-sub">Upload file and get a shareable link</div>
-      </div>
-      <div class="rm-card-arrow">›</div>
-    </button>
-
-    <button class="rm-tool-card wide" style="--card-glow:rgba(245,158,11,.14)" onclick="rmOpenTool('video')">
-      <div class="rm-card-icon" style="background:rgba(245,158,11,.12);color:var(--c5)">
-        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-      </div>
-      <div class="rm-card-body">
-        <div class="rm-card-title">Video → Audio</div>
-        <div class="rm-card-sub">Extract MP3, WAV, OGG from video</div>
       </div>
       <div class="rm-card-arrow">›</div>
     </button>
@@ -5743,32 +5742,6 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 
       <div class="sheet-divider"></div>
 
-      <!-- ── DEFAULT TAB ── -->
-      <div class="settings-section-head">
-        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        Default Tab on Open
-      </div>
-      <div style="padding:0 16px 4px;display:grid;grid-template-columns:1fr 1fr;gap:7px" id="defaultTabGrid">
-        <button class="default-tab-opt" data-tab="convert" onclick="setDefaultTab('convert')">
-          <div class="dt-opt-icon" style="background:rgba(79,140,255,.12);color:var(--c1)"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div>
-          <div><div class="dt-opt-label">Convert</div><div class="dt-opt-sub">PDF · Excel · Images</div></div>
-        </button>
-        <button class="default-tab-opt" data-tab="merge" onclick="setDefaultTab('merge')">
-          <div class="dt-opt-icon" style="background:rgba(52,211,153,.12);color:var(--c3)"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg></div>
-          <div><div class="dt-opt-label">Merge</div><div class="dt-opt-sub">Combine files</div></div>
-        </button>
-        <button class="default-tab-opt" data-tab="link" onclick="setDefaultTab('link')">
-          <div class="dt-opt-icon" style="background:rgba(139,92,246,.12);color:var(--c2)"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
-          <div><div class="dt-opt-label">Link</div><div class="dt-opt-sub">Share &amp; upload</div></div>
-        </button>
-        <button class="default-tab-opt" data-tab="video" onclick="setDefaultTab('video')">
-          <div class="dt-opt-icon" style="background:rgba(245,158,11,.12);color:var(--c5)"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
-          <div><div class="dt-opt-label">Video</div><div class="dt-opt-sub">Extract audio</div></div>
-        </button>
-      </div>
-
-      <div class="sheet-divider"></div>
-
       <!-- ── ABOUT ── -->
       <div class="settings-section-head">
         <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
@@ -8358,11 +8331,19 @@ async function convertVideoToAudio() {
   document.getElementById('videoResult').style.display = 'none';
   vidSetProg(5, 'Reading file…');
 
+  // Yield to browser so UI can update before heavy work
+  await new Promise(r => setTimeout(r, 30));
+
   try {
     const arrayBuffer = await videoFile.arrayBuffer();
-    vidSetProg(20, 'Decoding audio track…');
+    vidSetProg(15, 'Decoding audio track…');
+    await new Promise(r => setTimeout(r, 20));
 
-    const targetSR = parseInt(document.getElementById('vSampleRate').value) || 48000;
+    // Use lower sample rate on mobile to reduce memory & CPU
+    const isMobile = window.innerWidth < 800;
+    const requestedSR = parseInt(document.getElementById('vSampleRate').value) || 44100;
+    const targetSR = isMobile ? Math.min(requestedSR, 44100) : requestedSR;
+
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: targetSR });
 
     let audioBuffer;
@@ -8372,25 +8353,24 @@ async function convertVideoToAudio() {
       throw new Error('Could not decode audio. The file may have no audio track, or the codec is unsupported in this browser.');
     }
 
-    vidSetProg(40, 'Applying effects…');
+    vidSetProg(40, 'Processing audio…');
+    await new Promise(r => setTimeout(r, 20));
 
-    // ── Apply all processing ──
-    audioBuffer = await applyVideoEffects(audioBuffer, audioCtx, targetSR);
+    // Use OfflineAudioContext for all processing — much faster, doesn't block UI
+    audioBuffer = await applyVideoEffectsOffline(audioBuffer, targetSR);
 
     vidSetProg(65, 'Encoding ' + videoAudioFmt.toUpperCase() + '…');
+    await new Promise(r => setTimeout(r, 20));
 
-    // ── Encode ──
     let finalBlob, ext = videoAudioFmt;
-    const wavBlob = audioBufferToWavFull(audioBuffer);
 
     if (videoAudioFmt === 'wav') {
-      finalBlob = wavBlob;
+      finalBlob = await audioBufferToWavAsync(audioBuffer);
     } else if (videoAudioFmt === 'flac') {
-      finalBlob = wavBlob; ext = 'wav';
+      finalBlob = await audioBufferToWavAsync(audioBuffer); ext = 'wav';
       document.getElementById('msgVideo').className = 'msg info show';
       document.getElementById('msgVideoText').textContent = 'FLAC in-browser encoding is not yet supported — saved as lossless WAV instead.';
     } else {
-      // Try MediaRecorder for mp3/ogg/aac
       const mimeMap = {
         mp3: ['audio/mpeg','audio/mp3'],
         ogg: ['audio/ogg;codecs=opus','audio/ogg'],
@@ -8399,38 +8379,37 @@ async function convertVideoToAudio() {
       const candidates = mimeMap[videoAudioFmt] || [];
       const mimeType = candidates.find(m => { try { return MediaRecorder.isTypeSupported(m); } catch(e){return false;} });
       if (mimeType) {
+        vidSetProg(68, 'Encoding via MediaRecorder…');
         finalBlob = await encodeViaMediaRecorderFull(audioBuffer, audioCtx, mimeType);
         ext = videoAudioFmt === 'aac' ? 'm4a' : videoAudioFmt;
       } else {
-        finalBlob = wavBlob; ext = 'wav';
+        finalBlob = await audioBufferToWavAsync(audioBuffer); ext = 'wav';
         document.getElementById('msgVideo').className = 'msg info show';
         document.getElementById('msgVideoText').textContent = videoAudioFmt.toUpperCase() + ' encoding not supported in this browser — saved as WAV.';
       }
     }
 
     vidSetProg(90, 'Finalising…');
+    await new Promise(r => setTimeout(r, 20));
 
     videoAudioBlob = finalBlob;
     const customName = document.getElementById('vCustomName').value.trim();
     const baseName = customName || videoFile.name.replace(/\.[^.]+$/, '');
     const outName = baseName.replace(/\.[a-zA-Z0-9]+$/, '') + '.' + ext;
 
-    // ── Preview ──
     const url = URL.createObjectURL(finalBlob);
     const audioEl = document.getElementById('vidAudioPreview');
     audioEl.src = url;
 
-    // ── Waveform ──
-    drawWaveform(audioBuffer);
+    // Lightweight waveform draw (deferred so result shows first)
+    setTimeout(() => drawWaveform(audioBuffer), 100);
 
-    // ── Meta ──
     const dur = audioBuffer.duration;
     const mins = Math.floor(dur/60), secs = Math.floor(dur%60);
     document.getElementById('vmDuration').textContent = mins + ':' + String(secs).padStart(2,'0');
     document.getElementById('vmSize').textContent = fmtBytes(finalBlob.size);
     document.getElementById('vmFormat').textContent = ext.toUpperCase();
 
-    // ── Download button ──
     document.getElementById('dlVideoLabel').textContent = ext.toUpperCase();
     document.getElementById('dlVideo').onclick = async () => {
       const btn = document.getElementById('dlVideo');
@@ -8464,16 +8443,15 @@ async function convertVideoToAudio() {
   }
 }
 
-// ── Apply all effects to AudioBuffer ──
-async function applyVideoEffects(buffer, audioCtx, targetSR) {
+// ── Apply effects via OfflineAudioContext (GPU-accelerated, non-blocking) ──
+async function applyVideoEffectsOffline(buffer, targetSR) {
   const numCh = vidChannels === 'mono' ? 1 : Math.min(buffer.numberOfChannels, 2);
   const speed = parseFloat(document.getElementById('vSpeed').value) || 1;
-  const pitch = parseInt(document.getElementById('vPitch').value) || 0;
-  const vol = parseFloat(document.getElementById('vVol').value) / 100 || 1;
-  const fadeIn = parseFloat(document.getElementById('vFadeIn').value) || 0;
+  const vol   = parseFloat(document.getElementById('vVol').value) / 100 || 1;
+  const fadeIn  = parseFloat(document.getElementById('vFadeIn').value) || 0;
   const fadeOut = parseFloat(document.getElementById('vFadeOut').value) || 0;
+  const pitch   = parseInt(document.getElementById('vPitch').value) || 0;
 
-  // Determine trim bounds
   let startSec = 0, endSec = buffer.duration;
   if (vidTrimEnabled) {
     startSec = Math.max(0, parseFloat(document.getElementById('vTrimStart').value) || 0);
@@ -8481,110 +8459,194 @@ async function applyVideoEffects(buffer, audioCtx, targetSR) {
     if (te && te > startSec) endSec = Math.min(te, buffer.duration);
   }
 
-  const startSample = Math.floor(startSec * buffer.sampleRate);
-  const endSample = Math.min(Math.floor(endSec * buffer.sampleRate), buffer.length);
-  const srcLen = endSample - startSample;
+  // Calculate output duration
+  const trimDur = endSec - startSec;
+  const outDur  = trimDur / speed;
+  const outLen  = Math.ceil(outDur * targetSR);
 
-  // Target length adjusted for speed
-  const outLen = Math.ceil(srcLen / speed);
-  const outSR = targetSR;
-  const outBuf = new AudioBuffer({ numberOfChannels: numCh, length: outLen, sampleRate: outSR });
+  // Combine pitch + speed into one playback rate
+  const semiFactor = pitch !== 0 ? Math.pow(2, pitch / 12) : 1;
+  const playbackRate = speed * semiFactor;
 
-  for (let ch = 0; ch < numCh; ch++) {
-    const srcCh = ch < buffer.numberOfChannels ? ch : 0;
-    const src = buffer.getChannelData(srcCh);
-    const dst = outBuf.getChannelData(ch);
+  const offline = new OfflineAudioContext(numCh, outLen, targetSR);
 
-    // Simple linear-interpolation resample + speed change
-    for (let i = 0; i < outLen; i++) {
-      const srcIdx = startSample + i * speed * (buffer.sampleRate / outSR);
-      const lo = Math.floor(srcIdx), hi = Math.min(lo+1, src.length-1);
-      const t = srcIdx - lo;
-      dst[i] = (src[lo] || 0) * (1-t) + (src[hi] || 0) * t;
-    }
+  // Source
+  const src = offline.createBufferSource();
+  src.buffer = buffer;
+  src.playbackRate.value = playbackRate;
 
-    // Volume
-    if (vol !== 1) for (let i = 0; i < outLen; i++) dst[i] *= vol;
-
-    // Normalize
-    if (vidNormEnabled) {
-      let peak = 0;
-      for (let i = 0; i < outLen; i++) { const a = Math.abs(dst[i]); if(a>peak) peak=a; }
-      if (peak > 0.001) { const g = 0.95/peak; for (let i=0;i<outLen;i++) dst[i]*=g; }
-    }
-
-    // Fade in
-    if (fadeIn > 0) {
-      const fadeInSamples = Math.min(Math.floor(fadeIn * outSR), outLen);
-      for (let i = 0; i < fadeInSamples; i++) dst[i] *= i / fadeInSamples;
-    }
-
-    // Fade out
-    if (fadeOut > 0) {
-      const fadeOutSamples = Math.min(Math.floor(fadeOut * outSR), outLen);
-      for (let i = 0; i < fadeOutSamples; i++) dst[outLen - 1 - i] *= i / fadeOutSamples;
-    }
-
-    // Reverse
-    if (vidReverseEnabled) dst.reverse();
-
-    // Remove silence (simple gate: zero out samples below threshold)
-    if (vidSilenceEnabled) {
-      const thresh = 0.01;
-      for (let i = 0; i < outLen; i++) if (Math.abs(dst[i]) < thresh) dst[i] = 0;
-    }
+  // Channel merge to mono if needed
+  let node = src;
+  if (numCh === 1 && buffer.numberOfChannels > 1) {
+    const merger = offline.createChannelMerger(1);
+    src.connect(merger);
+    node = merger;
   }
 
-  // Pitch shift (simple — via playback rate trick on OfflineAudioContext)
-  if (pitch !== 0) {
-    const semiFactor = Math.pow(2, pitch/12);
-    const shiftedLen = Math.ceil(outLen / semiFactor);
-    const shiftedBuf = new AudioBuffer({ numberOfChannels: numCh, length: shiftedLen, sampleRate: outSR });
-    for (let ch = 0; ch < numCh; ch++) {
-      const src = outBuf.getChannelData(ch);
-      const dst = shiftedBuf.getChannelData(ch);
-      for (let i = 0; i < shiftedLen; i++) {
-        const srcIdx = i * semiFactor;
-        const lo = Math.floor(srcIdx), hi = Math.min(lo+1, outLen-1);
-        const t = srcIdx - lo;
-        dst[i] = (src[lo]||0)*(1-t) + (src[hi]||0)*t;
-      }
-    }
-    return shiftedBuf;
+  // Volume gain
+  const gainNode = offline.createGain();
+  gainNode.gain.value = vol;
+  node.connect(gainNode);
+
+  // Fade in via gain automation
+  if (fadeIn > 0) {
+    gainNode.gain.setValueAtTime(0, 0);
+    gainNode.gain.linearRampToValueAtTime(vol, Math.min(fadeIn, outDur));
+  }
+  // Fade out via gain automation
+  if (fadeOut > 0) {
+    const fadeStart = Math.max(0, outDur - fadeOut);
+    gainNode.gain.setValueAtTime(vol, fadeStart);
+    gainNode.gain.linearRampToValueAtTime(0, outDur);
   }
 
-  return outBuf;
+  gainNode.connect(offline.destination);
+
+  // Offset playback to trim start
+  src.start(0, startSec);
+
+  // Render — this is async and doesn't block the UI thread
+  let rendered = await offline.startRendering();
+
+  // Normalize (if enabled) — do in chunks to avoid blocking
+  if (vidNormEnabled) {
+    rendered = await normalizeBufferAsync(rendered);
+  }
+
+  // Reverse — chunked to avoid blocking
+  if (vidReverseEnabled) {
+    rendered = await reverseBufferAsync(rendered);
+  }
+
+  // Silence gate — chunked
+  if (vidSilenceEnabled) {
+    rendered = await silenceGateAsync(rendered);
+  }
+
+  return rendered;
 }
 
-// ── Draw waveform ──
+// ── Normalize buffer in async chunks ──
+async function normalizeBufferAsync(buffer) {
+  const CHUNK = 65536;
+  let peak = 0;
+  for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+    const data = buffer.getChannelData(ch);
+    for (let i = 0; i < data.length; i += CHUNK) {
+      const end = Math.min(i + CHUNK, data.length);
+      for (let j = i; j < end; j++) { const a = Math.abs(data[j]); if (a > peak) peak = a; }
+      if (i % (CHUNK * 8) === 0) await new Promise(r => setTimeout(r, 0));
+    }
+  }
+  if (peak > 0.001) {
+    const g = 0.95 / peak;
+    for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+      const data = buffer.getChannelData(ch);
+      for (let i = 0; i < data.length; i += CHUNK) {
+        const end = Math.min(i + CHUNK, data.length);
+        for (let j = i; j < end; j++) data[j] *= g;
+        if (i % (CHUNK * 8) === 0) await new Promise(r => setTimeout(r, 0));
+      }
+    }
+  }
+  return buffer;
+}
+
+// ── Reverse buffer in async chunks ──
+async function reverseBufferAsync(buffer) {
+  for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+    buffer.getChannelData(ch).reverse();
+    await new Promise(r => setTimeout(r, 0));
+  }
+  return buffer;
+}
+
+// ── Silence gate in async chunks ──
+async function silenceGateAsync(buffer) {
+  const CHUNK = 65536;
+  const thresh = 0.01;
+  for (let ch = 0; ch < buffer.numberOfChannels; ch++) {
+    const data = buffer.getChannelData(ch);
+    for (let i = 0; i < data.length; i += CHUNK) {
+      const end = Math.min(i + CHUNK, data.length);
+      for (let j = i; j < end; j++) if (Math.abs(data[j]) < thresh) data[j] = 0;
+      await new Promise(r => setTimeout(r, 0));
+    }
+  }
+  return buffer;
+}
+
+// ── Draw waveform — lightweight, capped at 300px wide on mobile ──
 function drawWaveform(buffer) {
   const canvas = document.getElementById('vidWaveCanvas');
   if (!canvas) return;
-  canvas.width = canvas.parentElement.offsetWidth || 600;
+  const isMobile = window.innerWidth < 800;
+  const w = isMobile ? Math.min(canvas.parentElement.offsetWidth || 300, 300) : (canvas.parentElement.offsetWidth || 600);
+  canvas.width = w;
   canvas.height = 60;
   const ctx = canvas.getContext('2d');
   const data = buffer.getChannelData(0);
-  const step = Math.ceil(data.length / canvas.width);
-  const mid = canvas.height / 2;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  const grad = ctx.createLinearGradient(0,0,canvas.width,0);
-  grad.addColorStop(0,'#4F8CFF'); grad.addColorStop(1,'#8B5CF6');
+  // Downsample heavily — only need one min/max per pixel
+  const step = Math.ceil(data.length / w);
+  const mid = 30;
+  ctx.clearRect(0, 0, w, 60);
+  const grad = ctx.createLinearGradient(0, 0, w, 0);
+  grad.addColorStop(0, '#4F8CFF'); grad.addColorStop(1, '#8B5CF6');
   ctx.strokeStyle = grad;
-  ctx.lineWidth = 1.2;
+  ctx.lineWidth = 1.5;
   ctx.beginPath();
-  for (let i = 0; i < canvas.width; i++) {
-    let min = 1, max = -1;
-    for (let j = 0; j < step; j++) {
-      const v = data[i*step+j] || 0;
-      if(v<min) min=v; if(v>max) max=v;
+  for (let i = 0; i < w; i++) {
+    let min = 0, max = 0;
+    const base = i * step;
+    for (let j = 0; j < step && base + j < data.length; j++) {
+      const v = data[base + j];
+      if (v < min) min = v;
+      if (v > max) max = v;
     }
-    ctx.moveTo(i, mid + min*mid*0.9);
-    ctx.lineTo(i, mid + max*mid*0.9);
+    ctx.moveTo(i, mid + min * mid * 0.9);
+    ctx.lineTo(i, mid + max * mid * 0.9);
   }
   ctx.stroke();
 }
 
-// ── Encode via MediaRecorder ──
+// ── WAV encoder — chunked async to avoid blocking UI ──
+async function audioBufferToWavAsync(buffer) {
+  const numCh = buffer.numberOfChannels;
+  const sr    = buffer.sampleRate;
+  const len   = buffer.length;
+  const byteLen = len * numCh * 2;
+  const ab    = new ArrayBuffer(44 + byteLen);
+  const view  = new DataView(ab);
+  const ws = (off, s) => { for (let i = 0; i < s.length; i++) view.setUint8(off + i, s.charCodeAt(i)); };
+  ws(0,'RIFF'); view.setUint32(4, 36 + byteLen, true); ws(8,'WAVE');
+  ws(12,'fmt '); view.setUint32(16, 16, true); view.setUint16(20, 1, true);
+  view.setUint16(22, numCh, true); view.setUint32(24, sr, true);
+  view.setUint32(28, sr * numCh * 2, true); view.setUint16(32, numCh * 2, true);
+  view.setUint16(34, 16, true); ws(36,'data'); view.setUint32(40, byteLen, true);
+
+  // Get all channel data upfront
+  const channels = [];
+  for (let ch = 0; ch < numCh; ch++) channels.push(buffer.getChannelData(ch));
+
+  // Write interleaved samples in chunks, yielding between chunks
+  const CHUNK = 32768;
+  let off = 44;
+  for (let i = 0; i < len; i += CHUNK) {
+    const end = Math.min(i + CHUNK, len);
+    for (let j = i; j < end; j++) {
+      for (let ch = 0; ch < numCh; ch++) {
+        const s = Math.max(-1, Math.min(1, channels[ch][j]));
+        view.setInt16(off, s < 0 ? s * 0x8000 : s * 0x7FFF, true);
+        off += 2;
+      }
+    }
+    await new Promise(r => setTimeout(r, 0)); // yield to browser
+  }
+
+  return new Blob([ab], { type: 'audio/wav' });
+}
+
+// ── Encode via MediaRecorder (for mp3/ogg/aac — runs in real-time) ──
 function encodeViaMediaRecorderFull(audioBuffer, audioCtx, mimeType) {
   return new Promise((resolve, reject) => {
     const dest = audioCtx.createMediaStreamDestination();
@@ -8593,35 +8655,13 @@ function encodeViaMediaRecorderFull(audioBuffer, audioCtx, mimeType) {
     src.connect(dest);
     const rec = new MediaRecorder(dest.stream, { mimeType });
     const chunks = [];
-    rec.ondataavailable = e => { if(e.data && e.data.size) chunks.push(e.data); };
+    rec.ondataavailable = e => { if (e.data && e.data.size) chunks.push(e.data); };
     rec.onstop = () => resolve(new Blob(chunks, { type: mimeType }));
-    rec.onerror = e => reject(new Error('MediaRecorder error'));
-    rec.start(100);
+    rec.onerror = () => reject(new Error('MediaRecorder error'));
+    rec.start(250);
     src.start(0);
-    src.onended = () => setTimeout(() => rec.stop(), 200);
+    src.onended = () => setTimeout(() => rec.stop(), 300);
   });
-}
-
-// ── WAV encoder ──
-function audioBufferToWavFull(buffer) {
-  const numCh = buffer.numberOfChannels;
-  const sr = buffer.sampleRate;
-  const len = buffer.length;
-  const byteLen = len * numCh * 2;
-  const ab = new ArrayBuffer(44 + byteLen);
-  const view = new DataView(ab);
-  const ws = (off,s) => { for(let i=0;i<s.length;i++) view.setUint8(off+i,s.charCodeAt(i)); };
-  ws(0,'RIFF'); view.setUint32(4,36+byteLen,true); ws(8,'WAVE');
-  ws(12,'fmt '); view.setUint32(16,16,true); view.setUint16(20,1,true);
-  view.setUint16(22,numCh,true); view.setUint32(24,sr,true);
-  view.setUint32(28,sr*numCh*2,true); view.setUint16(32,numCh*2,true);
-  view.setUint16(34,16,true); ws(36,'data'); view.setUint32(40,byteLen,true);
-  let off=44;
-  for(let i=0;i<len;i++) for(let ch=0;ch<numCh;ch++){
-    const s=Math.max(-1,Math.min(1,buffer.getChannelData(ch)[i]));
-    view.setInt16(off,s<0?s*0x8000:s*0x7FFF,true);off+=2;
-  }
-  return new Blob([ab],{type:'audio/wav'});
 }
 
 function switchMainTab(tab){
@@ -10628,10 +10668,6 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
         <span class="logo-name" style="font-size:18px;font-weight:800;letter-spacing:-.04em;">RΛMIX</span>
       </div>
       <div class="mobile-topbar-right">
-        <button class="rm-topbar-home-btn" id="topbarHomeBtn" onclick="rmGoHome()" title="Home" style="display:none;align-items:center;gap:5px;background:rgba(255,255,255,.07);border:1px solid var(--line2);border-radius:8px;padding:5px 10px;color:var(--mist);font-size:11px;font-family:'Syne',sans-serif;font-weight:700;cursor:pointer;transition:all .15s">
-          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          Home
-        </button>
         <span class="mobile-topbar-badge">100% In-Browser</span>
         <button class="mobile-settings-btn" onclick="openSettings()" title="Settings">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -10644,18 +10680,7 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
 
   // ── Inject mobile bottom nav ──
   function buildMobileBottomNav(){
-    if(document.getElementById('mobileBottomNav')) return;
-    var savedTab = (localStorage.getItem('ramix-default-tab') || 'convert');
-    var nav = document.createElement('div');
-    nav.id = 'mobileBottomNav';
-    nav.className = 'mobile-bottom-nav';
-    nav.innerHTML = `
-      <button class="mobile-nav-btn active" id="mobileNavHome" onclick="rmGoHome()">
-        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        Home
-      </button>
-    `;
-    document.body.appendChild(nav);
+    // Bottom nav removed — navigation handled by back arrow in tool screens
   }
 
   // ── Update bottom nav active state ──
@@ -10865,8 +10890,6 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
     document.body.classList.add('rm-at-home');
     var homeBtn = document.getElementById('mobileNavHome');
     if(homeBtn) homeBtn.classList.add('active');
-    var topbarHomeBtn = document.getElementById('topbarHomeBtn');
-    if(topbarHomeBtn) topbarHomeBtn.style.display = 'none';
     window.scrollTo(0,0);
   }
 
@@ -10891,8 +10914,6 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
     document.body.classList.remove('rm-at-home');
     var homeBtn = document.getElementById('mobileNavHome');
     if(homeBtn) homeBtn.classList.remove('active');
-    var topbarHomeBtn = document.getElementById('topbarHomeBtn');
-    if(topbarHomeBtn) topbarHomeBtn.style.display = 'flex';
 
     // Update back bar for convert tools
     if(tab === 'convert' && subTool){
