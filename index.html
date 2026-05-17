@@ -924,6 +924,163 @@
 }
 .sheet-close-btn:hover{color:var(--snow);border-color:var(--mist)}
 
+/* ── SETTINGS SHEET: scrollable body ── */
+.settings-sheet{
+  max-height:88vh;
+  display:flex;
+  flex-direction:column;
+}
+.settings-scroll-body{
+  overflow-y:auto;
+  flex:1;
+  overscroll-behavior:contain;
+  padding-bottom:8px;
+}
+.settings-scroll-body::-webkit-scrollbar{width:3px}
+.settings-scroll-body::-webkit-scrollbar-track{background:transparent}
+.settings-scroll-body::-webkit-scrollbar-thumb{background:var(--line2);border-radius:99px}
+
+/* ── SETTINGS SECTION HEAD ── */
+.settings-section-head{
+  display:flex;align-items:center;gap:7px;
+  padding:14px 16px 8px;
+  font-size:10px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;font-family:'DM Mono',monospace;
+  color:var(--fog);
+}
+.settings-section-head svg{flex-shrink:0;opacity:.7}
+
+/* ── TOGGLE ROW ── */
+.settings-toggle-row{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border-radius:10px;
+  transition:background .15s;
+}
+.settings-toggle-row:hover{background:rgba(255,255,255,.03)}
+.settings-toggle-info{flex:1;min-width:0}
+.settings-toggle-label{
+  font-size:12px;font-weight:700;
+  color:var(--snow);line-height:1.3;
+  display:flex;align-items:center;gap:6px;
+}
+.settings-toggle-sub{
+  font-size:10px;font-family:'DM Mono',monospace;
+  color:var(--fog);margin-top:1px;
+}
+
+/* ── TOGGLE SWITCH ── */
+.settings-toggle-btn{
+  width:40px;height:22px;border-radius:99px;
+  background:var(--line2);border:none;cursor:pointer;
+  position:relative;flex-shrink:0;
+  transition:background .2s;
+  padding:0;
+}
+.settings-toggle-btn[aria-checked="true"]{background:var(--c1)}
+.settings-toggle-knob{
+  position:absolute;top:3px;left:3px;
+  width:16px;height:16px;border-radius:50%;
+  background:#fff;
+  transition:transform .2s cubic-bezier(.2,.8,.2,1);
+  box-shadow:0 1px 4px rgba(0,0,0,.25);
+}
+.settings-toggle-btn[aria-checked="true"] .settings-toggle-knob{
+  transform:translateX(18px);
+}
+
+/* ── INPUT ROW ── */
+.settings-input-row{
+  display:flex;align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;padding:10px 12px;
+  border-radius:10px;
+  transition:background .15s;
+}
+.settings-input-row:hover{background:rgba(255,255,255,.03)}
+.settings-text-input{
+  background:var(--ink3);border:1px solid var(--line2);
+  border-radius:8px;padding:6px 10px;
+  font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--snow);outline:none;width:96px;
+  transition:border-color .18s;flex-shrink:0;
+}
+.settings-text-input:focus{border-color:var(--c1)}
+.settings-text-input::placeholder{color:var(--fog)}
+.settings-select{
+  background:var(--ink3);border:1px solid var(--line2);
+  border-radius:8px;padding:6px 10px;
+  font-family:'DM Mono',monospace;font-size:11px;
+  color:var(--snow);outline:none;cursor:pointer;
+  flex-shrink:0;
+  transition:border-color .18s;
+  -webkit-appearance:none;appearance:none;
+  padding-right:24px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%2364748B' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 8px center;
+}
+.settings-select:focus{border-color:var(--c1)}
+
+/* ── BADGE PILL ── */
+.settings-badge-pill{
+  font-size:8px;font-family:'DM Mono',monospace;font-weight:700;
+  background:rgba(79,140,255,.12);color:var(--c1);
+  border:1px solid rgba(79,140,255,.2);
+  border-radius:99px;padding:1px 6px;
+  letter-spacing:.04em;
+}
+
+/* ── ABOUT CARD ── */
+.settings-about-card{
+  background:var(--ink3);border:1px solid var(--line);
+  border-radius:12px;padding:14px;margin-bottom:10px;
+}
+.settings-about-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:10px;font-family:'DM Mono',monospace;
+  color:var(--fog);
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--line2);
+  border-radius:99px;padding:3px 9px;
+}
+
+/* ── RESET BUTTON ── */
+.settings-reset-btn{
+  width:100%;padding:11px;
+  border:1px dashed rgba(248,113,113,.25);
+  border-radius:10px;background:transparent;
+  color:#FCA5A5;font-family:'Syne',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  transition:background .15s,border-color .15s;
+}
+.settings-reset-btn:hover{
+  background:rgba(248,113,113,.06);
+  border-color:rgba(248,113,113,.45);
+}
+.settings-reset-btn svg{flex-shrink:0}
+
+/* Light theme overrides for new settings components */
+[data-theme="white-blue"] .settings-toggle-label,
+[data-theme="purple-modern"] .settings-toggle-label{color:var(--snow)}
+[data-theme="white-blue"] .settings-text-input,
+[data-theme="purple-modern"] .settings-text-input,
+[data-theme="white-blue"] .settings-select,
+[data-theme="purple-modern"] .settings-select{
+  background:rgba(255,255,255,.85);border-color:var(--line2);color:var(--snow);
+}
+[data-theme="white-blue"] .settings-about-card,
+[data-theme="purple-modern"] .settings-about-card{
+  background:rgba(255,255,255,.7);border-color:var(--line);
+}
+[data-theme="white-blue"] .settings-toggle-btn,
+[data-theme="purple-modern"] .settings-toggle-btn{background:var(--line2)}
+[data-theme="white-blue"] .settings-toggle-btn[aria-checked="true"],
+[data-theme="purple-modern"] .settings-toggle-btn[aria-checked="true"]{background:var(--c1)}
+
 html{height:100%;scroll-behavior:smooth}
 body{
   font-family:'Syne',sans-serif;
@@ -931,6 +1088,12 @@ body{
   color:var(--snow);
   min-height:100vh;
   overflow-x:hidden;
+}
+
+/* Disable non-essential animations on mobile */
+@media(max-width:799px){
+  .tagline-dot{animation:none!important;opacity:1}
+  .hero-title .shift{animation:none!important;background-position:0%}
 }
 
 /* ── NOISE TEXTURE ── */
@@ -941,7 +1104,7 @@ body::before{
 }
 
 /* ── AMBIENT GLOWS ── */
-.glow-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(100px);opacity:.12}
+.glow-orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0;filter:blur(100px);opacity:.12;will-change:transform}
 .orb1{width:600px;height:600px;background:var(--c2);top:-200px;right:-150px;animation:orbFloat1 18s ease-in-out infinite}
 .orb2{width:500px;height:500px;background:var(--c1);bottom:-150px;left:-120px;animation:orbFloat2 22s ease-in-out infinite}
 @keyframes orbFloat1{
@@ -953,6 +1116,10 @@ body::before{
   0%,100%{transform:translate(0,0) scale(1)}
   40%{transform:translate(30px,-40px) scale(1.06)}
   70%{transform:translate(-20px,20px) scale(.97)}
+}
+/* Disable orb animations on mobile to prevent lag */
+@media(max-width:799px){
+  .glow-orb{animation:none!important;opacity:.07;filter:blur(80px)}
 }
 
 /* ── LAYOUT ── */
@@ -1676,6 +1843,35 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
   .main-tabs{flex-direction:column}
 }
 
+/* ── MOBILE PERFORMANCE OPTIMIZATIONS ── */
+@media(max-width:799px){
+  /* GPU-accelerate scroll container */
+  .shell{
+    -webkit-overflow-scrolling:touch;
+  }
+  /* Avoid repaints on hidden panels */
+  .panel:not(.active){
+    content-visibility:auto;
+    contain-intrinsic-size:0 400px;
+  }
+  /* Faster tap response — remove 300ms delay */
+  button,.pick-btn,.fmt-opt,.fmt-card,.drop-zone,
+  .mobile-nav-btn,.sheet-mode-btn,.ppt-src-btn{
+    touch-action:manipulation;
+  }
+  /* Prevent overscroll bounce from causing layout thrash */
+  body{overscroll-behavior-y:contain}
+  /* Reduce settings overlay blur on mobile */
+  .settings-overlay{
+    backdrop-filter:blur(4px)!important;
+    -webkit-backdrop-filter:blur(4px)!important;
+  }
+  /* Reduce noise texture opacity on mobile */
+  body::before{opacity:.08!important}
+  /* Simplify card shadows on mobile */
+  .card,.res-card{box-shadow:none!important}
+}
+
 /* ── PASSWORD PROTECTION UI ── */
 .pw-section{
   margin-top:14px;
@@ -2164,9 +2360,9 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     position: sticky;
     top: 0;
     z-index: 50;
-    background: rgba(11, 16, 32, 0.94);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    background: rgba(11, 16, 32, 0.97);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--line);
     display: flex;
     align-items: center;
@@ -2209,9 +2405,9 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
     position: fixed;
     bottom: 0; left: 0; right: 0;
     z-index: 100;
-    background: rgba(11, 16, 32, 0.97);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
+    background: rgba(11, 16, 32, 0.98);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     border-top: 1px solid var(--line);
     padding: 6px 0 max(8px, env(safe-area-inset-bottom));
   }
@@ -2591,6 +2787,195 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 [data-theme="white-blue"] .mo-chip,
 [data-theme="purple-modern"] .mo-chip { background: rgba(255,255,255,0.7); color: var(--fog); }
 
+/* ═══════════════════════════════════════════════════════════════
+   HOME SCREEN + TOOL NAVIGATION SYSTEM
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Hide old sidebar-based layout on mobile — replaced by home/tool screens */
+@media(max-width:799px){
+  /* App shell: full screen, no scroll when home is showing */
+  .shell { padding: 0 0 80px !important; max-width: 100% !important; }
+
+  /* Hide old desktop-style sidebar layout */
+  .split-left, .split-left-label { display: none !important; }
+  .split-layout { display: block !important; }
+  .split-right { width: 100% !important; overflow: visible !important; }
+
+  /* Hide header hero text entirely on mobile */
+  header { display: none !important; }
+
+  /* Mobile topbar — bump z-index so it sits above screens */
+  .mobile-topbar { z-index: 60 !important; }
+
+  /* ── HOME SCREEN ── */
+  .rm-home {
+    display: block;
+    padding: 0 16px 24px;
+    animation: rmFadeIn .22s ease;
+  }
+  .rm-home.hidden { display: none !important; }
+
+  /* Home greeting */
+  .rm-home-greeting {
+    padding: 14px 0 18px;
+    text-align: center;
+  }
+  .rm-home-greeting h2 {
+    font-size: 22px; font-weight: 800; letter-spacing: -.03em;
+    background: linear-gradient(135deg, var(--c1), var(--c2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    margin-bottom: 4px;
+  }
+  .rm-home-greeting p {
+    font-size: 12px; color: var(--fog); font-family: 'DM Mono', monospace;
+  }
+
+  /* Section labels */
+  .rm-section-lbl {
+    font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--fog); font-family: 'DM Mono', monospace;
+    margin: 0 0 10px 2px;
+  }
+
+  /* ── TOOL CARDS GRID ── */
+  .rm-tools-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .rm-tool-card {
+    position: relative;
+    background: var(--card-bg);
+    border: 1px solid var(--line2);
+    border-radius: 18px;
+    padding: 16px 14px 14px;
+    cursor: pointer;
+    display: flex; flex-direction: column; gap: 10px;
+    transition: transform .18s, border-color .18s, box-shadow .18s;
+    touch-action: manipulation;
+    overflow: hidden;
+    text-align: left;
+  }
+  .rm-tool-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--card-glow, transparent) 0%, transparent 70%);
+    opacity: 0; transition: opacity .2s;
+    border-radius: inherit;
+  }
+  .rm-tool-card:active { transform: scale(.96); }
+  .rm-tool-card:active::before { opacity: 1; }
+
+  .rm-card-icon {
+    width: 44px; height: 44px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .rm-card-icon svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .rm-card-body { flex: 1; }
+  .rm-card-title { font-size: 13px; font-weight: 800; color: var(--snow); line-height: 1.2; margin-bottom: 3px; }
+  .rm-card-sub { font-size: 10px; color: var(--fog); font-family: 'DM Mono', monospace; line-height: 1.4; }
+
+  .rm-card-arrow {
+    position: absolute; bottom: 12px; right: 12px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,.07);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; color: var(--fog);
+  }
+
+  /* Wide card (spans 2 cols) */
+  .rm-tool-card.wide { grid-column: 1 / -1; flex-direction: row; align-items: center; padding: 14px 16px; }
+  .rm-tool-card.wide .rm-card-arrow { position: static; margin-left: auto; }
+
+  /* ── TOOL SCREEN ── */
+  .rm-tool-screen {
+    display: none;
+    animation: rmSlideIn .22s cubic-bezier(.22,.8,.4,1);
+    padding: 0 14px 24px;
+  }
+  .rm-tool-screen.active { display: block; }
+
+  @keyframes rmFadeIn { from { opacity:0; transform:translateY(8px) } to { opacity:1; transform:none } }
+  @keyframes rmSlideIn { from { opacity:0; transform:translateX(28px) } to { opacity:1; transform:none } }
+
+  /* Back bar */
+  .rm-back-bar {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 0 14px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 16px;
+  }
+  .rm-back-btn {
+    width: 34px; height: 34px; border-radius: 10px;
+    background: var(--ink3); border: 1px solid var(--line2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--snow); flex-shrink: 0;
+    touch-action: manipulation;
+    transition: background .15s;
+  }
+  .rm-back-btn:active { background: var(--line2); }
+  .rm-back-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+  .rm-back-info { flex: 1; min-width: 0; }
+  .rm-back-title { font-size: 15px; font-weight: 800; color: var(--snow); letter-spacing: -.02em; line-height: 1.2; }
+  .rm-back-sub { font-size: 10px; color: var(--fog); font-family: 'DM Mono', monospace; margin-top: 1px; }
+
+  .rm-back-icon {
+    width: 34px; height: 34px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .rm-back-icon svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Hide main-content direct children panels when home is shown */
+  body.rm-at-home .split-right .panel,
+  body.rm-at-home .split-right .merge-picker,
+  body.rm-at-home .contentMerge,
+  body.rm-at-home #contentMerge,
+  body.rm-at-home #contentLink,
+  body.rm-at-home #contentVideo { display: none !important; }
+
+  /* Keep current tab content visible when at tool screen */
+  body.rm-at-tool .rm-home { display: none !important; }
+
+  /* Merge/Link/Video tool screens wrap */
+  .rm-main-tool-wrap { }
+
+  /* Tab section headers inside tool screens */
+  .rm-tab-section-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 0 14px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 16px;
+  }
+
+  /* Hide the old mobile quick-action pill row */
+  .quick-actions { display: none !important; }
+  /* Hide the old horizontal main-tabs */
+  .main-tabs { display: none !important; }
+
+  /* Full-width panels inside tool screen */
+  .rm-tool-screen .panel { display: block !important; }
+  .rm-tool-screen .merge-picker { display: flex !important; flex-direction: row !important; }
+}
+
+/* Desktop: home screen & tool screens are invisible — sidebar handles everything */
+@media(min-width:800px){
+  .rm-home { display: none !important; }
+  .rm-tool-screen { display: none !important; }
+  .rm-back-bar { display: none !important; }
+}
+
+/* Light theme adjustments for tool cards */
+[data-theme="white-blue"] .rm-tool-card,
+[data-theme="purple-modern"] .rm-tool-card { background: rgba(255,255,255,.85); border-color: var(--line2); }
+[data-theme="white-blue"] .rm-back-btn,
+[data-theme="purple-modern"] .rm-back-btn { background: rgba(255,255,255,.7); border-color: var(--line2); }
+
 </style>
 </head>
 <body>
@@ -2599,7 +2984,217 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 
 <div class="shell">
 
-<header>
+<!-- ══════════════════════════════════════════════════════════════
+     MOBILE HOME SCREEN  (hidden on desktop)
+     ══════════════════════════════════════════════════════════════ -->
+<div class="rm-home" id="rmHome">
+  <div class="rm-home-greeting">
+    <h2>RΛMIX</h2>
+    <p>100% In-Browser · Zero Upload · Always Free</p>
+  </div>
+
+  <!-- Convert Tools -->
+  <div class="rm-section-lbl">Convert</div>
+  <div class="rm-tools-grid">
+
+    <button class="rm-tool-card" style="--card-glow:rgba(79,140,255,.18)" onclick="rmOpenTool('convert','pdf')">
+      <div class="rm-card-icon" style="background:rgba(79,140,255,.12);color:var(--c1)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">PDF → Excel</div>
+        <div class="rm-card-sub">Extract tables<br>to .xlsx</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+    <button class="rm-tool-card" style="--card-glow:rgba(139,92,246,.18)" onclick="rmOpenTool('convert','xl')">
+      <div class="rm-card-icon" style="background:rgba(139,92,246,.12);color:var(--c2)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Excel → PDF</div>
+        <div class="rm-card-sub">Export sheets<br>to .pdf</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+    <button class="rm-tool-card" style="--card-glow:rgba(52,211,153,.18)" onclick="rmOpenTool('convert','img')">
+      <div class="rm-card-icon" style="background:rgba(52,211,153,.12);color:var(--c3)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">PDF → Images</div>
+        <div class="rm-card-sub">PNG · JPG<br>WEBP</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+    <button class="rm-tool-card" style="--card-glow:rgba(52,211,153,.18)" onclick="rmOpenTool('convert','img2')">
+      <div class="rm-card-icon" style="background:rgba(52,211,153,.10);color:var(--c4)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/><line x1="3" y1="12" x2="21" y2="12" stroke-dasharray="3 2"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Excel → Images</div>
+        <div class="rm-card-sub">PNG · JPG<br>WEBP</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+    <button class="rm-tool-card" style="--card-glow:rgba(245,158,11,.18)" onclick="rmOpenTool('convert','img3')">
+      <div class="rm-card-icon" style="background:rgba(245,158,11,.12);color:var(--c5)">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><rect x="3" y="3" width="18" height="18" rx="3" opacity=".3"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Images → PDF</div>
+        <div class="rm-card-sub">JPG · PNG<br>WEBP</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+    <button class="rm-tool-card" style="--card-glow:rgba(224,64,251,.18)" onclick="rmOpenTool('convert','ppt')">
+      <div class="rm-card-icon" style="background:rgba(224,64,251,.12);color:var(--c6)">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h4a2 2 0 0 1 0 4H7V8z"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">→ PowerPoint</div>
+        <div class="rm-card-sub">PDF · Images<br>→ .pptx</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+  </div>
+
+  <!-- Merge Tools -->
+  <div class="rm-section-lbl">Merge</div>
+  <div class="rm-tools-grid" style="margin-bottom:20px">
+
+    <button class="rm-tool-card wide" style="--card-glow:rgba(52,211,153,.14)" onclick="rmOpenTool('merge','pdf')">
+      <div class="rm-card-icon" style="background:rgba(52,211,153,.12);color:var(--c3)">
+        <svg viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Merge PDFs</div>
+        <div class="rm-card-sub">Combine multiple PDFs, pick pages</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+    <button class="rm-tool-card wide" style="--card-glow:rgba(52,211,153,.14)" onclick="rmOpenTool('merge','xl')">
+      <div class="rm-card-icon" style="background:rgba(139,92,246,.12);color:var(--c2)">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/><path d="M3 14h18" stroke-dasharray="3 2"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Merge Excel</div>
+        <div class="rm-card-sub">Combine sheets or stack rows</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+  </div>
+
+  <!-- Other Tools -->
+  <div class="rm-section-lbl">More Tools</div>
+  <div class="rm-tools-grid">
+
+    <button class="rm-tool-card wide" style="--card-glow:rgba(79,140,255,.14)" onclick="rmOpenTool('link')">
+      <div class="rm-card-icon" style="background:rgba(79,140,255,.12);color:var(--c1)">
+        <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Share Link <span style="font-size:9px;background:linear-gradient(135deg,var(--c1),var(--c2));color:#fff;border-radius:99px;padding:1px 6px;font-family:'DM Mono',monospace;font-weight:700;vertical-align:middle">NEW</span></div>
+        <div class="rm-card-sub">Upload file and get a shareable link</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+    <button class="rm-tool-card wide" style="--card-glow:rgba(245,158,11,.14)" onclick="rmOpenTool('video')">
+      <div class="rm-card-icon" style="background:rgba(245,158,11,.12);color:var(--c5)">
+        <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+      </div>
+      <div class="rm-card-body">
+        <div class="rm-card-title">Video → Audio</div>
+        <div class="rm-card-sub">Extract MP3, WAV, OGG from video</div>
+      </div>
+      <div class="rm-card-arrow">›</div>
+    </button>
+
+  </div>
+</div><!-- /rm-home -->
+
+
+<!-- ══════════════════════════════════════════════════════════════
+     MOBILE TOOL SCREENS  (one per major tab + sub-tools)
+     ══════════════════════════════════════════════════════════════ -->
+
+<!-- Convert tool screen -->
+<div class="rm-tool-screen" id="rmScreenConvert">
+  <div class="rm-back-bar">
+    <button class="rm-back-btn" onclick="rmGoHome()" aria-label="Back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="rm-back-info">
+      <div class="rm-back-title" id="rmConvertTitle">PDF → Excel</div>
+      <div class="rm-back-sub" id="rmConvertSub">.pdf → .xlsx</div>
+    </div>
+    <div class="rm-back-icon" id="rmConvertIcon" style="background:rgba(79,140,255,.12);color:var(--c1)">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    </div>
+  </div>
+  <!-- panels will be moved here by JS -->
+  <div id="rmConvertPanelHost"></div>
+</div>
+
+<!-- Merge tool screen -->
+<div class="rm-tool-screen" id="rmScreenMerge">
+  <div class="rm-back-bar">
+    <button class="rm-back-btn" onclick="rmGoHome()" aria-label="Back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="rm-back-info">
+      <div class="rm-back-title" id="rmMergeTitle">Merge PDFs</div>
+      <div class="rm-back-sub" id="rmMergeSub">Combine multiple PDFs</div>
+    </div>
+    <div class="rm-back-icon" id="rmMergeIcon" style="background:rgba(52,211,153,.12);color:var(--c3)">
+      <svg viewBox="0 0 24 24"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+    </div>
+  </div>
+  <div id="rmMergePanelHost"></div>
+</div>
+
+<!-- Link tool screen -->
+<div class="rm-tool-screen" id="rmScreenLink">
+  <div class="rm-back-bar">
+    <button class="rm-back-btn" onclick="rmGoHome()" aria-label="Back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="rm-back-info">
+      <div class="rm-back-title">Share Link</div>
+      <div class="rm-back-sub">Upload &amp; get shareable link</div>
+    </div>
+    <div class="rm-back-icon" style="background:rgba(79,140,255,.12);color:var(--c1)">
+      <svg viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+    </div>
+  </div>
+  <div id="rmLinkPanelHost"></div>
+</div>
+
+<!-- Video tool screen -->
+<div class="rm-tool-screen" id="rmScreenVideo">
+  <div class="rm-back-bar">
+    <button class="rm-back-btn" onclick="rmGoHome()" aria-label="Back">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="rm-back-info">
+      <div class="rm-back-title">Video → Audio</div>
+      <div class="rm-back-sub">Extract audio from video</div>
+    </div>
+    <div class="rm-back-icon" style="background:rgba(245,158,11,.12);color:var(--c5)">
+      <svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+    </div>
+  </div>
+  <div id="rmVideoPanelHost"></div>
+</div>
   <div class="wordmark">
     <div class="logo-icon">
       <svg viewBox="0 0 24 24"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/></svg>
@@ -4975,98 +5570,236 @@ footer{text-align:center;padding:32px 0 0;border-top:1px solid var(--line);margi
 <div class="settings-overlay" id="settingsOverlay" onclick="handleOverlayClick(event)">
   <div class="settings-sheet" id="settingsSheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">App Settings</div>
-    <div class="sheet-sub">Personalise how RΛMIX looks</div>
-    <div class="sheet-divider"></div>
 
-    <div style="padding:0 20px 12px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--fog)">Choose theme</div>
-
-    <div class="theme-grid-modal">
-
-      <!-- White -->
-      <button class="theme-opt" data-t="white-blue" onclick="applyTheme('white-blue')">
-        <div class="theme-check-badge" style="background:#2563EB;color:#fff">✓</div>
-        <div class="theme-swatch" style="background:#EFF6FF">
-          <div class="sw-topbar" style="background:#2563EB"></div>
-          <div class="sw-card" style="background:#fff">
-            <div class="sw-line" style="background:#2563EB;opacity:.4;width:80%"></div>
-            <div class="sw-line" style="background:#2563EB;opacity:.2;width:55%"></div>
-            <div class="sw-btn" style="background:#2563EB"></div>
-          </div>
-        </div>
-        <div class="theme-opt-info">
-          <div class="theme-opt-name">White</div>
-          <div class="theme-opt-desc">Clean · Professional</div>
-        </div>
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:0 20px 4px">
+      <div>
+        <div class="sheet-title" style="padding:0;margin-bottom:2px">Settings</div>
+        <div class="sheet-sub" style="padding:0">Personalise your RΛMIX experience</div>
+      </div>
+      <button onclick="closeSettings()" style="background:none;border:none;cursor:pointer;color:var(--fog);padding:6px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:color .15s" onmouseover="this.style.color='var(--snow)'" onmouseout="this.style.color='var(--fog)'">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
       </button>
-
-      <!-- Black -->
-      <button class="theme-opt" data-t="dark-navy" onclick="applyTheme('dark-navy')">
-        <div class="theme-check-badge" style="background:#3B82F6;color:#fff">✓</div>
-        <div class="theme-swatch" style="background:#0F172A">
-          <div class="sw-topbar" style="background:#3B82F6"></div>
-          <div class="sw-card" style="background:#1E293B">
-            <div class="sw-line" style="background:#3B82F6;opacity:.4;width:80%"></div>
-            <div class="sw-line" style="background:#3B82F6;opacity:.2;width:55%"></div>
-            <div class="sw-btn" style="background:#3B82F6"></div>
-          </div>
-        </div>
-        <div class="theme-opt-info">
-          <div class="theme-opt-name">Black</div>
-          <div class="theme-opt-desc">Dark · Premium</div>
-        </div>
-      </button>
-
     </div>
 
-    <div class="sheet-divider" style="margin-top:4px"></div>
+    <div class="sheet-divider" style="margin-top:14px;margin-bottom:0"></div>
 
-    <div style="padding:12px 20px 8px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-family:'DM Mono',monospace;color:var(--fog)">Default Tab on Open</div>
-    <div style="padding:0 20px 20px;display:grid;grid-template-columns:1fr 1fr;gap:8px" id="defaultTabGrid">
+    <!-- Scrollable body -->
+    <div class="settings-scroll-body">
 
-      <button class="default-tab-opt" data-tab="convert" onclick="setDefaultTab('convert')">
-        <div class="dt-opt-icon" style="background:rgba(79,140,255,.12);color:var(--c1)">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-        </div>
-        <div>
-          <div class="dt-opt-label">Convert</div>
-          <div class="dt-opt-sub">PDF · Excel · Images</div>
-        </div>
-      </button>
+      <!-- ── BEHAVIOUR ── -->
+      <div class="settings-section-head">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        Behaviour
+      </div>
+      <div style="padding:0 16px 4px;display:flex;flex-direction:column;gap:2px">
 
-      <button class="default-tab-opt" data-tab="merge" onclick="setDefaultTab('merge')">
-        <div class="dt-opt-icon" style="background:rgba(52,211,153,.12);color:var(--c3)">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+        <!-- Auto-download toggle -->
+        <div class="settings-toggle-row" id="stRowAutoDownload">
+          <div class="settings-toggle-info">
+            <div class="settings-toggle-label">Auto-download after convert</div>
+            <div class="settings-toggle-sub">File downloads instantly when ready</div>
+          </div>
+          <button class="settings-toggle-btn" id="stBtnAutoDownload" onclick="toggleSetting('autoDownload')" role="switch" aria-checked="true">
+            <span class="settings-toggle-knob"></span>
+          </button>
         </div>
-        <div>
-          <div class="dt-opt-label">Merge</div>
-          <div class="dt-opt-sub">Combine files</div>
-        </div>
-      </button>
 
-      <button class="default-tab-opt" data-tab="link" onclick="setDefaultTab('link')">
-        <div class="dt-opt-icon" style="background:rgba(139,92,246,.12);color:var(--c2)">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        <!-- Confirm before clear -->
+        <div class="settings-toggle-row" id="stRowConfirmClear">
+          <div class="settings-toggle-info">
+            <div class="settings-toggle-label">Confirm before clearing files</div>
+            <div class="settings-toggle-sub">Ask before removing uploaded files</div>
+          </div>
+          <button class="settings-toggle-btn" id="stBtnConfirmClear" onclick="toggleSetting('confirmClear')" role="switch" aria-checked="false">
+            <span class="settings-toggle-knob"></span>
+          </button>
         </div>
-        <div>
-          <div class="dt-opt-label">Link</div>
-          <div class="dt-opt-sub">Share &amp; upload</div>
-        </div>
-      </button>
 
-      <button class="default-tab-opt" data-tab="video" onclick="setDefaultTab('video')">
-        <div class="dt-opt-icon" style="background:rgba(245,158,11,.12);color:var(--c5)">
-          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        <!-- Haptic feedback (mobile hint) -->
+        <div class="settings-toggle-row" id="stRowHaptic">
+          <div class="settings-toggle-info">
+            <div class="settings-toggle-label">Haptic feedback <span class="settings-badge-pill">Mobile</span></div>
+            <div class="settings-toggle-sub">Vibrate on key actions</div>
+          </div>
+          <button class="settings-toggle-btn" id="stBtnHaptic" onclick="toggleSetting('haptic')" role="switch" aria-checked="true">
+            <span class="settings-toggle-knob"></span>
+          </button>
         </div>
-        <div>
-          <div class="dt-opt-label">Video</div>
-          <div class="dt-opt-sub">Extract audio</div>
+
+      </div>
+
+      <div class="sheet-divider"></div>
+
+      <!-- ── OUTPUT ── -->
+      <div class="settings-section-head">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Output
+      </div>
+      <div style="padding:0 16px 4px;display:flex;flex-direction:column;gap:2px">
+
+        <!-- Default filename prefix -->
+        <div class="settings-input-row">
+          <div class="settings-toggle-info">
+            <div class="settings-toggle-label">Filename prefix</div>
+            <div class="settings-toggle-sub">Prepended to every exported file</div>
+          </div>
+          <input class="settings-text-input" id="stInputPrefix" type="text" maxlength="24" placeholder="ramix_" oninput="saveSetting('filenamePrefix',this.value.trim())" />
         </div>
-      </button>
 
-    </div>
+        <!-- PDF image quality -->
+        <div class="settings-input-row" style="align-items:center">
+          <div class="settings-toggle-info">
+            <div class="settings-toggle-label">PDF image quality</div>
+            <div class="settings-toggle-sub">Higher = larger file size</div>
+          </div>
+          <select class="settings-select" id="stSelectPdfQuality" onchange="saveSetting('pdfQuality',this.value)">
+            <option value="0.72">Standard</option>
+            <option value="0.85" selected>High</option>
+            <option value="0.95">Max</option>
+          </select>
+        </div>
 
-    <button class="sheet-close-btn" onclick="closeSettings()">Close</button>
+      </div>
+
+      <div class="sheet-divider"></div>
+
+      <!-- ── APPEARANCE ── -->
+      <div class="settings-section-head">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/></svg>
+        Appearance
+      </div>
+
+      <div class="theme-grid-modal" style="padding-top:0">
+        <!-- Dark Teal (default) -->
+        <button class="theme-opt" data-t="dark-teal" onclick="applyTheme('dark-teal')">
+          <div class="theme-check-badge" style="background:var(--c1);color:#fff">✓</div>
+          <div class="theme-swatch" style="background:#0B1020">
+            <div class="sw-topbar" style="background:#4F8CFF"></div>
+            <div class="sw-card" style="background:#111827">
+              <div class="sw-line" style="background:#4F8CFF;opacity:.4;width:80%"></div>
+              <div class="sw-line" style="background:#8B5CF6;opacity:.3;width:55%"></div>
+              <div class="sw-btn" style="background:linear-gradient(135deg,#4F8CFF,#8B5CF6)"></div>
+            </div>
+          </div>
+          <div class="theme-opt-info">
+            <div class="theme-opt-name">Night</div>
+            <div class="theme-opt-desc">Deep · Default</div>
+          </div>
+        </button>
+
+        <!-- White Blue -->
+        <button class="theme-opt" data-t="white-blue" onclick="applyTheme('white-blue')">
+          <div class="theme-check-badge" style="background:#2563EB;color:#fff">✓</div>
+          <div class="theme-swatch" style="background:#EFF6FF">
+            <div class="sw-topbar" style="background:#2563EB"></div>
+            <div class="sw-card" style="background:#fff">
+              <div class="sw-line" style="background:#2563EB;opacity:.4;width:80%"></div>
+              <div class="sw-line" style="background:#2563EB;opacity:.2;width:55%"></div>
+              <div class="sw-btn" style="background:#2563EB"></div>
+            </div>
+          </div>
+          <div class="theme-opt-info">
+            <div class="theme-opt-name">White</div>
+            <div class="theme-opt-desc">Clean · Professional</div>
+          </div>
+        </button>
+
+        <!-- Purple -->
+        <button class="theme-opt" data-t="purple-modern" onclick="applyTheme('purple-modern')">
+          <div class="theme-check-badge" style="background:#7C3AED;color:#fff">✓</div>
+          <div class="theme-swatch" style="background:#FAF5FF">
+            <div class="sw-topbar" style="background:#7C3AED"></div>
+            <div class="sw-card" style="background:#fff">
+              <div class="sw-line" style="background:#7C3AED;opacity:.4;width:80%"></div>
+              <div class="sw-line" style="background:#EC4899;opacity:.3;width:55%"></div>
+              <div class="sw-btn" style="background:linear-gradient(135deg,#7C3AED,#EC4899)"></div>
+            </div>
+          </div>
+          <div class="theme-opt-info">
+            <div class="theme-opt-name">Purple</div>
+            <div class="theme-opt-desc">Bold · Creative</div>
+          </div>
+        </button>
+
+        <!-- Dark Navy -->
+        <button class="theme-opt" data-t="dark-navy" onclick="applyTheme('dark-navy')">
+          <div class="theme-check-badge" style="background:#3B82F6;color:#fff">✓</div>
+          <div class="theme-swatch" style="background:#0F172A">
+            <div class="sw-topbar" style="background:#3B82F6"></div>
+            <div class="sw-card" style="background:#1E293B">
+              <div class="sw-line" style="background:#3B82F6;opacity:.4;width:80%"></div>
+              <div class="sw-line" style="background:#A78BFA;opacity:.3;width:55%"></div>
+              <div class="sw-btn" style="background:#3B82F6"></div>
+            </div>
+          </div>
+          <div class="theme-opt-info">
+            <div class="theme-opt-name">Navy</div>
+            <div class="theme-opt-desc">Dark · Premium</div>
+          </div>
+        </button>
+      </div>
+
+      <div class="sheet-divider"></div>
+
+      <!-- ── DEFAULT TAB ── -->
+      <div class="settings-section-head">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Default Tab on Open
+      </div>
+      <div style="padding:0 16px 4px;display:grid;grid-template-columns:1fr 1fr;gap:7px" id="defaultTabGrid">
+        <button class="default-tab-opt" data-tab="convert" onclick="setDefaultTab('convert')">
+          <div class="dt-opt-icon" style="background:rgba(79,140,255,.12);color:var(--c1)"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></div>
+          <div><div class="dt-opt-label">Convert</div><div class="dt-opt-sub">PDF · Excel · Images</div></div>
+        </button>
+        <button class="default-tab-opt" data-tab="merge" onclick="setDefaultTab('merge')">
+          <div class="dt-opt-icon" style="background:rgba(52,211,153,.12);color:var(--c3)"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg></div>
+          <div><div class="dt-opt-label">Merge</div><div class="dt-opt-sub">Combine files</div></div>
+        </button>
+        <button class="default-tab-opt" data-tab="link" onclick="setDefaultTab('link')">
+          <div class="dt-opt-icon" style="background:rgba(139,92,246,.12);color:var(--c2)"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></div>
+          <div><div class="dt-opt-label">Link</div><div class="dt-opt-sub">Share &amp; upload</div></div>
+        </button>
+        <button class="default-tab-opt" data-tab="video" onclick="setDefaultTab('video')">
+          <div class="dt-opt-icon" style="background:rgba(245,158,11,.12);color:var(--c5)"><svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+          <div><div class="dt-opt-label">Video</div><div class="dt-opt-sub">Extract audio</div></div>
+        </button>
+      </div>
+
+      <div class="sheet-divider"></div>
+
+      <!-- ── ABOUT ── -->
+      <div class="settings-section-head">
+        <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        About
+      </div>
+      <div style="padding:0 16px 16px">
+        <div class="settings-about-card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div style="width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--c1),var(--c2));display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="#fff" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:800;letter-spacing:-.02em">RΛMIX</div>
+              <div style="font-size:10px;font-family:'DM Mono',monospace;color:var(--fog)">v2.0 · 100% In-Browser</div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--fog);line-height:1.6;font-family:'DM Mono',monospace;margin-bottom:10px">All processing happens locally on your device. No files are ever uploaded to any server.</div>
+          <div style="display:flex;gap:6px">
+            <div class="settings-about-pill">🔒 Zero Upload</div>
+            <div class="settings-about-pill">⚡ In-Browser</div>
+            <div class="settings-about-pill">∞ Always Free</div>
+          </div>
+        </div>
+
+        <!-- Reset button -->
+        <button class="settings-reset-btn" onclick="resetAllSettings()">
+          <svg viewBox="0 0 24 24" width="13" height="13" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.7"/></svg>
+          Reset all settings to default
+        </button>
+      </div>
+
+    </div><!-- /settings-scroll-body -->
   </div>
 </div>
 
@@ -5329,28 +6062,29 @@ window.copyLinkPassword=function(){
 };
 
 /* ══ THEME MANAGER ══ */
-const THEMES=['white-blue','dark-navy'];
+const THEMES=['dark-teal','white-blue','purple-modern','dark-navy'];
 function applyTheme(id){
-  if(!THEMES.includes(id))id='white-blue';
+  if(!THEMES.includes(id)) id='white-blue';
   document.documentElement.setAttribute('data-theme',id);
   localStorage.setItem('fs-theme',id);
   document.querySelectorAll('.theme-opt').forEach(b=>{
-    b.classList.toggle('active-theme',b.dataset.t===id);
+    b.classList.toggle('active-theme', b.dataset.t===id);
   });
 }
 function openSettings(){
   document.getElementById('settingsOverlay').classList.add('open');
   syncDefaultTabUI();
+  syncSettingsUI();
 }
 function closeSettings(){
   document.getElementById('settingsOverlay').classList.remove('open');
 }
 function handleOverlayClick(e){
-  if(e.target===document.getElementById('settingsOverlay'))closeSettings();
+  if(e.target===document.getElementById('settingsOverlay')) closeSettings();
 }
 /* Load saved theme — default to white-blue for first-time visitors */
 (function(){
-  const saved=localStorage.getItem('fs-theme');
+  const saved = localStorage.getItem('fs-theme');
   applyTheme(saved && THEMES.includes(saved) ? saved : 'white-blue');
 })();
 
@@ -5360,11 +6094,9 @@ function setDefaultTab(tab){
   if(!DEFAULT_TABS.includes(tab)) tab='convert';
   localStorage.setItem('ramix-default-tab', tab);
   syncDefaultTabUI();
-  // Immediately navigate to the selected tab
   switchMainTab(tab);
   if(typeof updateDtNav === 'function') updateDtNav(tab);
   if(typeof updateMobileNav === 'function') updateMobileNav(tab);
-  // Close settings after short delay so user sees the change
   setTimeout(closeSettings, 220);
 }
 function syncDefaultTabUI(){
@@ -5377,10 +6109,7 @@ function syncDefaultTabUI(){
 document.addEventListener('DOMContentLoaded', function(){
   const saved = localStorage.getItem('ramix-default-tab') || 'convert';
   if(DEFAULT_TABS.includes(saved)){
-    // Switch content immediately
     switchMainTab(saved);
-    // Nav bars (mobile/desktop) are injected by applyLayout shortly after —
-    // use a small delay so they exist before we try to update them
     setTimeout(function(){
       if(typeof updateDtNav === 'function') updateDtNav(saved);
       if(typeof updateMobileNav === 'function') updateMobileNav(saved);
@@ -5388,7 +6117,115 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 });
 
-pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+/* ══ SETTINGS: TOGGLES & PREFERENCES ══ */
+const SETTING_DEFAULTS = {
+  autoDownload: true,
+  confirmClear: false,
+  haptic: true,
+  filenamePrefix: '',
+  pdfQuality: '0.85'
+};
+
+function loadSettings(){
+  const raw = localStorage.getItem('ramix-settings');
+  try { return raw ? Object.assign({}, SETTING_DEFAULTS, JSON.parse(raw)) : Object.assign({}, SETTING_DEFAULTS); }
+  catch(e){ return Object.assign({}, SETTING_DEFAULTS); }
+}
+function saveSettings(s){ localStorage.setItem('ramix-settings', JSON.stringify(s)); }
+function getSetting(key){ return loadSettings()[key]; }
+function saveSetting(key, val){
+  const s = loadSettings(); s[key] = val; saveSettings(s);
+}
+function toggleSetting(key){
+  const s = loadSettings();
+  s[key] = !s[key];
+  saveSettings(s);
+  const id = 'stBtn' + key.charAt(0).toUpperCase() + key.slice(1);
+  const btn = document.getElementById(id);
+  if(btn) btn.setAttribute('aria-checked', s[key] ? 'true' : 'false');
+  if(s.haptic && navigator.vibrate) navigator.vibrate(10);
+}
+function syncSettingsUI(){
+  const s = loadSettings();
+  ['autoDownload','confirmClear','haptic'].forEach(function(key){
+    const btn = document.getElementById('stBtn' + key.charAt(0).toUpperCase() + key.slice(1));
+    if(btn) btn.setAttribute('aria-checked', s[key] ? 'true' : 'false');
+  });
+  const pfx = document.getElementById('stInputPrefix');
+  if(pfx) pfx.value = s.filenamePrefix || '';
+  const ql = document.getElementById('stSelectPdfQuality');
+  if(ql) ql.value = s.pdfQuality || '0.85';
+}
+function resetAllSettings(){
+  localStorage.removeItem('ramix-settings');
+  localStorage.removeItem('ramix-default-tab');
+  syncSettingsUI();
+  syncDefaultTabUI();
+  switchMainTab('convert');
+  if(typeof updateMobileNav === 'function') updateMobileNav('convert');
+  if(typeof updateDtNav === 'function') updateDtNav('convert');
+  const btn = document.querySelector('.settings-reset-btn');
+  if(btn){
+    const orig = btn.innerHTML;
+    btn.textContent = '✓ Reset done';
+    setTimeout(function(){ btn.innerHTML = orig; }, 1800);
+  }
+}
+
+/* ══ APPLY SETTINGS IN PRACTICE ══ */
+
+/* 1. Filename prefix — wrap all download anchor triggers */
+function applyFilenamePrefix(name){
+  const prefix = (getSetting('filenamePrefix') || '').trim();
+  if(!prefix) return name;
+  // Avoid double-prefix
+  if(name.startsWith(prefix)) return name;
+  return prefix + name;
+}
+
+/* 2. Auto-download — central download helper used by all converters */
+function triggerDownload(url, filename){
+  const name = applyFilenamePrefix(filename);
+  if(!getSetting('autoDownload')){
+    // Store pending download, show toast instead of auto-triggering
+    window._pendingDownload = {url, filename: name};
+    showDownloadToast(name, url);
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = url; a.download = name;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* Download toast for when auto-download is off */
+function showDownloadToast(filename, url){
+  let toast = document.getElementById('ramixDlToast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'ramixDlToast';
+    toast.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);z-index:999;background:var(--ink2);border:1px solid var(--line2);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;font-family:Syne,sans-serif;font-size:13px;font-weight:700;color:var(--snow);box-shadow:0 8px 32px rgba(0,0,0,.4);white-space:nowrap;max-width:calc(100vw - 40px);';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="var(--c3)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>'
+    + '<span style="max-width:180px;overflow:hidden;text-overflow:ellipsis">' + filename + '</span>'
+    + '<a href="' + url + '" download="' + filename + '" style="background:var(--c1);color:#fff;border-radius:8px;padding:5px 12px;font-size:12px;text-decoration:none;flex-shrink:0">Save</a>'
+    + '<button onclick="document.getElementById(\'ramixDlToast\').style.display=\'none\'" style="background:none;border:none;color:var(--fog);cursor:pointer;padding:2px;font-size:16px;line-height:1">×</button>';
+  toast.style.display = 'flex';
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(function(){ toast.style.display = 'none'; }, 8000);
+}
+
+/* 3. Confirm before clear — hook into reset functions */
+function confirmClear(label, callback){
+  if(!getSetting('confirmClear')){ callback(); return; }
+  if(window.confirm('Remove ' + (label||'this file') + '?')) callback();
+}
+
+/* 4. PDF quality — used in PDF export canvas rendering */
+function getPdfImageQuality(){
+  return parseFloat(getSetting('pdfQuality') || '0.85');
+}
+
 
 // ── MODE ─────────────────────────────────────────────────────────────────────
 function switchMode(m){
@@ -5406,7 +6243,9 @@ function switchMode(m){
 // ── HELPERS ──────────────────────────────────────────────────────────────────
 const fmtBytes=b=>b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
 const escHtml=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+// Adaptive sleep: on mobile use shorter delays to keep the UI responsive
+const _isMobilePerf=window.matchMedia('(max-width:799px)').matches;
+const sleep=ms=>new Promise(r=>setTimeout(r,_isMobilePerf?Math.min(ms,16):ms));
 
 function prog(pfx,pct,lbl,stp){
   document.getElementById('pw'+pfx).classList.add('show');
@@ -5483,10 +6322,7 @@ document.getElementById('dlPdf').addEventListener('click',async()=>{
   btn.disabled=true;btn.innerHTML='🔒 Encrypting…';
   const {blob,filename}=await maybeEncrypt('Pdf',pdfBlob,baseName,'.xlsx');
   btn.disabled=false;btn.innerHTML=origLabel;
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=filename;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  triggerDownload(URL.createObjectURL(blob), filename);
 });
 function pickPdf(f){
   if(!f.name.toLowerCase().endsWith('.pdf')){showMsg('Pdf','error','Please select a PDF file.');return}
@@ -5641,7 +6477,7 @@ document.getElementById('btnCvtPdf').addEventListener('click',async()=>{
         // If we found image ops but couldn't extract individual images,
         // fall back to a full-page screenshot for this page
         if(imgOps.length>0&&extractedImages.filter(i=>i.pageNum===p).length===0){
-          const fullDataURL=canvas.toDataURL('image/jpeg',0.92);
+          const fullDataURL=canvas.toDataURL('image/jpeg', getPdfImageQuality());
           extractedImages.push({
             pageNum:p,
             dataURL:fullDataURL,
@@ -6342,8 +7178,9 @@ function detectTables(items, totalPages){
 
     if(!colsToUse || colsToUse.length<2){
       // Single-column page or no columns: treat entire page as one text column
-      if(tableRows.length>=2){
-        const singleColRows=tableRows.map(row=>
+      // Use `rows` here (not tableRows which is declared later in this iteration)
+      if(rows.length>=2){
+        const singleColRows=rows.map(row=>
           [row.map(it=>(it.text||'').trim()).filter(Boolean).join(' ')]
         ).filter(r=>r[0].trim()!=='');
         if(singleColRows.length>=2){
@@ -6934,10 +7771,7 @@ document.getElementById('btnCvtXl').addEventListener('click',async()=>{
       btn.disabled=true;btn.innerHTML='🔒 Encrypting…';
       const {blob,filename}=await maybeEncrypt('Xl',rawBlob,baseName,'.pdf');
       btn.disabled=false;btn.innerHTML=origLbl;
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');a.href=url;a.download=filename;
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
-      setTimeout(()=>URL.revokeObjectURL(url),5000);
+      triggerDownload(URL.createObjectURL(blob), filename);
     };
     document.getElementById('fnameInXl').value=docTitle;
     document.getElementById('resXlMeta').textContent=`${sheets.length} sheet${sheets.length===1?'':'s'} · Professional layout`;
@@ -7030,10 +7864,7 @@ document.getElementById('dlImg').addEventListener('click',async()=>{
     const zipBlob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
     btn.textContent='🔒 Encrypting…';
     const {blob:outBlob,filename}=await maybeEncrypt('Img',zipBlob,base,'.zip');
-    const url=URL.createObjectURL(outBlob);
-    const a=document.createElement('a');a.href=url;a.download=filename;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    triggerDownload(URL.createObjectURL(outBlob), filename);
   }catch(err){showMsg('Img','error','ZIP failed: '+err.message)}
   btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download ZIP';
 });
@@ -7159,10 +7990,7 @@ document.getElementById('dlImg2').addEventListener('click',async()=>{
     const zipBlob=await zip.generateAsync({type:'blob',compression:'DEFLATE',compressionOptions:{level:6}});
     btn.textContent='🔒 Encrypting…';
     const {blob:outBlob,filename}=await maybeEncrypt('Img2',zipBlob,base,'.zip');
-    const url=URL.createObjectURL(outBlob);
-    const a=document.createElement('a');a.href=url;a.download=filename;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    setTimeout(()=>URL.revokeObjectURL(url),5000);
+    triggerDownload(URL.createObjectURL(outBlob), filename);
   }catch(err){showMsg('Img2','error','ZIP failed: '+err.message)}
   btn.disabled=false;btn.innerHTML='<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Download ZIP';
 });
@@ -7374,10 +8202,7 @@ document.getElementById('btnCvtImg3').addEventListener('click',async()=>{
       btn.disabled=true;btn.innerHTML='🔒 Encrypting…';
       const {blob,filename}=await maybeEncrypt('Img3',rawBlob,baseName,'.pdf');
       btn.disabled=false;btn.innerHTML=origLbl;
-      const url=URL.createObjectURL(blob);
-      const a=document.createElement('a');a.href=url;a.download=filename;
-      document.body.appendChild(a);a.click();document.body.removeChild(a);
-      setTimeout(()=>URL.revokeObjectURL(url),5000);
+      triggerDownload(URL.createObjectURL(blob), filename);
     };
     document.getElementById('resImg3Meta').textContent=`${total} image${total===1?'':'s'} · ${img3PageSize.toUpperCase()} · ${img3Orient}`;
 
@@ -7470,7 +8295,10 @@ function updateVidVolLbl() {
   ['dragenter','dragover'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.add('over'); }));
   ['dragleave','drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.classList.remove('over'); }));
   dz.addEventListener('drop', ev => { const f = ev.dataTransfer.files[0]; if(f) pickVideo(f); });
-  inp.addEventListener('change', () => { if(inp.files[0]) pickVideo(inp.files[0]); });
+  inp.addEventListener('change', () => { if(inp.files[0]) pickVideo(inp.files[0]); inp.value=''; });
+  // Stop propagation so dz click doesn't bubble and double-trigger on some mobile browsers
+  inp.addEventListener('click', ev => ev.stopPropagation());
+  dz.addEventListener('click', () => inp.click());
 })();
 
 function pickVideo(f) {
@@ -7802,10 +8630,11 @@ function switchMainTab(tab){
     if(tabEl) tabEl.classList.toggle('active',t===tab);
     if(contEl) contEl.classList.toggle('active',t===tab);
   });
-  if(tab==='merge'){
-    document.getElementById('mainTabMerge').classList.add('merge-active');
-  } else {
-    document.getElementById('mainTabMerge').classList.remove('merge-active');
+  // Guard: mainTabMerge may not exist in all layout modes
+  const mergeTabEl=document.getElementById('mainTabMerge');
+  if(mergeTabEl){
+    if(tab==='merge') mergeTabEl.classList.add('merge-active');
+    else mergeTabEl.classList.remove('merge-active');
   }
 }
 
@@ -7971,10 +8800,7 @@ document.getElementById('dlMxl').addEventListener('click',async()=>{
   btn.disabled=true;btn.innerHTML='🔒 Encrypting…';
   const {blob,filename}=await maybeEncrypt('Mxl',mxlBlob,baseName,'.xlsx');
   btn.disabled=false;btn.innerHTML=origLbl;
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=filename;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  triggerDownload(URL.createObjectURL(blob), filename);
 });
 
 document.getElementById('btnMxl').addEventListener('click',async()=>{
@@ -8287,10 +9113,7 @@ document.getElementById('dlMpdf').addEventListener('click',async()=>{
   btn.disabled=true;btn.innerHTML='🔒 Encrypting…';
   const {blob,filename}=await maybeEncrypt('Mpdf',mpdfBlob,baseName,'.pdf');
   btn.disabled=false;btn.innerHTML=origLbl;
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=filename;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  triggerDownload(URL.createObjectURL(blob), filename);
 });
 
 function clearMpdfAll(){
@@ -8365,7 +9188,7 @@ async function renderMpdfFileBlock(idx){
   allFiles.appendChild(block);
   setupMpdfBlockDrag(block,idx);
 
-  // Render page thumbnails
+  // Render page thumbnails — batch on mobile to prevent jank
   const grid=document.getElementById(`mpdfGrid${idx}`);
   for(let p=1;p<=entry.numPages;p++){
     const thumb=document.createElement('div');
@@ -8375,10 +9198,20 @@ async function renderMpdfFileBlock(idx){
     thumb.innerHTML=`<div class="mpdf-loading-thumb">…</div><div class="mpdf-page-num">p.${p}</div>`;
     thumb.onclick=()=>toggleMpdfPage(idx,p-1);
     grid.appendChild(thumb);
-
-    // Render canvas thumbnail async (don't await, let them load progressively)
-    renderMpdfThumb(entry.pdfDoc,p,thumb);
   }
+  // Render thumbnails in batches of 4 to stay smooth on mobile
+  const thumbsToRender=[];
+  for(let p=1;p<=entry.numPages;p++){
+    const thumbEl=document.getElementById(`mpdfThumb${idx}_${p}`);
+    if(thumbEl) thumbsToRender.push({pdfDoc:entry.pdfDoc,pageNum:p,thumbEl});
+  }
+  (async function renderBatch(list,batchSize){
+    for(let i=0;i<list.length;i+=batchSize){
+      const batch=list.slice(i,i+batchSize);
+      await Promise.all(batch.map(item=>renderMpdfThumb(item.pdfDoc,item.pageNum,item.thumbEl)));
+      if(i+batchSize<list.length) await new Promise(r=>setTimeout(r,30));
+    }
+  })(thumbsToRender, window.matchMedia('(max-width:799px)').matches ? 3 : 6);
 }
 
 async function renderMpdfThumb(pdfDoc,pageNum,thumbEl){
@@ -8917,10 +9750,7 @@ document.getElementById('dlPpt').addEventListener('click',async()=>{
   btn.disabled=true;btn.innerHTML='🔒 Encrypting…';
   const {blob,filename}=await maybeEncrypt('Ppt',pptBlob,baseName,ext);
   btn.disabled=false;btn.innerHTML=origLbl;
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=filename;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  triggerDownload(URL.createObjectURL(blob), filename);
 });
 
 document.getElementById('againPpt').addEventListener('click',()=>{
@@ -9962,6 +10792,228 @@ document.querySelectorAll('[onclick*="selectSlideTheme"]').forEach(btn => {
 
 })();
 
+</script>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   RAMIX HOME SCREEN NAVIGATION
+   Home screen shows tool cards. Tapping a card opens tool screen.
+   ═══════════════════════════════════════════════════════════════ */
+(function(){
+
+  var isMob = window.matchMedia('(max-width:799px)');
+  if(!isMob.matches) return; // desktop uses sidebar, skip
+
+  // ── Tool metadata for back-bar labels ──
+  var TOOL_META = {
+    pdf:  { title:'PDF → Excel',    sub:'.pdf → .xlsx',              icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="12" y2="17"/>',  bg:'rgba(79,140,255,.12)', color:'var(--c1)' },
+    xl:   { title:'Excel → PDF',    sub:'.xlsx → .pdf',              icon:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',                                                                                                                     bg:'rgba(139,92,246,.12)', color:'var(--c2)' },
+    img:  { title:'PDF → Images',   sub:'PNG · JPG · WEBP',          icon:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',                                                                     bg:'rgba(52,211,153,.12)',  color:'var(--c3)' },
+    img2: { title:'Excel → Images', sub:'PNG · JPG · WEBP',          icon:'<rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>',                                                                     bg:'rgba(52,211,153,.10)',  color:'var(--c4)' },
+    img3: { title:'Images → PDF',   sub:'JPG · PNG · WEBP → .pdf',   icon:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>',                                                                                    bg:'rgba(245,158,11,.12)',  color:'var(--c5)' },
+    ppt:  { title:'→ PowerPoint',   sub:'Multi-file → .pptx',        icon:'<rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 8h4a2 2 0 0 1 0 4H7V8z"/>',                                                                              bg:'rgba(224,64,251,.12)',  color:'var(--c6)' },
+  };
+  var MERGE_META = {
+    pdf: { title:'Merge PDFs',   sub:'Combine multiple PDFs, pick pages', bg:'rgba(52,211,153,.12)',  color:'var(--c3)' },
+    xl:  { title:'Merge Excel',  sub:'Combine sheets or stack rows',       bg:'rgba(139,92,246,.12)',  color:'var(--c2)' },
+  };
+
+  // ── State ──
+  var currentScreen = 'home'; // 'home' | 'convert' | 'merge' | 'link' | 'video'
+
+  // ── Panel host elements ──
+  var convertHost = document.getElementById('rmConvertPanelHost');
+  var mergeHost   = document.getElementById('rmMergePanelHost');
+  var linkHost    = document.getElementById('rmLinkPanelHost');
+  var videoHost   = document.getElementById('rmVideoPanelHost');
+
+  // ── Original panel parents (for when we need to restore on resize) ──
+  var originalConvertRight = document.querySelector('#convertSplitLayout .split-right');
+  var originalMergeContent = document.getElementById('contentMerge');
+  var originalLinkContent  = document.getElementById('contentLink');
+  var originalVideoContent = document.getElementById('contentVideo');
+
+  // ── Move panels into host divs on mobile ──
+  function setupMobilePanels(){
+    // Convert panels → convertHost
+    if(convertHost && originalConvertRight && !convertHost.hasChildNodes()){
+      // Move all children (panel divs) into the host
+      while(originalConvertRight.firstChild){
+        convertHost.appendChild(originalConvertRight.firstChild);
+      }
+    }
+    // Merge content → mergeHost
+    if(mergeHost && originalMergeContent && !mergeHost.hasChildNodes()){
+      while(originalMergeContent.firstChild){
+        mergeHost.appendChild(originalMergeContent.firstChild);
+      }
+    }
+    // Link content → linkHost
+    if(linkHost && originalLinkContent && !linkHost.hasChildNodes()){
+      while(originalLinkContent.firstChild){
+        linkHost.appendChild(originalLinkContent.firstChild);
+      }
+    }
+    // Video content → videoHost
+    if(videoHost && originalVideoContent && !videoHost.hasChildNodes()){
+      while(originalVideoContent.firstChild){
+        videoHost.appendChild(originalVideoContent.firstChild);
+      }
+    }
+  }
+
+  // ── Show home, hide all tool screens ──
+  function showHome(){
+    currentScreen = 'home';
+    document.getElementById('rmHome').classList.remove('hidden');
+    ['convert','merge','link','video'].forEach(function(s){
+      var el = document.getElementById('rmScreen'+cap(s));
+      if(el) el.classList.remove('active');
+    });
+    document.body.classList.remove('rm-at-tool');
+    document.body.classList.add('rm-at-home');
+    window.scrollTo(0,0);
+  }
+
+  // ── Open a specific tool screen ──
+  window.rmOpenTool = function(tab, subTool){
+    setupMobilePanels();
+    currentScreen = tab;
+
+    // Hide home
+    document.getElementById('rmHome').classList.add('hidden');
+    // Hide all screens
+    ['convert','merge','link','video'].forEach(function(s){
+      var el = document.getElementById('rmScreen'+cap(s));
+      if(el) el.classList.remove('active');
+    });
+
+    var screenId = 'rmScreen'+cap(tab);
+    var screen = document.getElementById(screenId);
+    if(screen) screen.classList.add('active');
+
+    document.body.classList.add('rm-at-tool');
+    document.body.classList.remove('rm-at-home');
+
+    // Update back bar for convert tools
+    if(tab === 'convert' && subTool){
+      var meta = TOOL_META[subTool];
+      if(meta){
+        var titleEl = document.getElementById('rmConvertTitle');
+        var subEl   = document.getElementById('rmConvertSub');
+        var iconEl  = document.getElementById('rmConvertIcon');
+        if(titleEl) titleEl.textContent = meta.title;
+        if(subEl)   subEl.textContent   = meta.sub;
+        if(iconEl){
+          iconEl.style.background = meta.bg;
+          iconEl.style.color      = meta.color;
+          iconEl.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + meta.icon + '</svg>';
+        }
+      }
+      // Switch to the right panel
+      switchMode(subTool);
+    }
+
+    // Update back bar for merge tools
+    if(tab === 'merge' && subTool){
+      var m = MERGE_META[subTool];
+      if(m){
+        var titleEl2 = document.getElementById('rmMergeTitle');
+        var subEl2   = document.getElementById('rmMergeSub');
+        var iconEl2  = document.getElementById('rmMergeIcon');
+        if(titleEl2) titleEl2.textContent = m.title;
+        if(subEl2)   subEl2.textContent   = m.sub;
+        if(iconEl2){ iconEl2.style.background = m.bg; iconEl2.style.color = m.color; }
+      }
+      // Activate merge tab & sub-panel
+      switchMainTab('merge');
+      if(subTool === 'pdf') switchMerge('pdf');
+      else if(subTool === 'xl') switchMerge('xl');
+    }
+
+    if(tab === 'link'){
+      switchMainTab('link');
+    }
+    if(tab === 'video'){
+      switchMainTab('video');
+    }
+
+    window.scrollTo(0,0);
+  };
+
+  // ── Go back to home ──
+  window.rmGoHome = function(){
+    showHome();
+    // Also sync bottom nav back to "convert" as a neutral state
+    if(window.updateMobileNav) updateMobileNav('convert');
+  };
+
+  // ── Override bottom nav on mobile to go through home ──
+  // We hook into updateMobileNav to intercept direct tab switches
+  var _origUpdateMobileNav = window.updateMobileNav;
+  window.updateMobileNav = function(tab){
+    if(_origUpdateMobileNav) _origUpdateMobileNav(tab);
+  };
+
+  // Intercept the switchMainTab calls from bottom nav on mobile
+  var _origSwitchMainTab = window.switchMainTab;
+  // Patch bottom nav buttons to go home first if needed
+  // (The rmOpenTool function handles the actual switching)
+
+  // ── Override bottom-nav button onclick to show home screen with that section ──
+  // We do this by re-attaching click handlers after the nav is built
+  function patchBottomNav(){
+    var nav = document.getElementById('mobileBottomNav');
+    if(!nav) return;
+
+    // Remap each bottom nav button
+    var btnConvert = document.getElementById('mobileNavConvert');
+    var btnMerge   = document.getElementById('mobileNavMerge');
+    var btnLink    = document.getElementById('mobileNavLink');
+    var btnVideo   = document.getElementById('mobileNavVideo');
+
+    if(btnConvert) btnConvert.onclick = function(){
+      updateMobileNav('convert');
+      showHome();
+    };
+    if(btnMerge) btnMerge.onclick = function(){
+      updateMobileNav('merge');
+      showHome();
+    };
+    if(btnLink) btnLink.onclick = function(){
+      updateMobileNav('link');
+      rmOpenTool('link');
+    };
+    if(btnVideo) btnVideo.onclick = function(){
+      updateMobileNav('video');
+      rmOpenTool('video');
+    };
+  }
+
+  // ── Helpers ──
+  function cap(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+  // ── Init ──
+  function init(){
+    if(!isMob.matches) return;
+    setupMobilePanels();
+    showHome();
+    // Patch bottom nav after it's injected
+    setTimeout(patchBottomNav, 200);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    setTimeout(init, 0);
+  }
+
+  // Re-init on resize to mobile
+  isMob.addEventListener('change', function(){
+    if(isMob.matches) init();
+  });
+
+})();
 </script>
 </body>
 </html>
